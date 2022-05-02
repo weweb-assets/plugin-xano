@@ -16,7 +16,7 @@ export default {
     data() {
         return {
             isLoading: false,
-            instances: null,
+            instances: [],
         };
     },
     computed: {
