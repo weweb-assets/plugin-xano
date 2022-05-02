@@ -21,7 +21,7 @@ export default {
     },
     computed: {
         instance() {
-            const instance = this.instances.find(instance => instance.id === this.settings.privateData.instanceId);
+            const instance = this.instances.find(instance => instance.id == this.settings.privateData.instanceId);
             return instance ? instance.display : 'Not found';
         },
     },
