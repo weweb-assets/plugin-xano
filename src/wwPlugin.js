@@ -47,7 +47,7 @@ export default {
     },
     /* wwEditor:start */
     async fetchInstances(apiKey) {
-        if (!apiKey && !this.settings.privateData.apiKey) return;
+        if (!apiKey || !this.settings.privateData.apiKey) return;
 
         const { data: instances } = await axios.get('https://app.xano.com/api:developer/instance', {
             headers: { Authorization: `Bearer ${apiKey || this.settings.privateData.apiKey}` },
@@ -57,8 +57,8 @@ export default {
         return instances;
     },
     async fetchInstance(apiKey, instanceId) {
-        if (!apiKey && !this.settings.privateData.apiKey) return;
-        if (!instanceId && !this.settings.privateData.instanceId) return;
+        if (!apiKey || !this.settings.privateData.apiKey) return;
+        if (!instanceId || !this.settings.privateData.instanceId) return;
         if (!this.instances) return;
 
         const instance = this.instances.find(
