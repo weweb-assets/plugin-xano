@@ -54,7 +54,7 @@ export default {
             method: endpoint.method,
             baseURL: apiGroupUrl,
             url,
-            data: body,
+            data: { ...parameters, ...body },
             headers: { Authorization: token ? `Bearer ${token}` : undefined },
         });
     },
