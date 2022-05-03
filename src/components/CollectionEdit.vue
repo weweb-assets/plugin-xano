@@ -23,7 +23,7 @@
         :label="parameter.name"
         type="query"
         placeholder="Enter a value"
-        bindable
+        :bindable="collection.mode === 'dynamic'"
         :required="parameter.required"
         :model-value="api.parameters[parameter.name]"
         @update:modelValue="setProp('parameters', { ...api.parameters, [parameter.name]: $event })"
@@ -34,7 +34,7 @@
         :label="elem.name"
         :type="elem.type || 'string'"
         placeholder="Enter a value"
-        bindable
+        :bindable="collection.mode === 'dynamic'"
         :required="elem.required"
         :model-value="api.body[elem.name]"
         @update:modelValue="setProp('body', { ...api.body, [elem.name]: $event })"
