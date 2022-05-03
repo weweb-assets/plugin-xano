@@ -65,10 +65,10 @@ export default {
             return `${this.endpoint.method}-${this.endpoint.path}`;
         },
         parameters() {
-            return this.args.parameters;
+            return this.args.parameters || {};
         },
         body() {
-            return this.args.body;
+            return this.args.body || {};
         },
         apiGroupsOptions() {
             if (!this.plugin.instance) return [];
