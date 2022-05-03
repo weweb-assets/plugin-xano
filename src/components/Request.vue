@@ -88,7 +88,7 @@ export default {
             return Object.keys(this.apiGroup.paths)
                 .map(path =>
                     Object.keys(this.apiGroup.paths[path]).map(method => ({
-                        label: this.apiGroup.paths[path][method].summary || `${method} ${path}`,
+                        label: `${method} ${path}`,
                         value: `${method}-${path}`,
                     }))
                 )

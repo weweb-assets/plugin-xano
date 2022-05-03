@@ -22,9 +22,19 @@ export default {
         Collection API
     \================================================================================================*/
     /* wwEditor:start */
-    // eslint-disable-next-line no-unused-vars
-    async fetchCollection(_collection) {
-        return { data: null, error: null };
+    async fetchCollection(collection) {
+        if (collection.mode === 'dynamic') {
+            try {
+                const { data } = await this.request(collection.config);
+                return data;
+            } catch (err) {
+                return {
+                    error: Object.getOwnPropertyNames(err).reduce((obj, key) => ({ ...obj, [key]: err[key] }), {}),
+                };
+            }
+        } else {
+            return { data: null, error: null };
+        }
     },
     /* wwEditor:end */
     /*=============================================m_ÔÔ_m=============================================\
