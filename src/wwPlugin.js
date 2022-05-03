@@ -34,7 +34,7 @@ export default {
         /* wwEditor:start */
         if (wwUtils) {
             wwUtils.log({ label: 'Endpoint', preview: `${endpoint.method.toUpperCase()} - ${endpoint.path}` });
-            wwUtils.log({ label: 'Payload', preview: { ...parameters, ...body } });
+            wwUtils.log({ label: 'Payload', preview: body });
         }
         /* wwEditor:end */
         const token = wwLib.wwPlugins.xanoAuth && wwLib.wwPlugins.xanoAuth.accessToken;
