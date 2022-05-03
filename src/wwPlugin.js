@@ -26,7 +26,7 @@ export default {
         if (collection.mode === 'dynamic') {
             try {
                 const { data } = await this.request(collection.config);
-                return data;
+                return { data, error: null };
             } catch (err) {
                 return {
                     error: Object.getOwnPropertyNames(err).reduce((obj, key) => ({ ...obj, [key]: err[key] }), {}),
