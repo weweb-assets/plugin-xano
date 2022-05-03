@@ -72,14 +72,20 @@ export default {
             headers: { Authorization: `Bearer ${apiKey || this.settings.privateData.apiKey}` },
         });
 
-        const {
-            data: [instanceSpec],
-        } = await axios.get(`${origin}/api:developer/workspace?type=json`, {
+        const { data: workspaces } = await axios.get(`${origin}/api:developer/workspace?type=json`, {
             headers: { Authorization: `Bearer ${authToken}` },
         });
 
-        this.instance = instanceSpec;
-        return instanceSpec;
+        this.instance = workspaces.map(async workspace => ({
+            ...workspace,
+            apigroups: await Promise.all(
+                workspace.apigroups.map(async apigroup => ({
+                    ...apigroup,
+                    paths: await axios.get(apigroup.swaggerspec),
+                }))
+            ),
+        }));
+        return this.instance;
     },
     async getApiGroup(apiGroupId) {
         if (!this.instance || !apiGroupId) return;
