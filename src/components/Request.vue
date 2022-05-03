@@ -95,13 +95,23 @@ export default {
                 .flat();
         },
         endpointParameters() {
-            if (!this.apiGroup || !this.endpoint || !this.apiGroup.paths) return [];
+            if (
+                !this.apiGroup ||
+                !this.endpoint ||
+                !this.apiGroup.paths ||
+                !this.apiGroup.paths[this.endpoint.path] ||
+                !this.apiGroup.paths[this.endpoint.path][this.endpoint.method]
+            )
+                return [];
             return this.apiGroup.paths[this.endpoint.path][this.endpoint.method].parameters || [];
         },
         endpointBody() {
             if (
                 !this.apiGroup ||
                 !this.endpoint ||
+                !this.apiGroup.paths ||
+                !this.apiGroup.paths[this.endpoint.path] ||
+                !this.apiGroup.paths[this.endpoint.path][this.endpoint.method] ||
                 !this.apiGroup.paths[this.endpoint.path][this.endpoint.method].requestBody
             )
                 return [];
