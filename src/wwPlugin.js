@@ -39,7 +39,7 @@ export default {
         /* wwEditor:end */
         const token = wwLib.wwPlugins.xanoAuth && wwLib.wwPlugins.xanoAuth.accessToken;
         let url = endpoint.path;
-        for (const key in parameters) url = url.replace(`:${key}`, parameters[key]);
+        for (const key in parameters) url = url.replace(`{${key}}`, parameters[key]);
         return await axios({
             method: endpoint.method,
             baseURL: apiGroupUrl,
