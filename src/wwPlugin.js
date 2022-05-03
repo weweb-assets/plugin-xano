@@ -30,19 +30,20 @@ export default {
     /*=============================================m_ÔÔ_m=============================================\
         Xano API
     \================================================================================================*/
-    async request({ endpoint, parameters, body }, wwUtils) {
+    async request({ apiGroupUrl, endpoint, parameters, body }, wwUtils) {
         /* wwEditor:start */
         if (wwUtils) {
             wwUtils.log({ label: 'Endpoint', preview: `${endpoint.method.toUpperCase()} - ${endpoint.path}` });
             wwUtils.log({ label: 'Payload', preview: { ...parameters, ...body } });
         }
         /* wwEditor:end */
+        const token = wwLib.wwPlugins.xanoAuth && wwLib.wwPlugins.xanoAuth.accessToken;
         return await axios({
             method: endpoint.method,
-            baseURL: this.settings.publicData.apiUrl,
+            baseURL: apiGroupUrl,
             url: endpoint.path,
             data: body,
-            headers: { Authorization: 'Bearer Token' },
+            headers: { Authorization: token ? `Bearer ${token}` : undefined },
         });
     },
     /* wwEditor:start */
@@ -79,13 +80,13 @@ export default {
         this.instance = workspaces;
         return this.instance;
     },
-    async getApiGroup(apiGroupId) {
-        if (!this.instance || !apiGroupId) return;
+    async getApiGroup(apiGroupUrl) {
+        if (!this.instance || !apiGroupUrl) return;
 
         const apiGroup = this.instance
             .map(({ apigroups }) => apigroups)
             .flat()
-            .find(apiGroup => `${apiGroup.id}` === apiGroupId);
+            .find(apiGroup => apiGroup.api === apiGroupUrl);
         if (!apiGroup) return;
 
         const { data } = await axios.get(apiGroup.swaggerspec, {

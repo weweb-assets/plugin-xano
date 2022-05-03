@@ -4,9 +4,9 @@
         type="select"
         placeholder="Select an api group"
         required
-        :model-value="apiGroupId"
+        :model-value="apiGroupUrl"
         :options="apiGroupsOptions"
-        @update:modelValue="setApiGroupId"
+        @update:modelValue="setApiGroupUrl"
     />
     <wwEditorInputRow
         label="Endpoint"
@@ -56,8 +56,8 @@ export default {
         };
     },
     computed: {
-        apiGroupId() {
-            return this.args.apiGroupId;
+        apiGroupUrl() {
+            return this.args.apiGroupUrl;
         },
         endpoint() {
             return this.args.endpoint;
@@ -78,7 +78,7 @@ export default {
                 .map(workspace =>
                     workspace.apigroups.map(apiGroup => ({
                         label: `${workspace.name} - ${apiGroup.name}`,
-                        value: `${apiGroup.id}`,
+                        value: apiGroup.api,
                     }))
                 )
                 .flat();
@@ -133,13 +133,13 @@ export default {
         },
     },
     watch: {
-        apiGroupId: {
+        apiGroupUrl: {
             immediate: true,
             async handler() {
-                if (!this.apiGroupId) return;
+                if (!this.apiGroupUrl) return;
                 try {
                     this.isLoading = true;
-                    this.apiGroup = await this.plugin.getApiGroup(this.apiGroupId);
+                    this.apiGroup = await this.plugin.getApiGroup(this.apiGroupUrl);
                 } catch (err) {
                     wwLib.wwLog.error(err);
                 } finally {
@@ -149,8 +149,8 @@ export default {
         },
     },
     methods: {
-        setApiGroupId(apiGroupId) {
-            this.$emit('update:args', { ...this.args, parameters: {}, body: {}, endpoint: null, apiGroupId });
+        setApiGroupUrl(apiGroupUrl) {
+            this.$emit('update:args', { ...this.args, parameters: {}, body: {}, endpoint: null, apiGroupUrl });
         },
         setEndpoint(endpoint) {
             const [method, path] = endpoint.split(/-(.+)/);
