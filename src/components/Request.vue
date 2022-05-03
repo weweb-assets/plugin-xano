@@ -23,6 +23,7 @@
         :label="parameter.name"
         type="query"
         placeholder="Enter a value"
+        bindable
         :required="parameter.required"
         :model-value="parameters[parameter.name]"
         @update:modelValue="setParameters({ ...parameters, [parameter.name]: $event })"
@@ -33,6 +34,7 @@
         :label="elem.name"
         :type="elem.type || 'string'"
         placeholder="Enter a value"
+        bindable
         :required="elem.required"
         :model-value="body[elem.name]"
         @update:modelValue="setBody({ ...body, [elem.name]: $event })"
@@ -138,11 +140,11 @@ export default {
     },
     methods: {
         setApiGroupId(apiGroupId) {
-            this.$emit('update:args', { ...this.args, apiGroupId });
+            this.$emit('update:args', { ...this.args, parameters: {}, body: {}, endpoint: {}, apiGroupId });
         },
         setEndpoint(endpoint) {
             const [method, path] = endpoint.split(/-(.+)/);
-            this.$emit('update:args', { ...this.args, endpoint: { method, path } });
+            this.$emit('update:args', { ...this.args, parameters: {}, body: {}, endpoint: { method, path } });
         },
         setParameters(parameters) {
             this.$emit('update:args', { ...this.args, parameters });
