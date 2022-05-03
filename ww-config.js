@@ -7,13 +7,13 @@ export default {
                 return !!settings.privateData.apiKey;
             },
         },
-        // collection: {
-        //     edit: () => import('./src/components/CollectionEdit.vue'),
-        //     summary: () => import('./src/components/CollectionSummary.vue'),
-        //     getIsValid() {
-        //         return false;
-        //     },
-        // },
+        collection: {
+            edit: () => import('./src/components/CollectionEdit.vue'),
+            summary: () => import('./src/components/CollectionSummary.vue'),
+            getIsValid({ apiGroupUrl, endpoint }) {
+                return !!apiGroupUrl && !!endpoint;
+            },
+        },
     },
     actions: [
         {
