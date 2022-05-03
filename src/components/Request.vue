@@ -72,10 +72,14 @@ export default {
         },
         apiGroupsOptions() {
             if (!this.plugin.instance) return [];
-            return this.plugin.instance.apigroups.map(apiGroup => ({
-                label: apiGroup.name,
-                value: `${apiGroup.id}`,
-            }));
+            return this.plugin.instance
+                .map(workspace =>
+                    workspace.apigroups.map(apiGroup => ({
+                        label: apiGroup.name,
+                        value: `${apiGroup.id}`,
+                    }))
+                )
+                .flat();
         },
         endpointsOptions() {
             if (!this.apiGroup) return [];
