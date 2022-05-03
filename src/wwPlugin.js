@@ -43,7 +43,10 @@ export default {
             baseURL: apiGroupUrl,
             url: endpoint.path,
             data: body,
-            headers: { Authorization: token ? `Bearer ${token}` : undefined },
+            headers: {
+                'content-type': 'application/json',
+                Authorization: token ? `Bearer ${token}` : undefined,
+            },
         });
     },
     /* wwEditor:start */
