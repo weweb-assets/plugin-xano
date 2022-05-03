@@ -31,15 +31,15 @@ export default {
         Xano API
     \================================================================================================*/
     async request({ apiGroupUrl, endpoint, parameters, body }, wwUtils) {
-        /* wwEditor:start */
-        if (wwUtils) {
-            wwUtils.log({ label: 'Endpoint', preview: `${endpoint.method.toUpperCase()} - ${endpoint.path}` });
-            wwUtils.log({ label: 'Payload', preview: body });
-        }
-        /* wwEditor:end */
         const token = wwLib.wwPlugins.xanoAuth && wwLib.wwPlugins.xanoAuth.accessToken;
         let url = endpoint.path;
         for (const key in parameters) url = url.replace(`{${key}}`, parameters[key]);
+        /* wwEditor:start */
+        if (wwUtils) {
+            wwUtils.log({ label: 'Endpoint', preview: `${endpoint.method.toUpperCase()} - ${url}` });
+            wwUtils.log({ label: 'Payload', preview: body });
+        }
+        /* wwEditor:end */
         return await axios({
             method: endpoint.method,
             baseURL: apiGroupUrl,
