@@ -82,7 +82,10 @@ export default {
     async getApiGroup(apiGroupId) {
         if (!this.instance || !apiGroupId) return;
 
-        const apiGroup = this.instance.apigroups.find(apiGroup => `${apiGroup.id}` === apiGroupId);
+        const apiGroup = this.instance
+            .map(({ apigroups }) => apigroups)
+            .flat()
+            .apigroups.find(apiGroup => `${apiGroup.id}` === apiGroupId);
         if (!apiGroup) return;
 
         const { data } = await axios.get(apiGroup.swaggerspec, {
