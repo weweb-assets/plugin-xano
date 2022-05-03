@@ -95,8 +95,8 @@ export default {
                 .flat();
         },
         endpointParameters() {
-            if (!this.apiGroup || !this.endpoint) return [];
-            return this.apiGroup.paths[this.endpoint.path][this.endpoint.method].parameters;
+            if (!this.apiGroup || !this.endpoint || !this.apiGroup.paths) return [];
+            return this.apiGroup.paths[this.endpoint.path][this.endpoint.method].parameters || [];
         },
         endpointBody() {
             if (
