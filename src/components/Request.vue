@@ -140,7 +140,7 @@ export default {
     },
     methods: {
         setApiGroupId(apiGroupId) {
-            this.$emit('update:args', { ...this.args, parameters: {}, body: {}, endpoint: {}, apiGroupId });
+            this.$emit('update:args', { ...this.args, parameters: {}, body: {}, endpoint: null, apiGroupId });
         },
         setEndpoint(endpoint) {
             const [method, path] = endpoint.split(/-(.+)/);
