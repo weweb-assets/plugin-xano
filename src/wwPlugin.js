@@ -76,17 +76,7 @@ export default {
             headers: { Authorization: `Bearer ${authToken}` },
         });
 
-        this.instance = await Promise.all(
-            workspaces.map(async workspace => ({
-                ...workspace,
-                apigroups: await Promise.all(
-                    workspace.apigroups.map(async apigroup => ({
-                        ...apigroup,
-                        paths: await axios.get(apigroup.swaggerspec),
-                    }))
-                ),
-            }))
-        );
+        this.instance = workspaces;
         return this.instance;
     },
     async getApiGroup(apiGroupId) {

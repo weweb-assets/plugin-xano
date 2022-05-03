@@ -75,7 +75,7 @@ export default {
             return this.plugin.instance
                 .map(workspace =>
                     workspace.apigroups.map(apiGroup => ({
-                        label: apiGroup.name,
+                        label: `${workspace.name} - ${apiGroup.name}`,
                         value: `${apiGroup.id}`,
                     }))
                 )
@@ -138,17 +138,17 @@ export default {
     },
     methods: {
         setApiGroupId(apiGroupId) {
-            this.$emit('update:args', [apiGroupId, this.endpoint, this.parameters, this.body]);
+            this.$emit('update:args', { ...this.args, apiGroupId });
         },
         setEndpoint(endpoint) {
             const [method, path] = endpoint.split(/-(.+)/);
-            this.$emit('update:args', [this.apiGroupId, { path, method }, this.parameters, this.body]);
+            this.$emit('update:args', { ...this.args, endpoint: { method, path } });
         },
         setParameters(parameters) {
-            this.$emit('update:args', [this.apiGroupId, this.endpoint, parameters, this.body]);
+            this.$emit('update:args', { ...this.args, parameters });
         },
         setBody(body) {
-            this.$emit('update:args', [this.apiGroupId, this.endpoint, this.parameters, body]);
+            this.$emit('update:args', { ...this.args, body });
         },
     },
 };
