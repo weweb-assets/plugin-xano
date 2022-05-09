@@ -50,13 +50,15 @@ export default {
             wwUtils.log({ label: 'Payload', preview: body });
         }
         /* wwEditor:end */
+        const headers = {};
+        if (token) headers['Authorization'] = `Bearer ${token}`;
         return await axios({
             method: endpoint.method,
             baseURL: apiGroupUrl,
             url,
             params: parameters,
             data: body,
-            headers: { Authorization: token ? `Bearer ${token}` : undefined },
+            headers,
         });
     },
     /* wwEditor:start */
