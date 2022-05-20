@@ -116,14 +116,14 @@ export default {
             )
                 return [];
 
-            return Object.keys(
-                this.apiGroup.paths[this.endpoint.path][this.endpoint.method].requestBody.content['application/json']
-                    .schema.properties
-            ).map(key => {
-                const elem =
-                    this.apiGroup.paths[this.endpoint.path][this.endpoint.method].requestBody.content[
-                        'application/json'
-                    ].schema.properties[key];
+            const endpoint =
+                this.apiGroup.paths[this.endpoint.path][this.endpoint.method].requestBody.content['application/json'] ||
+                this.apiGroup.paths[this.endpoint.path][this.endpoint.method].requestBody.content[
+                    'multipart/form-data'
+                ];
+
+            return Object.keys(endpoint.schema.properties).map(key => {
+                const elem = endpoint.schema.properties[key];
                 return {
                     name: key,
                     type: elem.type === 'string' ? 'query' : elem.type,
