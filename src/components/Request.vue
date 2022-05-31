@@ -176,6 +176,7 @@ export default {
         async refreshInstance() {
             try {
                 this.isLoading = true;
+                await this.plugin.fetchInstances();
                 await this.plugin.fetchInstance();
             } catch (err) {
                 wwLib.wwLog.error(err);
