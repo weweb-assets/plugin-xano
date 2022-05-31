@@ -1,22 +1,41 @@
 <template>
-    <wwEditorInputRow
-        label="Api group"
-        type="select"
-        placeholder="Select an api group"
-        required
-        :model-value="apiGroupUrl"
-        :options="apiGroupsOptions"
-        @update:modelValue="setApiGroupUrl"
-    />
-    <wwEditorInputRow
-        label="Endpoint"
-        type="select"
-        placeholder="Select an endpoint"
-        required
-        :model-value="endpointValue"
-        :options="endpointsOptions"
-        @update:modelValue="setEndpoint"
-    />
+    <div class="flex items-center">
+        <div class="w-100 -full">
+            <wwEditorInputRow
+                label="Api group"
+                type="select"
+                placeholder="Select an api group"
+                required
+                :model-value="apiGroupUrl"
+                :options="apiGroupsOptions"
+                @update:modelValue="setApiGroupUrl"
+            />
+        </div>
+        <button type="button" class="ww-editor-button -small -primary ml-2 mt-3" @click="refreshInstance">
+            refresh
+        </button>
+    </div>
+    <div class="flex items-center">
+        <div class="w-100 -full">
+            <wwEditorInputRow
+                label="Endpoint"
+                type="select"
+                placeholder="Select an endpoint"
+                required
+                :model-value="endpointValue"
+                :options="endpointsOptions"
+                @update:modelValue="setEndpoint"
+            />
+        </div>
+        <button
+            type="button"
+            class="ww-editor-button -small -primary ml-2 mt-3"
+            @click="refreshApiGroup"
+            :disabled="!apiGroupUrl"
+        >
+            refresh
+        </button>
+    </div>
     <wwEditorInputRow
         v-for="(parameter, index) in endpointParameters"
         :key="index"
@@ -136,15 +155,7 @@ export default {
         apiGroupUrl: {
             immediate: true,
             async handler() {
-                if (!this.apiGroupUrl) return;
-                try {
-                    this.isLoading = true;
-                    this.apiGroup = await this.plugin.getApiGroup(this.apiGroupUrl);
-                } catch (err) {
-                    wwLib.wwLog.error(err);
-                } finally {
-                    this.isLoading = false;
-                }
+                await this.refreshApiGroup();
             },
         },
     },
@@ -161,6 +172,27 @@ export default {
         },
         setBody(body) {
             this.$emit('update:args', { ...this.args, body });
+        },
+        async refreshInstance() {
+            try {
+                this.isLoading = true;
+                await this.plugin.fetchInstance();
+            } catch (err) {
+                wwLib.wwLog.error(err);
+            } finally {
+                this.isLoading = false;
+            }
+        },
+        async refreshApiGroup() {
+            if (!this.apiGroupUrl) return;
+            try {
+                this.isLoading = true;
+                this.apiGroup = await this.plugin.getApiGroup(this.apiGroupUrl);
+            } catch (err) {
+                wwLib.wwLog.error(err);
+            } finally {
+                this.isLoading = false;
+            }
         },
     },
 };

@@ -1,22 +1,42 @@
 <template>
-    <wwEditorInputRow
-        label="Api group"
-        type="select"
-        placeholder="Select an api group"
-        required
-        :model-value="api.apiGroupUrl"
-        :options="apiGroupsOptions"
-        @update:modelValue="setProp('apiGroupUrl', $event)"
-    />
-    <wwEditorInputRow
-        label="Endpoint"
-        type="select"
-        placeholder="Select an endpoint"
-        required
-        :model-value="endpointValue"
-        :options="endpointsOptions"
-        @update:modelValue="setEndpoint"
-    />
+    <div class="flex items-center">
+        <div class="w-100 -full">
+            <wwEditorInputRow
+                label="Api group"
+                type="select"
+                placeholder="Select an api group"
+                required
+                :model-value="api.apiGroupUrl"
+                :options="apiGroupsOptions"
+                @update:modelValue="setProp('apiGroupUrl', $event)"
+            />
+        </div>
+        <button type="button" class="ww-editor-button -small -primary ml-2 mt-3" @click="refreshInstance">
+            refresh
+        </button>
+    </div>
+    <div class="flex items-center">
+        <div class="w-100 -full">
+            <wwEditorInputRow
+                label="Endpoint"
+                type="select"
+                full
+                placeholder="Select an endpoint"
+                required
+                :model-value="endpointValue"
+                :options="endpointsOptions"
+                @update:modelValue="setEndpoint"
+            />
+        </div>
+        <button
+            type="button"
+            class="ww-editor-button -small -primary ml-2 mt-3"
+            @click="refreshApiGroup"
+            :disabled="!api.apiGroupUrl"
+        >
+            refresh
+        </button>
+    </div>
     <wwEditorInputRow
         v-for="(parameter, index) in endpointParameters"
         :key="index"
@@ -135,15 +155,7 @@ export default {
         'api.apiGroupUrl': {
             immediate: true,
             async handler() {
-                if (!this.api.apiGroupUrl) return;
-                try {
-                    this.isLoading = true;
-                    this.apiGroup = await this.plugin.getApiGroup(this.api.apiGroupUrl);
-                } catch (err) {
-                    wwLib.wwLog.error(err);
-                } finally {
-                    this.isLoading = false;
-                }
+                await this.refreshApiGroup();
             },
         },
     },
@@ -154,6 +166,27 @@ export default {
         setEndpoint(endpoint) {
             const [method, path] = endpoint.split(/-(.+)/);
             this.setProp('endpoint', { method, path });
+        },
+        async refreshInstance() {
+            try {
+                this.isLoading = true;
+                await this.plugin.fetchInstance();
+            } catch (err) {
+                wwLib.wwLog.error(err);
+            } finally {
+                this.isLoading = false;
+            }
+        },
+        async refreshApiGroup() {
+            if (!this.api.apiGroupUrl) return;
+            try {
+                this.isLoading = true;
+                this.apiGroup = await this.plugin.getApiGroup(this.api.apiGroupUrl);
+            } catch (err) {
+                wwLib.wwLog.error(err);
+            } finally {
+                this.isLoading = false;
+            }
         },
     },
 };
