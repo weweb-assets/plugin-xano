@@ -48,7 +48,18 @@
         @update:modelValue="setParameters({ ...parameters, [parameter.name]: $event })"
     />
     <wwEditorInputRow
-        v-for="(elem, index) in endpointBody"
+        v-if="endpointBody.length"
+        label="Body fields"
+        type="select"
+        required
+        multiple
+        :options="bodyFieldOptions"
+        :model-value="bodyFields"
+        placeholder="All body fields"
+        @update:modelValue="setBodyFields"
+    />
+    <wwEditorInputRow
+        v-for="(elem, index) in endpointBodyFiltered"
         :key="index"
         :label="elem.name"
         :type="elem.type || 'string'"
@@ -87,6 +98,9 @@ export default {
         },
         parameters() {
             return this.args.parameters || {};
+        },
+        bodyFields() {
+            return this.args.bodyFields || [];
         },
         body() {
             return this.args.body || {};
@@ -150,6 +164,12 @@ export default {
                 };
             });
         },
+        endpointBodyFiltered() {
+            return this.endpointBody.filter(item => !this.bodyFields.length || this.bodyFields.includes(item.name));
+        },
+        bodyFieldOptions() {
+            return this.endpointBody.map(item => ({ label: item.name, value: item.name }));
+        },
     },
     watch: {
         apiGroupUrl: {
@@ -171,7 +191,15 @@ export default {
             this.$emit('update:args', { ...this.args, parameters });
         },
         setBody(body) {
+            for (const bodyKey in body) {
+                if (!this.endpointBodyFiltered.find(field => field.name === bodyKey)) {
+                    delete body[bodyKey];
+                }
+            }
             this.$emit('update:args', { ...this.args, body });
+        },
+        setBodyFields(bodyFields) {
+            this.$emit('update:args', { ...this.args, bodyFields });
         },
         async refreshInstance() {
             try {
