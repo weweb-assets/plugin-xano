@@ -45,7 +45,7 @@ export default {
         /* wwEditor:start */
         if (wwUtils) {
             wwUtils.log({ label: 'Endpoint', preview: `${endpoint.method.toUpperCase()} - ${url}` });
-            wwUtils.log({ label: 'Payload', preview: body });
+            if (Object.keys(body).length) wwUtils.log({ label: 'Payload', preview: body });
         }
         /* wwEditor:end */
         const headers = {};
