@@ -196,10 +196,14 @@ export default {
                     delete body[bodyKey];
                 }
             }
+            for (const field of this.endpointBodyFiltered) {
+                body[field.name] = body[field.name] || null;
+            }
             this.$emit('update:args', { ...this.args, body });
         },
         setBodyFields(bodyFields) {
             this.$emit('update:args', { ...this.args, bodyFields });
+            this.$nextTick(() => this.setBody({ ...this.body }));
         },
         async refreshInstance() {
             try {
