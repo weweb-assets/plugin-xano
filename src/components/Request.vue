@@ -165,7 +165,9 @@ export default {
             });
         },
         endpointBodyFiltered() {
-            return this.endpointBody.filter(item => !this.bodyFields.length || this.bodyFields.includes(item.name));
+            return this.endpointBody.filter(
+                item => !this.bodyFields || !this.bodyFields.length || this.bodyFields.includes(item.name)
+            );
         },
         bodyFieldOptions() {
             return this.endpointBody.map(item => ({ label: item.name, value: item.name }));
