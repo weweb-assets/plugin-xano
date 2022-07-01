@@ -97,13 +97,13 @@ export default {
             return `${this.endpoint.method}-${this.endpoint.path}`;
         },
         parameters() {
-            return this.args.parameters || {};
+            return this.args.parameters;
         },
         bodyFields() {
-            return this.args.bodyFields || [];
+            return this.args.bodyFields;
         },
         body() {
-            return this.args.body || {};
+            return this.args.body;
         },
         apiGroupsOptions() {
             if (!this.plugin.instance) return [];
@@ -181,11 +181,24 @@ export default {
     },
     methods: {
         setApiGroupUrl(apiGroupUrl) {
-            this.$emit('update:args', { ...this.args, parameters: {}, body: {}, endpoint: null, apiGroupUrl });
+            this.$emit('update:args', {
+                ...this.args,
+                parameters: {},
+                body: {},
+                bodyFields: [],
+                endpoint: null,
+                apiGroupUrl,
+            });
         },
         setEndpoint(endpoint) {
             const [method, path] = endpoint.split(/-(.+)/);
-            this.$emit('update:args', { ...this.args, parameters: {}, body: {}, endpoint: { method, path } });
+            this.$emit('update:args', {
+                ...this.args,
+                parameters: {},
+                body: {},
+                bodyFields: [],
+                endpoint: { method, path },
+            });
         },
         setParameters(parameters) {
             this.$emit('update:args', { ...this.args, parameters });
