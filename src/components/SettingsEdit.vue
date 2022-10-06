@@ -32,7 +32,7 @@
         </template>
         <wwEditorInputRow
             type="query"
-            placeholder=""
+            placeholder="Default to live data"
             :model-value="settings.publicData.xDataSourceEditor"
             label="In editor"
             @update:modelValue="changeXDataSource('xDataSourceEditor', $event)"
@@ -40,7 +40,7 @@
         />
         <!-- <wwEditorInputRow
             type="query"
-            placeholder=""
+            placeholder="Default to live data"
             :model-value="settings.publicData.xDataSourceStaging"
             label="In staging"
             @update:modelValue="changeXDataSource('xDataSourceStaging', $event)"
@@ -48,7 +48,7 @@
         /> -->
         <wwEditorInputRow
             type="query"
-            placeholder=""
+            placeholder="Default to live data"
             :model-value="settings.publicData.xDataSourceProd"
             label="In production"
             @update:modelValue="changeXDataSource('xDataSourceProd', $event)"
