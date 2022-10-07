@@ -23,38 +23,6 @@
         label="Instance"
         @update:modelValue="changeInstance"
     />
-    <div class="divider"></div>
-    <wwEditorFormRow label="Data source">
-        <template #append-label>
-            <a class="xano-settings-edit__link" href="https://docs.xano.com/database/data-sources" target="_blank">
-                Learn more
-            </a>
-        </template>
-        <wwEditorInputRow
-            type="query"
-            placeholder="Default to live data"
-            :model-value="settings.publicData.xDataSourceEditor"
-            label="In editor"
-            @update:modelValue="changeXDataSource('xDataSourceEditor', $event)"
-            small
-        />
-        <!-- <wwEditorInputRow
-            type="query"
-            placeholder="Default to live data"
-            :model-value="settings.publicData.xDataSourceStaging"
-            label="In staging"
-            @update:modelValue="changeXDataSource('xDataSourceStaging', $event)"
-            small
-        /> -->
-        <wwEditorInputRow
-            type="query"
-            placeholder="Default to live data"
-            :model-value="settings.publicData.xDataSourceProd"
-            label="In production"
-            @update:modelValue="changeXDataSource('xDataSourceProd', $event)"
-            small
-        />
-    </wwEditorFormRow>
     <wwLoader :loading="isLoading" />
 </template>
 
@@ -79,7 +47,6 @@ export default {
     },
     mounted() {
         this.fetchInstances(this.settings.privateData.apiKey);
-        console.log(this.settings);
     },
     methods: {
         async fetchInstances(apiKey) {
@@ -111,12 +78,6 @@ export default {
                 this.isLoading = false;
             }
         },
-        async changeXDataSource(key, value) {
-            this.$emit('update:settings', {
-                ...this.settings,
-                publicData: { ...this.settings.publicData, [key]: value },
-            });
-        },
     },
 };
 </script>
@@ -127,11 +88,5 @@ export default {
         color: var(--ww-color-blue-500);
         margin-left: var(--ww-spacing-02);
     }
-}
-.divider {
-    width: 100%;
-    height: 1px;
-    background-color: var(--ww-color-dark-200);
-    margin: 12px 0px;
 }
 </style>
