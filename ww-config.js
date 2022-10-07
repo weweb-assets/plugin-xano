@@ -1,12 +1,22 @@
 export default {
     editor: {
-        settings: {
-            edit: () => import('./src/components/SettingsEdit.vue'),
-            summary: () => import('./src/components/SettingsSummary.vue'),
-            getIsValid(settings) {
-                return !!settings.privateData.apiKey;
+        settings: [
+            {
+                edit: () => import('./src/components/SettingsEdit.vue'),
+                summary: () => import('./src/components/SettingsSummary.vue'),
+                getIsValid(settings) {
+                    return !!settings.privateData.apiKey;
+                },
             },
-        },
+            {
+                label: 'Data Source',
+                edit: () => import('./src/components/SettingsDataSourceEdit.vue'),
+                summary: () => import('./src/components/SettingsDataSourceSummary.vue'),
+                getIsValid() {
+                    return true;
+                },
+            },
+        ],
         collection: {
             edit: () => import('./src/components/CollectionEdit.vue'),
             summary: () => import('./src/components/CollectionSummary.vue'),

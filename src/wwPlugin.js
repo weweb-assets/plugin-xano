@@ -40,6 +40,7 @@ export default {
     \================================================================================================*/
     async request({ apiGroupUrl, endpoint, parameters, body }, wwUtils) {
         const token = wwLib.wwPlugins.xanoAuth && wwLib.wwPlugins.xanoAuth.accessToken;
+        const dataSource = getCurrentDataSource();
         let url = endpoint.path;
         for (const key in parameters) url = url.replace(`{${key}}`, parameters[key]);
         /* wwEditor:start */
@@ -50,6 +51,7 @@ export default {
         /* wwEditor:end */
         const headers = {};
         if (token) headers['Authorization'] = `Bearer ${token}`;
+        if (dataSource) headers['X-Data-Source'] = dataSource;
         return await axios({
             method: endpoint.method,
             baseURL: apiGroupUrl,
@@ -110,3 +112,19 @@ export default {
     },
     /* wwEditor:end */
 };
+
+function getCurrentDataSource() {
+    const settings = wwLib.wwPlugins.xano.settings;
+    switch (wwLib.globalContext.browser.environment) {
+        case 'editor':
+            return settings.publicData.xDataSourceEditor;
+        case 'preview':
+            return settings.publicData.xDataSourceEditor;
+        case 'staging':
+            return settings.publicData.xDataSourceStaging;
+        case 'production':
+            return settings.publicData.xDataSourceProd;
+        default:
+            return null;
+    }
+}
