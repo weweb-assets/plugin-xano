@@ -121,7 +121,7 @@ function getCurrentDataSource() {
         case 'editor':
             return settings.publicData.xDataSourceEditor;
         case 'preview':
-            return settings.publicData.xDataSourceEditor;
+            return settings.publicData.xDataSourceProd;
         case 'staging':
             return settings.publicData.xDataSourceStaging;
         case 'production':
