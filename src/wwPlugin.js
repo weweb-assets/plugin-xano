@@ -1,6 +1,8 @@
 /* wwEditor:start */
 import './components/SettingsEdit.vue';
 import './components/SettingsSummary.vue';
+import './components/SettingsDataSourceEdit.vue';
+import './components/SettingsDataSourceSummary.vue';
 import './components/CollectionEdit.vue';
 import './components/CollectionSummary.vue';
 import './components/Request.vue';
