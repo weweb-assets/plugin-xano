@@ -1,9 +1,12 @@
 <template>
-    <p class="mb-3">
+    <p>
         X-Data-Source Header
         <a class="xano-settings-edit__link" href="https://docs.xano.com/database/data-sources" target="_blank">
             Learn more
         </a>
+    </p>
+    <p class="mb-3 label-3">
+        This will only affect Dynamic collections. Static and Cached collections will always use the Production value.
     </p>
     <wwEditorInputRow
         type="query"
