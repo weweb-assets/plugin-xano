@@ -1,6 +1,17 @@
 <template>
     <div class="flex items-center">
         <div class="w-100 -full">
+            <wwEditorFormRow label="Content type">
+                <wwEditorInputTextSelect
+                    :options="dataTypeOptions"
+                    :model-value="dataType"
+                    @update:modelValue="setDataType"
+                />
+            </wwEditorFormRow>
+        </div>
+    </div>
+    <div class="flex items-center">
+        <div class="w-100 -full">
             <wwEditorInputRow
                 label="Api group"
                 type="select"
@@ -83,6 +94,15 @@ export default {
         return {
             isLoading: false,
             apiGroup: null,
+            dataTypeOptions: [
+                { label: 'Default (application/json)', value: 'application/json', default: true },
+                { label: 'application/x-www-form-urlencoded', value: 'application/x-www-form-urlencoded' },
+                { label: 'application/javascript', value: 'application/javascript' },
+                { label: 'application/xml', value: 'application/xml' },
+                { label: 'multipart/form-data', value: 'multipart/form-data' },
+                { label: 'text/plain', value: 'text/plain' },
+                { label: 'text/html', value: 'text/html' },
+            ],
         };
     },
     computed: {
@@ -95,6 +115,9 @@ export default {
         endpointValue() {
             if (!this.endpoint) return null;
             return `${this.endpoint.method}-${this.endpoint.path}`;
+        },
+        dataType() {
+            return this.args.dataType || null;
         },
         parameters() {
             return this.args.parameters || {};
@@ -190,6 +213,7 @@ export default {
                 bodyFields: [],
                 endpoint: null,
                 apiGroupUrl,
+                dataType: null,
             });
         },
         setEndpoint(endpoint) {
@@ -219,6 +243,9 @@ export default {
         setBodyFields(bodyFields) {
             this.$emit('update:args', { ...this.args, bodyFields });
             this.$nextTick(() => this.setBody({ ...this.body }));
+        },
+        setDataType(dataType) {
+            this.$emit('update:args', { ...this.args, dataType });
         },
         async refreshInstance() {
             try {

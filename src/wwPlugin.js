@@ -40,7 +40,7 @@ export default {
     /*=============================================m_ÔÔ_m=============================================\
         Xano API
     \================================================================================================*/
-    async request({ apiGroupUrl, endpoint, parameters, body }, wwUtils) {
+    async request({ apiGroupUrl, endpoint, parameters, body, dataType }, wwUtils) {
         const token = wwLib.wwPlugins.xanoAuth && wwLib.wwPlugins.xanoAuth.accessToken;
         const dataSource = getCurrentDataSource();
         let url = endpoint.path;
@@ -54,6 +54,8 @@ export default {
         const headers = {};
         if (token) headers['Authorization'] = `Bearer ${token}`;
         if (dataSource) headers['X-Data-Source'] = dataSource;
+        if (dataType) headers['Content-Type'] = dataType;
+
         return await axios({
             method: endpoint.method,
             baseURL: apiGroupUrl,
