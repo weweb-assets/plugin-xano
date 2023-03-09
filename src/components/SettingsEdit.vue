@@ -14,7 +14,7 @@
                 @update:modelValue="changeApiKey"
                 class="w-full mr-3"
             />
-            <button class="pointer" @click="isKeyVisible = !isKeyVisible">
+            <button class="pointer" @click.prevent="isKeyVisible = !isKeyVisible">
                 <wwEditorIcon :name="isKeyVisible ? 'eye-off' : 'eye'"></wwEditorIcon>
             </button>
         </div>
