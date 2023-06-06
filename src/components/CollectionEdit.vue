@@ -172,6 +172,7 @@ export default {
                 this.isLoading = true;
                 await this.plugin.fetchInstances();
                 await this.plugin.fetchInstance();
+                this.cleanConfig();
             } catch (err) {
                 wwLib.wwLog.error(err);
             } finally {
@@ -183,10 +184,38 @@ export default {
             try {
                 this.isLoading = true;
                 this.apiGroup = await this.plugin.getApiGroup(this.api.apiGroupUrl);
+                this.cleanConfig();
             } catch (err) {
                 wwLib.wwLog.error(err);
             } finally {
                 this.isLoading = false;
+            }
+        },
+        cleanConfig() {
+            const cleanedParameters = Object.keys(this.api.parameters).reduce((parameters, key) => {
+                if (this.endpointParameters.some(param => param.name === key)) {
+                    parameters[key] = this.api.parameters[key];
+                }
+            }, {});
+
+            const cleanedBody = Object.keys(this.api.body).reduce((body, key) => {
+                if (this.endpointBody.some(param => param.name === key)) {
+                    body[key] = this.api.body[key];
+                }
+            }, {});
+
+            if (
+                JSON.stringify(cleanedParameters) !== JSON.stringify(this.api.parameters) ||
+                JSON.stringify(cleanedBody) !== JSON.stringify(this.api.body)
+            ) {
+                this.$emit('update:config', { ...this.api, ['parameters']: cleanedParameters, ['body']: cleanedBody });
+                wwLib.wwNotification.open({
+                    text: {
+                        en: 'Old collection settings has been cleaned to match your updated endpoint config',
+                    },
+                    color: 'blue',
+                    duration: '5000',
+                });
             }
         },
     },
