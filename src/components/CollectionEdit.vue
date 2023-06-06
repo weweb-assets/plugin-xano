@@ -196,12 +196,14 @@ export default {
                 if (this.endpointParameters.some(param => param.name === key)) {
                     parameters[key] = this.api.parameters[key];
                 }
+                return parameters;
             }, {});
 
             const cleanedBody = Object.keys(this.api.body).reduce((body, key) => {
                 if (this.endpointBody.some(param => param.name === key)) {
                     body[key] = this.api.body[key];
                 }
+                return body;
             }, {});
 
             if (

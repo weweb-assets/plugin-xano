@@ -275,12 +275,14 @@ export default {
                 if (this.endpointParameters.some(param => param.name === key)) {
                     parameters[key] = this.args.parameters[key];
                 }
+                return parameters;
             }, {});
 
             const cleanedBody = Object.keys(this.args.body).reduce((body, key) => {
                 if (this.endpointBody.some(param => param.name === key)) {
                     body[key] = this.args.body[key];
                 }
+                return body;
             }, {});
 
             if (
