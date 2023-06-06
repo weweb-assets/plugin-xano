@@ -201,6 +201,7 @@ export default {
             immediate: true,
             async handler() {
                 await this.refreshApiGroup();
+                this.cleanConfig();
             },
         },
     },
@@ -267,6 +268,33 @@ export default {
                 wwLib.wwLog.error(err);
             } finally {
                 this.isLoading = false;
+            }
+        },
+        cleanConfig() {
+            const cleanedParameters = Object.keys(this.args.parameters).reduce((parameters, key) => {
+                if (this.endpointParameters.some(param => param.name === key)) {
+                    parameters[key] = this.args.parameters[key];
+                }
+            }, {});
+
+            const cleanedBody = Object.keys(this.args.body).reduce((body, key) => {
+                if (this.endpointBody.some(param => param.name === key)) {
+                    body[key] = this.args.body[key];
+                }
+            }, {});
+
+            if (
+                JSON.stringify(cleanedParameters) !== JSON.stringify(this.args.parameters) ||
+                JSON.stringify(cleanedBody) !== JSON.stringify(this.args.body)
+            ) {
+                this.$emit('update:args', { ...this.args, ['parameters']: cleanedParameters, ['body']: cleanedBody });
+                wwLib.wwNotification.open({
+                    text: {
+                        en: 'Old request settings has been cleaned to match your updated endpoint config',
+                    },
+                    color: 'blue',
+                    duration: '5000',
+                });
             }
         },
     },
