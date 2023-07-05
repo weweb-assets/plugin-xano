@@ -48,6 +48,35 @@
         </button>
     </div>
     <wwEditorInputRow
+        label="Headers"
+        type="array"
+        :model-value="headers"
+        bindable
+        @update:modelValue="setHeaders"
+        @add-item="setHeaders([...(headers || []), {}])"
+    >
+        <template #default="{ item, setItem }">
+            <wwEditorInputRow
+                type="query"
+                :model-value="item.key"
+                label="Key"
+                placeholder="Enter a value"
+                bindable
+                small
+                @update:modelValue="setItem({ ...item, key: $event })"
+            />
+            <wwEditorInputRow
+                type="query"
+                :model-value="item.value"
+                label="Value"
+                placeholder="Enter a value"
+                bindable
+                small
+                @update:modelValue="setItem({ ...item, value: $event })"
+            />
+        </template>
+    </wwEditorInputRow>
+    <wwEditorInputRow
         v-for="(parameter, index) in endpointParameters"
         :key="index"
         :label="parameter.name"
@@ -118,6 +147,9 @@ export default {
         },
         dataType() {
             return this.args.dataType || null;
+        },
+        headers() {
+            return this.args.headers || [];
         },
         parameters() {
             return this.args.parameters || {};
@@ -225,6 +257,9 @@ export default {
                 bodyFields: [],
                 endpoint: { method, path },
             });
+        },
+        setHeaders(headers) {
+            this.$emit('update:args', { ...this.args, headers });
         },
         setParameters(parameters) {
             this.$emit('update:args', { ...this.args, parameters });

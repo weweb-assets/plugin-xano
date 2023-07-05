@@ -40,9 +40,9 @@ export default {
     /*=============================================m_ÔÔ_m=============================================\
         Xano API
     \================================================================================================*/
-    async request({ apiGroupUrl, endpoint, parameters, body, dataType }, wwUtils) {
-        const token = wwLib.wwPlugins.xanoAuth && wwLib.wwPlugins.xanoAuth.accessToken;
-        const dataSource = getCurrentDataSource();
+    async request({ apiGroupUrl, endpoint, headers, parameters, body, dataType }, wwUtils) {
+        const authToken = wwLib.wwPlugins.xanoAuth && wwLib.wwPlugins.xanoAuth.accessToken;
+
         let url = endpoint.path;
         for (const key in parameters) url = url.replace(`{${key}}`, parameters[key]);
         /* wwEditor:start */
@@ -51,10 +51,6 @@ export default {
             if (Object.keys(body).length) wwUtils.log({ label: 'Payload', preview: body });
         }
         /* wwEditor:end */
-        const headers = {};
-        if (token) headers['Authorization'] = `Bearer ${token}`;
-        if (dataSource) headers['X-Data-Source'] = dataSource;
-        if (dataType) headers['Content-Type'] = dataType;
 
         return await axios({
             method: endpoint.method,
@@ -62,7 +58,7 @@ export default {
             url,
             params: parameters,
             data: body,
-            headers,
+            headers: buildXanoHeaders({ authToken, dataType }, headers),
         });
     },
     /* wwEditor:start */
@@ -131,4 +127,15 @@ function getCurrentDataSource() {
         default:
             return null;
     }
+}
+
+function buildXanoHeaders({ xDataSource = getCurrentDataSource(), authToken, dataType }, customHeaders = []) {
+    return {
+        ...(xDataSource ? { 'X-Data-Source': xDataSource } : {}),
+        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+        ...(dataType ? { 'Content-Type': dataType } : {}),
+        ...(Array.isArray(customHeaders) ? customHeaders : [])
+            .filter(header => !!header && !!header.key)
+            .reduce((curr, next) => ({ ...curr, [next.key]: next.value }), {}),
+    };
 }
