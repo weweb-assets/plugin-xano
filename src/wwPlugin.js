@@ -45,6 +45,9 @@ export default {
 
         let url = endpoint.path;
         for (const key in parameters) url = url.replace(`{${key}}`, parameters[key]);
+        url = new URL(url);
+        url.hostname = this.settings.publicData.customDomain || url.hostname;
+        url = url.href;
         /* wwEditor:start */
         if (wwUtils) {
             wwUtils.log({ label: 'Endpoint', preview: `${endpoint.method.toUpperCase()} - ${url}` });

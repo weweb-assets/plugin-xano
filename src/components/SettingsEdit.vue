@@ -29,6 +29,14 @@
         label="Instance"
         @update:modelValue="changeInstance"
     />
+    <wwEditorInputRow
+        type="query"
+        :placeholder="'Default: ' + defaultDomain"
+        :model-value="settings.publicData.customDomain"
+        :disabled="!settings.privateData.instanceId"
+        label="Instance domain"
+        @update:modelValue="setCustomDomain"
+    />
     <wwLoader :loading="isLoading" />
 </template>
 
@@ -50,6 +58,10 @@ export default {
         instancesOptions() {
             if (!this.instances) return [];
             return this.instances.map(instance => ({ label: instance.display, value: `${instance.id}` }));
+        },
+        defaultDomain() {
+            if (!this.instances || !this.settings.privateData.instanceId) return null;
+            return this.instances.find(instance => instance.id === this.settings.privateData.instanceId)?.host;
         },
     },
     mounted() {
@@ -84,6 +96,12 @@ export default {
             } finally {
                 this.isLoading = false;
             }
+        },
+        setCustomDomain(value) {
+            this.$emit('update:settings', {
+                ...this.settings,
+                publicData: { ...this.settings.publicData, customDomain: value },
+            });
         },
     },
 };
