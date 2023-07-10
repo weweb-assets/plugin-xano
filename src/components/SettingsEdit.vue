@@ -89,7 +89,7 @@ export default {
             this.$emit('update:settings', {
                 ...this.settings,
                 privateData: { ...this.settings.privateData, instanceId },
-                publicDate: {
+                publicData: {
                     ...this.settings.publicData,
                     domain: this.instances?.find(instance => instance.id === instanceId)?.host,
                 },
