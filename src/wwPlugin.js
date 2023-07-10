@@ -46,7 +46,7 @@ export default {
         let url = endpoint.path;
         for (const key in parameters) url = url.replace(`{${key}}`, parameters[key]);
         url = new URL(url);
-        url.hostname = this.settings.publicData.customDomain || url.hostname;
+        url.hostname = this.settings.publicData.customDomain || this.settings.publicData.domain || url.hostname;
         url = url.href;
         /* wwEditor:start */
         if (wwUtils) {

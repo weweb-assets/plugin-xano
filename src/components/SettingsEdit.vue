@@ -60,8 +60,10 @@ export default {
             return this.instances.map(instance => ({ label: instance.display, value: `${instance.id}` }));
         },
         defaultDomain() {
-            if (!this.instances || !this.settings.privateData.instanceId) return null;
-            return this.instances.find(instance => instance.id === this.settings.privateData.instanceId)?.host;
+            return (
+                this.settings.publicData.domain ||
+                this.instances?.find(instance => instance.id === this.settings.privateData.instanceId)?.host
+            );
         },
     },
     mounted() {
@@ -87,6 +89,10 @@ export default {
             this.$emit('update:settings', {
                 ...this.settings,
                 privateData: { ...this.settings.privateData, instanceId },
+                publicDate: {
+                    ...this.settings.publicData,
+                    domain: this.instances?.find(instance => instance.id === instanceId)?.host,
+                },
             });
             try {
                 this.isLoading = true;
