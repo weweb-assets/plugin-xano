@@ -57,12 +57,12 @@ export default {
     computed: {
         instancesOptions() {
             if (!this.instances) return [];
-            return this.instances.map(instance => ({ label: instance.display, value: `${instance.id}` }));
+            return this.instances.map(instance => ({ label: instance.display, value: String(instance.id) }));
         },
         defaultDomain() {
             return (
                 this.settings.publicData.domain ||
-                this.instances?.find(instance => instance.id === this.settings.privateData.instanceId)?.host
+                this.instances?.find(instance => String(instance.id) === this.settings.privateData.instanceId)?.host
             );
         },
     },
@@ -91,7 +91,7 @@ export default {
                 privateData: { ...this.settings.privateData, instanceId },
                 publicData: {
                     ...this.settings.publicData,
-                    domain: this.instances?.find(instance => instance.id === instanceId)?.host,
+                    domain: this.instances?.find(instance => String(instance.id) === instanceId)?.host,
                 },
             });
             try {
