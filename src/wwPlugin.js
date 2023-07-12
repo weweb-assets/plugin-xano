@@ -43,11 +43,12 @@ export default {
     async request({ apiGroupUrl, endpoint, headers, parameters, body, dataType }, wwUtils) {
         const authToken = wwLib.wwPlugins.xanoAuth && wwLib.wwPlugins.xanoAuth.accessToken;
 
+        const baseURL = new URL(apiGroupUrl);
+        baseURL.hostname = this.settings.publicData.customDomain || this.settings.publicData.domain || baseURL.hostname;
+
         let url = endpoint.path;
         for (const key in parameters) url = url.replace(`{${key}}`, parameters[key]);
-        url = new URL(url);
-        url.hostname = this.settings.publicData.customDomain || this.settings.publicData.domain || url.hostname;
-        url = url.href;
+
         /* wwEditor:start */
         if (wwUtils) {
             wwUtils.log({ label: 'Endpoint', preview: `${endpoint.method.toUpperCase()} - ${url}` });
@@ -57,7 +58,7 @@ export default {
 
         return await axios({
             method: endpoint.method,
-            baseURL: apiGroupUrl,
+            baseURL: baseURL.href,
             url,
             params: parameters,
             data: body,
