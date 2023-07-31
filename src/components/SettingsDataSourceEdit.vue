@@ -41,8 +41,7 @@
             <div class="ml-2">
                 <p class="mb-3 label-sm">
                     Global headers will be used for every request to your Xano made browser side. Secure headers will be
-                    used for every request coming from our backend (static collections generation and private page
-                    access).
+                    used for accessing your data when generating static pages on our side.
                 </p>
                 <wwEditorInputRow
                     label="Global headers"
