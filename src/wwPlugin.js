@@ -58,12 +58,19 @@ export default {
 
         return await axios({
             method: endpoint.method,
-            baseURL: baseURL.href,
+            baseURL: this.resolveUrl(apiGroupUrl),
             url,
             params: parameters,
             data: body,
             headers: buildXanoHeaders({ authToken, dataType }, headers),
         });
+    },
+    // Ensure everything use the same base domain
+    resolveUrl(url) {
+        const _url = new URL(url);
+        _url.hostname = this.settings.publicData.customDomain || this.settings.publicData.domain || _url.hostname;
+
+        return _url.href;
     },
     /* wwEditor:start */
     async fetchInstances(apiKey) {

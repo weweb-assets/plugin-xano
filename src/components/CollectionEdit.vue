@@ -106,14 +106,19 @@ export default {
         };
     },
     computed: {
+        apiGroupUrl() {
+            if (!this.config.apiGroupUrl) return null;
+            // Ensure old api group value still match even if base domain has changed
+            return this.plugin.resolveUrl(this.args.apiGroupUrl);
+        },
         api() {
             return {
-                apiGroupUrl: null,
                 endpoint: null,
                 headers: [],
                 parameters: {},
                 body: {},
                 ...this.config,
+                apiGroupUrl: this.apiGroupUrl,
             };
         },
         endpointValue() {
@@ -126,7 +131,7 @@ export default {
                 .map(workspace =>
                     workspace.apigroups.map(apiGroup => ({
                         label: `${workspace.name} - ${apiGroup.name}`,
-                        value: apiGroup.api,
+                        value: this.plugin.resolveUrl(apiGroup.api),
                     }))
                 )
                 .flat();
