@@ -109,7 +109,7 @@ export default {
         apiGroupUrl() {
             if (!this.config.apiGroupUrl) return null;
             // Ensure old api group value still match even if base domain has changed
-            return this.plugin.resolveUrl(this.args.apiGroupUrl);
+            return this.plugin.resolveUrl(this.config.apiGroupUrl);
         },
         api() {
             return {
