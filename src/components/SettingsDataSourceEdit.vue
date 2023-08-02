@@ -32,8 +32,8 @@
         @update:modelValue="updatePublicSettings('xDataSourceEditor', $event)"
         small
     />
-    <p class="label mt-3">Custom Headers</p>
-    <p class="mb-3 label-sm">
+    <p class="mb-1 label-md mt-3">Custom Headers</p>
+    <p class="mb-3 label-sm text-dark-600">
         Global headers will be applied to each request made to your Xano server from the browser side.
     </p>
     <wwEditorInputRow
