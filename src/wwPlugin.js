@@ -141,7 +141,7 @@ function getCurrentDataSource() {
 }
 
 function getGlobalHeaders() {
-    return wwLib.wwPlugins.xanoAuth.settings.publicData.globalHeaders;
+    return wwLib.wwPlugins.xano.settings.publicData.globalHeaders;
 }
 
 function buildXanoHeaders(
