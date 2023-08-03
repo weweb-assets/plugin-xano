@@ -111,11 +111,9 @@ export default {
             }
         },
         setCustomDomain(value) {
-            // remove protocol
-            const sanitized = value.replace(/(^\w+:|^)\/\//, '');
             this.$emit('update:settings', {
                 ...this.settings,
-                publicData: { ...this.settings.publicData, customDomain: sanitized },
+                publicData: { ...this.settings.publicData, customDomain: value },
             });
         },
     },
