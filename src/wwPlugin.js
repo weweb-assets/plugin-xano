@@ -113,7 +113,7 @@ export default {
         const apiGroup = this.instance
             .map(({ apigroups }) => apigroups)
             .flat()
-            .find(apiGroup => apiGroup.api === apiGroupUrl);
+            .find(apiGroup => this.resolveUrl(apiGroup.api) === apiGroupUrl);
         if (!apiGroup) return;
 
         const { data } = await axios.get(apiGroup.swaggerspec, {

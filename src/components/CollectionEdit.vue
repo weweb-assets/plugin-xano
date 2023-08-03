@@ -107,7 +107,6 @@ export default {
     },
     computed: {
         apiGroupUrl() {
-            if (!this.config.apiGroupUrl) return null;
             // Ensure old api group value still match even if base domain has changed
             return this.plugin.resolveUrl(this.config.apiGroupUrl);
         },
@@ -214,10 +213,10 @@ export default {
             }
         },
         async refreshApiGroup() {
-            if (!this.api.apiGroupUrl) return;
+            if (!this.apiGroupUrl) return;
             try {
                 this.isLoading = true;
-                this.apiGroup = await this.plugin.getApiGroup(this.api.apiGroupUrl);
+                this.apiGroup = await this.plugin.getApiGroup(this.apiGroupUrl);
             } catch (err) {
                 wwLib.wwLog.error(err);
             } finally {
