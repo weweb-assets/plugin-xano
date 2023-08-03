@@ -73,9 +73,6 @@ export default {
         plugin: { type: Object, required: true },
         settings: { type: Object, required: true },
     },
-    data: () => ({
-        showHeaders: false,
-    }),
     emits: ['update:settings'],
     methods: {
         async updatePublicSettings(key, value) {
