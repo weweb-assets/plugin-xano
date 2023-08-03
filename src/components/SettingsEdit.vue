@@ -37,6 +37,10 @@
         label="Instance domain"
         @update:modelValue="setCustomDomain"
     />
+    <p v-if="incorrectCustomDomain" class="flex text-error-500 mt-2">
+        <wwEditorIcon name="warning" small />
+        Custom domain must not contain the protocol (http(s)://)
+    </p>
     <wwLoader :loading="isLoading" />
 </template>
 
@@ -64,6 +68,9 @@ export default {
                 this.settings.publicData.domain ||
                 this.instances?.find(instance => String(instance.id) === this.settings.privateData.instanceId)?.host
             );
+        },
+        incorrectCustomDomain() {
+            return (this.settings.publicData.customDomain || '').includes('http');
         },
     },
     mounted() {

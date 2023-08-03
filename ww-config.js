@@ -5,7 +5,7 @@ export default {
                 edit: () => import('./src/components/SettingsEdit.vue'),
                 summary: () => import('./src/components/SettingsSummary.vue'),
                 getIsValid(settings) {
-                    return !!settings.privateData.apiKey;
+                    return !!settings.privateData.apiKey && !(settings.customDomain || '').includes('http');
                 },
             },
             {
