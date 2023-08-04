@@ -64,6 +64,7 @@ export default {
             params: parameters,
             data: body,
             headers: buildXanoHeaders({ authToken, dataType }, headers),
+            withCredentials: this.settings.publicData.withCredentials || false,
         });
     },
     // Ensure everything use the same base domain
