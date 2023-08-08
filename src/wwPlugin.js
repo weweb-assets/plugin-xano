@@ -47,9 +47,6 @@ export default {
     async request({ apiGroupUrl, endpoint, headers, parameters, body, dataType }, wwUtils) {
         const authToken = wwLib.wwPlugins.xanoAuth && wwLib.wwPlugins.xanoAuth.accessToken;
 
-        const baseURL = new URL(apiGroupUrl);
-        baseURL.hostname = this.settings.publicData.customDomain || this.settings.publicData.domain || baseURL.hostname;
-
         let url = endpoint.path;
         for (const key in parameters) url = url.replace(`{${key}}`, parameters[key]);
 
@@ -146,7 +143,7 @@ function getCurrentDataSource() {
 }
 
 function getCurrentBranch() {
-    const settings = wwLib.wwPlugins.xanoAuth.settings;
+    const settings = wwLib.wwPlugins.xano.settings;
     switch (wwLib.globalContext.browser.environment) {
         case 'editor':
             return settings.publicData.xBranchEditor;
