@@ -38,6 +38,35 @@
         </button>
     </div>
     <wwEditorInputRow
+        label="Headers"
+        type="array"
+        :model-value="api.headers"
+        :bindable="collection.mode === 'dynamic'"
+        @update:modelValue="setProp('headers', $event)"
+        @add-item="setProp('headers', [...(api.headers || []), {}])"
+    >
+        <template #default="{ item, setItem }">
+            <wwEditorInputRow
+                type="query"
+                :model-value="item.key"
+                label="Key"
+                placeholder="Enter a value"
+                small
+                :bindable="collection.mode === 'dynamic'"
+                @update:modelValue="setItem({ ...item, key: $event })"
+            />
+            <wwEditorInputRow
+                type="query"
+                :model-value="item.value"
+                label="Value"
+                placeholder="Enter a value"
+                small
+                :bindable="collection.mode === 'dynamic'"
+                @update:modelValue="setItem({ ...item, value: $event })"
+            />
+        </template>
+    </wwEditorInputRow>
+    <wwEditorInputRow
         v-for="(parameter, index) in endpointParameters"
         :key="index"
         :label="parameter.name"
@@ -77,13 +106,18 @@ export default {
         };
     },
     computed: {
+        apiGroupUrl() {
+            // Ensure old api group value still match even if base domain has changed
+            return this.plugin.resolveUrl(this.config.apiGroupUrl);
+        },
         api() {
             return {
-                apiGroupUrl: null,
                 endpoint: null,
+                headers: [],
                 parameters: {},
                 body: {},
                 ...this.config,
+                apiGroupUrl: this.apiGroupUrl,
             };
         },
         endpointValue() {
@@ -96,7 +130,7 @@ export default {
                 .map(workspace =>
                     workspace.apigroups.map(apiGroup => ({
                         label: `${workspace.name} - ${apiGroup.name}`,
-                        value: apiGroup.api,
+                        value: this.plugin.resolveUrl(apiGroup.api),
                     }))
                 )
                 .flat();
@@ -179,10 +213,10 @@ export default {
             }
         },
         async refreshApiGroup() {
-            if (!this.api.apiGroupUrl) return;
+            if (!this.apiGroupUrl) return;
             try {
                 this.isLoading = true;
-                this.apiGroup = await this.plugin.getApiGroup(this.api.apiGroupUrl);
+                this.apiGroup = await this.plugin.getApiGroup(this.apiGroupUrl);
             } catch (err) {
                 wwLib.wwLog.error(err);
             } finally {

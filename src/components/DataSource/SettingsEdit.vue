@@ -1,35 +1,36 @@
 <template>
-    <p>
+    <div class="mb-2 label-md">
         X-Data-Source Header
         <a class="xano-settings-edit__link" href="https://docs.xano.com/database/data-sources" target="_blank">
             Learn more
         </a>
-    </p>
-    <p class="mb-3 label-3">
-        This will only affect Dynamic collections. Static and Cached collections will always use the Production value.
-    </p>
+    </div>
+    <div class="mb-3 label-sm text-yellow-500 flex items-center">
+        <wwEditorIcon class="mr-1" name="warning" small />
+        Static and cached collections will always use the production setting.
+    </div>
     <wwEditorInputRow
         type="query"
         placeholder="Default to live data"
         :model-value="settings.publicData.xDataSourceProd"
         label="In production"
-        @update:modelValue="changeXDataSource('xDataSourceProd', $event)"
+        @update:modelValue="updatePublicSettings('xDataSourceProd', $event)"
         small
     />
-    <!-- <wwEditorInputRow
-            type="query"
-            placeholder="Default to live data"
-            :model-value="settings.publicData.xDataSourceStaging"
-            label="In staging"
-            @update:modelValue="changeXDataSource('xDataSourceStaging', $event)"
-            small
-        /> -->
+    <wwEditorInputRow
+        type="query"
+        placeholder="Default to live data"
+        :model-value="settings.publicData.xDataSourceStaging"
+        label="In staging"
+        @update:modelValue="updatePublicSettings('xDataSourceStaging', $event)"
+        small
+    />
     <wwEditorInputRow
         type="query"
         placeholder="Default to live data"
         :model-value="settings.publicData.xDataSourceEditor"
         label="In editor"
-        @update:modelValue="changeXDataSource('xDataSourceEditor', $event)"
+        @update:modelValue="updatePublicSettings('xDataSourceEditor', $event)"
         small
     />
 </template>
@@ -42,7 +43,7 @@ export default {
     },
     emits: ['update:settings'],
     methods: {
-        async changeXDataSource(key, value) {
+        async updatePublicSettings(key, value) {
             this.$emit('update:settings', {
                 ...this.settings,
                 publicData: { ...this.settings.publicData, [key]: value },

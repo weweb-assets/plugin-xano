@@ -29,6 +29,18 @@
         label="Instance"
         @update:modelValue="changeInstance"
     />
+    <wwEditorInputRow
+        type="query"
+        :placeholder="'Default: ' + defaultDomain"
+        :model-value="settings.publicData.customDomain"
+        :disabled="!settings.privateData.instanceId"
+        label="Instance domain"
+        @update:modelValue="setCustomDomain"
+    />
+    <p v-if="incorrectCustomDomain" class="label-sm flex items-center text-red-500 mb-3">
+        <wwEditorIcon class="mr-1" name="warning" small />
+        The custom domain must not include the protocol (http(s)://)
+    </p>
     <wwLoader :loading="isLoading" />
 </template>
 
@@ -49,7 +61,16 @@ export default {
     computed: {
         instancesOptions() {
             if (!this.instances) return [];
-            return this.instances.map(instance => ({ label: instance.display, value: `${instance.id}` }));
+            return this.instances.map(instance => ({ label: instance.display, value: String(instance.id) }));
+        },
+        defaultDomain() {
+            return (
+                this.settings.publicData.domain ||
+                this.instances?.find(instance => String(instance.id) === this.settings.privateData.instanceId)?.host
+            );
+        },
+        incorrectCustomDomain() {
+            return (this.settings.publicData.customDomain || '').includes('http');
         },
     },
     mounted() {
@@ -75,6 +96,10 @@ export default {
             this.$emit('update:settings', {
                 ...this.settings,
                 privateData: { ...this.settings.privateData, instanceId },
+                publicData: {
+                    ...this.settings.publicData,
+                    domain: this.instances?.find(instance => String(instance.id) === instanceId)?.host,
+                },
             });
             try {
                 this.isLoading = true;
@@ -84,6 +109,12 @@ export default {
             } finally {
                 this.isLoading = false;
             }
+        },
+        setCustomDomain(value) {
+            this.$emit('update:settings', {
+                ...this.settings,
+                publicData: { ...this.settings.publicData, customDomain: value },
+            });
         },
     },
 };

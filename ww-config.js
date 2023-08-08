@@ -5,13 +5,29 @@ export default {
                 edit: () => import('./src/components/SettingsEdit.vue'),
                 summary: () => import('./src/components/SettingsSummary.vue'),
                 getIsValid(settings) {
-                    return !!settings.privateData.apiKey;
+                    return !!settings.privateData.apiKey && !(settings.publicData.customDomain || '').includes('http');
                 },
             },
             {
                 label: 'Data Source',
-                edit: () => import('./src/components/SettingsDataSourceEdit.vue'),
-                summary: () => import('./src/components/SettingsDataSourceSummary.vue'),
+                edit: () => import('./src/components/DataSource/SettingsEdit.vue'),
+                summary: () => import('./src/components/DataSource/SettingsSummary.vue'),
+                getIsValid() {
+                    return true;
+                },
+            },
+            {
+                label: 'Branching',
+                edit: () => import('./src/components/Branching/SettingsEdit.vue'),
+                summary: () => import('./src/components/Branching/SettingsSummary.vue'),
+                getIsValid() {
+                    return true;
+                },
+            },
+            {
+                label: 'Global Headers',
+                edit: () => import('./src/components/GlobalHeaders/SettingsEdit.vue'),
+                summary: () => import('./src/components/GlobalHeaders/SettingsSummary.vue'),
                 getIsValid() {
                     return true;
                 },
