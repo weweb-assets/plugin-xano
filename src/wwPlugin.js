@@ -1,10 +1,14 @@
 /* wwEditor:start */
 import './components/SettingsEdit.vue';
 import './components/SettingsSummary.vue';
-import './components/SettingsDataSourceEdit.vue';
-import './components/SettingsDataSourceSummary.vue';
 import './components/CollectionEdit.vue';
 import './components/CollectionSummary.vue';
+import './components/DataSource/SettingsEdit.vue';
+import './components/DataSource/SettingsSummary.vue';
+import './components/Branching/SettingsEdit.vue';
+import './components/Branching/SettingsSummary.vue';
+import './components/GlobalHeaders/SettingsEdit.vue';
+import './components/GlobalHeaders/SettingsSummary.vue';
 import './components/Request.vue';
 /* wwEditor:end */
 
@@ -141,16 +145,39 @@ function getCurrentDataSource() {
     }
 }
 
+function getCurrentBranch() {
+    const settings = wwLib.wwPlugins.xanoAuth.settings;
+    switch (wwLib.globalContext.browser.environment) {
+        case 'editor':
+            return settings.publicData.xBranchEditor;
+        case 'preview':
+            return settings.publicData.xBranchProd;
+        case 'staging':
+            return settings.publicData.xBranchStaging;
+        case 'production':
+            return settings.publicData.xBranchProd;
+        default:
+            return null;
+    }
+}
+
 function getGlobalHeaders() {
     return wwLib.wwFormula.getValue(wwLib.wwPlugins.xano.settings.publicData.globalHeaders);
 }
 
 function buildXanoHeaders(
-    { xDataSource = getCurrentDataSource(), authToken, dataType, globalHeaders = getGlobalHeaders() },
+    {
+        xDataSource = getCurrentDataSource(),
+        xBranch = getCurrentBranch(),
+        authToken,
+        dataType,
+        globalHeaders = getGlobalHeaders(),
+    },
     customHeaders = []
 ) {
     return {
         ...(xDataSource ? { 'X-Data-Source': xDataSource } : {}),
+        ...(xBranch ? { 'X-Branch': xBranch } : {}),
         ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
         ...(dataType ? { 'Content-Type': dataType } : {}),
         ...(Array.isArray(globalHeaders) ? globalHeaders : [])
