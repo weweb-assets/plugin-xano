@@ -130,7 +130,6 @@ export default {
             this.isLoading = true;
             xanoManager = this.plugin.createManager(this.settings);
             await xanoManager.init();
-            await this.loadApiSpec();
             this.sync();
             this.isLoading = false;
         },
