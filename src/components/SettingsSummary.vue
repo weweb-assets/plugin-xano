@@ -2,13 +2,13 @@
     <wwEditorFormRow label="Instance">
         <div class="flex items-center mb-2">
             <div><wwEditorIcon large name="data" class="mr-2" /></div>
-            <span class="truncate text-stale-500">{{ instanceName }}</span>
+            <span class="truncate">{{ instanceName }}</span>
         </div>
     </wwEditorFormRow>
     <wwEditorFormRow label="Workspace">
         <div class="flex items-center">
             <div><wwEditorIcon large name="data" class="mr-2" /></div>
-            <span class="truncate text-stale-500">{{ workspaceName }}</span>
+            <span class="truncate">{{ workspaceName }}</span>
         </div>
     </wwEditorFormRow>
     <wwLoader :loading="isLoading" />
