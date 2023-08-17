@@ -1,8 +1,16 @@
 <template>
-    <div class="flex items-center caption-m">
-        <wwEditorIcon name="link" class="mr-2"></wwEditorIcon>
-        {{ instance }}
-    </div>
+    <wwEditorFormRow label="Login Endpoint">
+        <div class="flex items-center mb-2">
+            <div><wwEditorIcon large name="data" class="mr-2" /></div>
+            <span class="truncate text-stale-500">{{ instanceName }}</span>
+        </div>
+    </wwEditorFormRow>
+    <wwEditorFormRow label="Get Me  Endpoint">
+        <div class="flex items-center">
+            <div><wwEditorIcon large name="data" class="mr-2" /></div>
+            <span class="truncate text-stale-500">{{ workspaceName }}</span>
+        </div>
+    </wwEditorFormRow>
     <wwLoader :loading="isLoading" />
 </template>
 
@@ -12,34 +20,18 @@ export default {
         plugin: { type: Object, required: true },
         settings: { type: Object, required: true },
     },
-    emits: ['update:settings'],
-    data() {
-        return {
-            isLoading: false,
-            instances: [],
-        };
-    },
-    computed: {
-        instance() {
-            const instance = this.instances.find(instance => instance.id == this.settings.privateData.instanceId);
-            return instance ? instance.display : 'Not found';
-        },
-    },
+    data: () => ({
+        isLoading: false,
+        instanceName: null,
+        workspaceName: null,
+    }),
     mounted() {
-        this.fetchInstances(this.settings.privateData.apiKey);
-    },
-    methods: {
-        async fetchInstances(apiKey) {
-            if (!apiKey) return;
-            try {
-                this.isLoading = true;
-                this.instances = await this.plugin.fetchInstances(apiKey);
-            } catch (err) {
-                wwLib.wwLog.error(err);
-            } finally {
-                this.isLoading = false;
-            }
-        },
+        this.isLoading = true;
+        this.plugin.xanoManager.onReady(() => {
+            this.instanceName = this.plugin.xanoManager.getInstance()?.name;
+            this.workspaceName = this.plugin.xanoManager.getWorkspace()?.name;
+            this.isLoading = false;
+        });
     },
 };
 </script>

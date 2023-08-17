@@ -10,20 +10,38 @@ import './components/Branching/SettingsSummary.vue';
 import './components/GlobalHeaders/SettingsEdit.vue';
 import './components/GlobalHeaders/SettingsSummary.vue';
 import './components/Request.vue';
+
+import DevApi from './api/developer.class';
+import MetaApi from './api/metadata.class';
 /* wwEditor:end */
 
 export default {
-    instances: null,
-    instance: null,
+    xanoManager: null,
     /*=============================================m_ÔÔ_m=============================================\
         Plugin API
     \================================================================================================*/
     async onLoad(settings) {
         /* wwEditor:start */
-        await this.fetchInstances(settings.privateData.apiKey);
-        await this.fetchInstance(settings.privateData.apiKey, settings.privateData.instanceId);
+        await this.initManager(settings);
         /* wwEditor:end */
     },
+    /*=============================================m_ÔÔ_m=============================================\
+        Editor API
+    \================================================================================================*/
+    /* wwEditor:start */
+    async initManager(settings) {
+        this.xanoManager = this.createManager(settings);
+        await this.xanoManager.init();
+    },
+    createManager(settings) {
+        const XanoManager = settings.privateData.metaApiKey ? MetaApi : DevApi;
+        return new XanoManager(
+            settings.privateData.metaApiKey || settings.privateData.apiKey,
+            settings.privateData.instanceId,
+            settings.privateData.workspaceId
+        );
+    },
+    /* wwEditor:end */
     /*=============================================m_ÔÔ_m=============================================\
         Collection API
     \================================================================================================*/
@@ -74,56 +92,6 @@ export default {
 
         return _url.href;
     },
-    /* wwEditor:start */
-    async fetchInstances(apiKey) {
-        if (!apiKey && !this.settings.privateData.apiKey) return;
-
-        const { data: instances } = await axios.get('https://app.xano.com/api:developer/instance', {
-            headers: { Authorization: `Bearer ${apiKey || this.settings.privateData.apiKey}` },
-        });
-
-        this.instances = instances;
-        return instances;
-    },
-    async fetchInstance(apiKey, instanceId) {
-        if (!apiKey && !this.settings.privateData.apiKey) return;
-        if (!instanceId && !this.settings.privateData.instanceId) return;
-        if (!this.instances) return;
-
-        const instance = this.instances.find(
-            instance => `${instance.id}` === (instanceId || this.settings.privateData.instanceId)
-        );
-        if (!instance) return;
-
-        const {
-            data: { authToken, origin },
-        } = await axios.get(instance.tokenUrl, {
-            headers: { Authorization: `Bearer ${apiKey || this.settings.privateData.apiKey}` },
-        });
-
-        const { data: workspaces } = await axios.get(`${origin}/api:developer/workspace?type=json`, {
-            headers: { Authorization: `Bearer ${authToken}` },
-        });
-
-        this.instance = workspaces;
-        return this.instance;
-    },
-    async getApiGroup(apiGroupUrl) {
-        if (!this.instance || !apiGroupUrl) return;
-
-        const apiGroup = this.instance
-            .map(({ apigroups }) => apigroups)
-            .flat()
-            .find(apiGroup => this.resolveUrl(apiGroup.api) === apiGroupUrl);
-        if (!apiGroup) return;
-
-        const { data } = await axios.get(apiGroup.swaggerspec, {
-            headers: { Authorization: `Bearer ${this.settings.privateData.apiKey}` },
-        });
-
-        return data;
-    },
-    /* wwEditor:end */
 };
 
 function getCurrentDataSource() {

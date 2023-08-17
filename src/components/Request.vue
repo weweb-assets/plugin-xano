@@ -22,7 +22,7 @@
                 @update:modelValue="setApiGroupUrl"
             />
         </div>
-        <button type="button" class="ww-editor-button -small -primary ml-2 mt-3" @click="refreshInstance">
+        <button type="button" class="ww-editor-button -small -primary ml-2 mt-3" @click="refreshManager">
             refresh
         </button>
     </div>
@@ -41,7 +41,7 @@
         <button
             type="button"
             class="ww-editor-button -small -primary ml-2 mt-3"
-            @click="refreshApiGroup"
+            @click="refreshSpec"
             :disabled="!apiGroupUrl"
         >
             refresh
@@ -122,7 +122,8 @@ export default {
     data() {
         return {
             isLoading: false,
-            apiGroup: null,
+            spec: null,
+            apiGroups: [],
             dataTypeOptions: [
                 { label: 'Default (application/json)', value: 'application/json', default: true },
                 { label: 'application/x-www-form-urlencoded', value: 'application/x-www-form-urlencoded' },
@@ -134,10 +135,18 @@ export default {
             ],
         };
     },
+    mounted() {
+        this.isLoading = true;
+        this.plugin.xanoManager.onReady(async () => {
+            this.apiGroups = this.plugin.xanoManager.getApiGroups();
+            await this.refreshSpec();
+            this.isLoading = false;
+        });
+    },
     computed: {
         apiGroupUrl() {
             // Ensure old api group value still match even if base domain has changed
-            return this.plugin.resolveUrl(this.args.apiGroupUrl);
+            return this.plugin.xanoManager.fixUrl(this.args.apiGroupUrl);
         },
         endpoint() {
             return this.args.endpoint;
@@ -162,21 +171,16 @@ export default {
             return this.args.body || {};
         },
         apiGroupsOptions() {
-            if (!this.plugin.instance) return [];
-            return this.plugin.instance
-                .map(workspace =>
-                    workspace.apigroups.map(apiGroup => ({
-                        label: `${workspace.name} - ${apiGroup.name}`,
-                        value: this.plugin.resolveUrl(apiGroup.api),
-                    }))
-                )
-                .flat();
+            return this.apiGroups.map(apiGroup => ({
+                label: `${workspace.name} - ${apiGroup.name}`,
+                value: apiGroup.api,
+            }));
         },
         endpointsOptions() {
-            if (!this.apiGroup) return [];
-            return Object.keys(this.apiGroup.paths)
+            if (!this.spec) return [];
+            return Object.keys(this.spec.paths)
                 .map(path =>
-                    Object.keys(this.apiGroup.paths[path]).map(method => ({
+                    Object.keys(this.spec.paths[path]).map(method => ({
                         label: `${method.toUpperCase()} ${path}`,
                         value: `${method}-${path}`,
                     }))
@@ -185,31 +189,29 @@ export default {
         },
         endpointParameters() {
             if (
-                !this.apiGroup ||
+                !this.spec ||
                 !this.endpoint ||
-                !this.apiGroup.paths ||
-                !this.apiGroup.paths[this.endpoint.path] ||
-                !this.apiGroup.paths[this.endpoint.path][this.endpoint.method]
+                !this.spec.paths ||
+                !this.spec.paths[this.endpoint.path] ||
+                !this.spec.paths[this.endpoint.path][this.endpoint.method]
             )
                 return [];
-            return this.apiGroup.paths[this.endpoint.path][this.endpoint.method].parameters || [];
+            return this.spec.paths[this.endpoint.path][this.endpoint.method].parameters || [];
         },
         endpointBody() {
             if (
-                !this.apiGroup ||
+                !this.spec ||
                 !this.endpoint ||
-                !this.apiGroup.paths ||
-                !this.apiGroup.paths[this.endpoint.path] ||
-                !this.apiGroup.paths[this.endpoint.path][this.endpoint.method] ||
-                !this.apiGroup.paths[this.endpoint.path][this.endpoint.method].requestBody
+                !this.spec.paths ||
+                !this.spec.paths[this.endpoint.path] ||
+                !this.spec.paths[this.endpoint.path][this.endpoint.method] ||
+                !this.spec.paths[this.endpoint.path][this.endpoint.method].requestBody
             )
                 return [];
 
             const endpoint =
-                this.apiGroup.paths[this.endpoint.path][this.endpoint.method].requestBody.content['application/json'] ||
-                this.apiGroup.paths[this.endpoint.path][this.endpoint.method].requestBody.content[
-                    'multipart/form-data'
-                ];
+                this.spec.paths[this.endpoint.path][this.endpoint.method].requestBody.content['application/json'] ||
+                this.spec.paths[this.endpoint.path][this.endpoint.method].requestBody.content['multipart/form-data'];
 
             return Object.keys(endpoint.schema.properties).map(key => {
                 const elem = endpoint.schema.properties[key];
@@ -230,11 +232,8 @@ export default {
         },
     },
     watch: {
-        apiGroupUrl: {
-            immediate: true,
-            async handler() {
-                await this.refreshApiGroup();
-            },
+        apiGroupUrl() {
+            this.refreshSpec();
         },
     },
     methods: {
@@ -283,22 +282,22 @@ export default {
         setDataType(dataType) {
             this.$emit('update:args', { ...this.args, dataType });
         },
-        async refreshInstance() {
+        async refreshManager() {
             try {
                 this.isLoading = true;
-                await this.plugin.fetchInstances();
-                await this.plugin.fetchInstance();
+                await this.plugin.xanoManager.init();
+                this.apiGroups = this.plugin.xanoManager.getApiGroups();
             } catch (err) {
                 wwLib.wwLog.error(err);
             } finally {
                 this.isLoading = false;
             }
         },
-        async refreshApiGroup() {
+        async refreshSpec() {
             if (!this.apiGroupUrl) return;
             try {
                 this.isLoading = true;
-                this.apiGroup = await this.plugin.getApiGroup(this.apiGroupUrl);
+                this.spec = await this.plugin.xanoManager.fetchApiGroupSpec(this.apiGroupUrl);
             } catch (err) {
                 wwLib.wwLog.error(err);
             } finally {
