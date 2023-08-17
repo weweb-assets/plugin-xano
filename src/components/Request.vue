@@ -172,7 +172,7 @@ export default {
         },
         apiGroupsOptions() {
             return this.apiGroups.map(apiGroup => ({
-                label: `${workspace.name} - ${apiGroup.name}`,
+                label: `${this.plugin.xanoManager.getWorkspace().name} - ${apiGroup.name}`,
                 value: apiGroup.api,
             }));
         },
