@@ -9,7 +9,7 @@ export default {
                         (settings.privateData.metaApiKey || settings.privateData.apiKey) &&
                         !!settings.privateData.instanceId &&
                         !!settings.privateData.workspaceId &&
-                        !settings.publicData.customDomain.includes('http')
+                        (!settings.publicData.customDomain || !settings.publicData.customDomain.includes('http'))
                     );
                 },
                 onSave: 'initManager',
