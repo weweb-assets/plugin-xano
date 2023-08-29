@@ -67,7 +67,6 @@
             label="Workspace"
             type="select"
             placeholder="Select a workspace"
-            required
             :model-value="settings.privateData.workspaceId"
             :disabled="!settings.privateData.instanceId"
             :options="workspacesOptions"
@@ -101,7 +100,10 @@ export default {
             return this.instances.map(instance => ({ label: instance.name, value: String(instance.id) }));
         },
         workspacesOptions() {
-            return this.workspaces.map(workspace => ({ label: workspace.name, value: workspace.id, ...workspace }));
+            return [
+                ...this.workspaces.map(workspace => ({ label: workspace.name, value: workspace.id, ...workspace })),
+                { label: 'None', value: null },
+            ];
         },
         incorrectCustomDomain() {
             return (this.settings.publicData.customDomain || '').includes('http');

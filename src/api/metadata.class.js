@@ -60,24 +60,43 @@ export default class {
             }
         }
     }
+
     async #loadApiGroups() {
         this.#apiGroups = [];
         const instance = this.getInstance();
         const workspace = this.getWorkspace();
-        if (!instance || !workspace) return;
+        if (!instance) return;
 
+        if (workspace) {
+            this.#apiGroups = await this.#fetchApiGroups(workspace.id);
+        } else {
+            for (const workspace of this.getWorkspaces()) {
+                const groups = await this.#fetchApiGroups(workspace.id);
+                this.#apiGroups.push(
+                    ...groups.map(group => ({
+                        ...group,
+                        name: workspace.name + ' - ' + group.name,
+                    }))
+                );
+            }
+        }
+    }
+
+    async #fetchApiGroups(workspaceId) {
+        const instance = this.getInstance();
+        if (!instance) return;
         try {
             const { data } = await axios.get(
-                `https://${instance.baseDomain}/api:meta/workspace/${workspace.id}/apigroup`,
+                `https://${instance.baseDomain}/api:meta/workspace/${workspaceId}/apigroup`,
                 {
                     headers: { Authorization: `Bearer ${this.#apiKey}` },
                 }
             );
-            this.#apiGroups = data.items;
+            return data.items;
         } catch (error) {
             if (error && error.response && error.response.status === 429) {
                 await this.waitRateLimit();
-                return this.#loadApiGroups();
+                return this.#fetchApiGroups();
             }
         }
     }

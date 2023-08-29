@@ -73,8 +73,14 @@ export default class {
     async #loadApiGroups() {
         this.#apiGroups = [];
         const workspace = this.getWorkspace();
-        if (!workspace) return;
-        this.#apiGroups = workspace.apigroups;
+        if (workspace) this.#apiGroups = workspace.apigroups;
+        else {
+            for (const workspace of this.getWorkspaces()) {
+                this.#apiGroups.push(
+                    ...workspace.apigroups.map(group => ({ ...group, name: workspace.name + ' - ' + group.name }))
+                );
+            }
+        }
     }
 
     /**

@@ -28,8 +28,8 @@ export default {
     mounted() {
         this.isLoading = true;
         this.plugin.xanoManager.onReady(() => {
-            this.instanceName = this.plugin.xanoManager.getInstance()?.name;
-            this.workspaceName = this.plugin.xanoManager.getWorkspace()?.name;
+            this.instanceName = this.plugin.xanoManager.getInstance()?.name || 'None';
+            this.workspaceName = this.plugin.xanoManager.getWorkspace()?.name || 'None';
             this.isLoading = false;
         });
     },

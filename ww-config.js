@@ -8,7 +8,6 @@ export default {
                     return (
                         (settings.privateData.metaApiKey || settings.privateData.apiKey) &&
                         !!settings.privateData.instanceId &&
-                        !!settings.privateData.workspaceId &&
                         (!settings.publicData.customDomain || !settings.publicData.customDomain.includes('http'))
                     );
                 },
