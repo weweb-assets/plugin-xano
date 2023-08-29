@@ -101,8 +101,8 @@ export default {
         },
         workspacesOptions() {
             return [
-                ...this.workspaces.map(workspace => ({ label: workspace.name, value: workspace.id, ...workspace })),
                 { label: 'None', value: null },
+                ...this.workspaces.map(workspace => ({ label: workspace.name, value: workspace.id, ...workspace })),
             ];
         },
         incorrectCustomDomain() {

@@ -122,11 +122,13 @@ export default class {
         return this.getWorkspaces().find(workspace => workspace.id === this.#workspaceId);
     }
     getApiGroups() {
-        return this.#apiGroups.map(group => ({
-            id: group.id,
-            name: group.name,
-            api: `https://${this.getBaseDomain()}/api:${group.canonical}`,
-        }));
+        return this.#apiGroups
+            .map(group => ({
+                id: group.id,
+                name: group.name,
+                api: `https://${this.getBaseDomain()}/api:${group.canonical}`,
+            }))
+            .sort((a, b) => (a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1));
     }
     getSocialProviders() {
         if (!this.#workspaceId) return null;

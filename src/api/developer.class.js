@@ -109,7 +109,9 @@ export default class {
         for (const group of this.#apiGroups) {
             if (!duplicateRemoved.some(i => i.api === group.api)) duplicateRemoved.push(group);
         }
-        return duplicateRemoved.map(group => ({ id: group.id, name: group.name, api: group.api }));
+        return duplicateRemoved
+            .map(group => ({ id: group.id, name: group.name, api: group.api }))
+            .sort((a, b) => (a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1));
     }
     getSocialProviders() {
         if (!this.#workspaceId) return null;
