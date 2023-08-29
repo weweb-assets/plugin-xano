@@ -135,7 +135,7 @@ export default {
         },
         apiGroupsOptions() {
             return this.apiGroups.map(apiGroup => ({
-                label: `${this.plugin.xanoManager.getWorkspace().name} - ${apiGroup.name}`,
+                label: apiGroup.name,
                 value: apiGroup.api,
             }));
         },
