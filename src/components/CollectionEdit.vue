@@ -140,13 +140,13 @@ export default {
             }));
         },
         endpointsOptions() {
-            return xanoManager.parseSpecEndpoints(this.spec);
+            return this.plugin.xanoManager.parseSpecEndpoints(this.spec);
         },
         endpointParameters() {
-            return xanoManager.parseSpecEndpointParameters(this.spec, this.endpoint);
+            return this.plugin.xanoManager.parseSpecEndpointParameters(this.spec, this.endpoint);
         },
         endpointBody() {
-            return xanoManager.parseSpecEndpointBody(this.spec, this.endpoint);
+            return this.plugin.xanoManager.parseSpecEndpointBody(this.spec, this.endpoint);
         },
     },
     watch: {
