@@ -83,6 +83,7 @@
         type="query"
         placeholder="Enter a value"
         bindable
+        :binding-validation="parameter.bindingValidation"
         :required="parameter.required"
         :model-value="parameters[parameter.name]"
         @update:modelValue="setParameters({ ...parameters, [parameter.name]: $event })"

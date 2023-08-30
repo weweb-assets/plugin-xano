@@ -73,6 +73,7 @@
         type="query"
         placeholder="Enter a value"
         :bindable="collection.mode === 'dynamic'"
+        :binding-validation="parameter.bindingValidation"
         :required="parameter.required"
         :model-value="api.parameters[parameter.name]"
         @update:modelValue="setProp('parameters', { ...api.parameters, [parameter.name]: $event })"
@@ -84,6 +85,7 @@
         :type="elem.type || 'string'"
         placeholder="Enter a value"
         :bindable="collection.mode === 'dynamic'"
+        :binding-validation="elem.bindingValidation"
         :required="elem.required"
         :model-value="api.body[elem.name]"
         @update:modelValue="setProp('body', { ...api.body, [elem.name]: $event })"
@@ -143,10 +145,10 @@ export default {
             return this.plugin.xanoManager.parseSpecEndpoints(this.spec);
         },
         endpointParameters() {
-            return this.plugin.xanoManager.parseSpecEndpointParameters(this.spec, this.endpoint);
+            return this.plugin.xanoManager.parseSpecEndpointParameters(this.spec, this.api.endpoint);
         },
         endpointBody() {
-            return this.plugin.xanoManager.parseSpecEndpointBody(this.spec, this.endpoint);
+            return this.plugin.xanoManager.parseSpecEndpointBody(this.spec, this.api.endpoint);
         },
     },
     watch: {
