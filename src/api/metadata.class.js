@@ -58,6 +58,7 @@ export default class {
                 await this.waitRateLimit();
                 return this.#loadWorkspaces();
             }
+            throw error;
         }
     }
 
@@ -98,6 +99,7 @@ export default class {
                 await this.waitRateLimit();
                 return this.#fetchApiGroups();
             }
+            throw error;
         }
     }
 
@@ -150,6 +152,14 @@ export default class {
 
     async changeApiKey(apiKey) {
         this.#apiKey = apiKey;
+        if (!this.#apiKey) {
+            this.#instanceId = null;
+            this.#workspaceId = null;
+            this.#instances = [];
+            this.#workspaces = [];
+            this.#apiGroups = [];
+            return;
+        }
         await this.#loadInstances();
         if (!this.getInstance()) {
             await this.changeInstance(null);
