@@ -140,53 +140,13 @@ export default {
             }));
         },
         endpointsOptions() {
-            if (!this.spec) return [];
-            return Object.keys(this.spec.paths)
-                .map(path =>
-                    Object.keys(this.spec.paths[path]).map(method => ({
-                        label: `${method.toUpperCase()} ${path}`,
-                        value: `${method}-${path}`,
-                    }))
-                )
-                .flat();
+            return xanoManager.parseSpecEndpoints(this.spec);
         },
         endpointParameters() {
-            if (
-                !this.spec ||
-                !this.api.endpoint ||
-                !this.spec.paths ||
-                !this.spec.paths[this.api.endpoint.path] ||
-                !this.spec.paths[this.api.endpoint.path][this.api.endpoint.method]
-            )
-                return [];
-            return this.spec.paths[this.api.endpoint.path][this.api.endpoint.method].parameters || [];
+            return xanoManager.parseSpecEndpointParameters(this.spec, this.endpoint);
         },
         endpointBody() {
-            if (
-                !this.spec ||
-                !this.api.endpoint ||
-                !this.spec.paths ||
-                !this.spec.paths[this.api.endpoint.path] ||
-                !this.spec.paths[this.api.endpoint.path][this.api.endpoint.method] ||
-                !this.spec.paths[this.api.endpoint.path][this.api.endpoint.method].requestBody
-            )
-                return [];
-
-            return Object.keys(
-                this.spec.paths[this.api.endpoint.path][this.api.endpoint.method].requestBody.content[
-                    'application/json'
-                ].schema.properties
-            ).map(key => {
-                const elem =
-                    this.spec.paths[this.api.endpoint.path][this.api.endpoint.method].requestBody.content[
-                        'application/json'
-                    ].schema.properties[key];
-                return {
-                    name: key,
-                    type: elem.type === 'string' ? 'query' : elem.type,
-                    required: elem.required,
-                };
-            });
+            return xanoManager.parseSpecEndpointBody(this.spec, this.endpoint);
         },
     },
     watch: {
