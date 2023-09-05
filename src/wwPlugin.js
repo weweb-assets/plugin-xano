@@ -38,6 +38,7 @@ export default {
                 text: 'Failed to init Xano, please ensure your API key has the permission required.',
                 color: 'red',
             });
+            throw error;
         }
     },
     createManager(settings) {
