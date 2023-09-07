@@ -5,8 +5,13 @@ export default {
                 edit: () => import('./src/components/SettingsEdit.vue'),
                 summary: () => import('./src/components/SettingsSummary.vue'),
                 getIsValid(settings) {
-                    return !!settings.privateData.apiKey && !(settings.publicData.customDomain || '').includes('http');
+                    return (
+                        (settings.privateData.metaApiKey || settings.privateData.apiKey) &&
+                        !!settings.privateData.instanceId &&
+                        (!settings.publicData.customDomain || !settings.publicData.customDomain.includes('http'))
+                    );
                 },
+                onSave: 'initManager',
             },
             {
                 label: 'Data Source',
