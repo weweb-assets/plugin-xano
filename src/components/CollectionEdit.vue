@@ -73,6 +73,7 @@
         type="query"
         placeholder="Enter a value"
         :bindable="collection.mode === 'dynamic'"
+        :binding-validation="parameter.bindingValidation"
         :required="parameter.required"
         :model-value="api.parameters[parameter.name]"
         @update:modelValue="setProp('parameters', { ...api.parameters, [parameter.name]: $event })"
@@ -84,6 +85,7 @@
         :type="elem.type || 'string'"
         placeholder="Enter a value"
         :bindable="collection.mode === 'dynamic'"
+        :binding-validation="elem.bindingValidation"
         :required="elem.required"
         :model-value="api.body[elem.name]"
         @update:modelValue="setProp('body', { ...api.body, [elem.name]: $event })"
@@ -107,6 +109,13 @@ export default {
         };
     },
     mounted() {
+        if (this.plugin.xanoManager.hasFailed()) {
+            wwLib.wwNotification.open({
+                text: 'Failed to init Xano, please ensure your API key has the permission required.',
+                color: 'red',
+            });
+            return;
+        }
         this.isLoading = true;
         this.plugin.xanoManager.onReady(async () => {
             this.apiGroups = this.plugin.xanoManager.getApiGroups();
@@ -140,53 +149,13 @@ export default {
             }));
         },
         endpointsOptions() {
-            if (!this.spec) return [];
-            return Object.keys(this.spec.paths)
-                .map(path =>
-                    Object.keys(this.spec.paths[path]).map(method => ({
-                        label: `${method.toUpperCase()} ${path}`,
-                        value: `${method}-${path}`,
-                    }))
-                )
-                .flat();
+            return this.plugin.xanoManager.parseSpecEndpoints(this.spec);
         },
         endpointParameters() {
-            if (
-                !this.spec ||
-                !this.api.endpoint ||
-                !this.spec.paths ||
-                !this.spec.paths[this.api.endpoint.path] ||
-                !this.spec.paths[this.api.endpoint.path][this.api.endpoint.method]
-            )
-                return [];
-            return this.spec.paths[this.api.endpoint.path][this.api.endpoint.method].parameters || [];
+            return this.plugin.xanoManager.parseSpecEndpointParameters(this.spec, this.api.endpoint);
         },
         endpointBody() {
-            if (
-                !this.spec ||
-                !this.api.endpoint ||
-                !this.spec.paths ||
-                !this.spec.paths[this.api.endpoint.path] ||
-                !this.spec.paths[this.api.endpoint.path][this.api.endpoint.method] ||
-                !this.spec.paths[this.api.endpoint.path][this.api.endpoint.method].requestBody
-            )
-                return [];
-
-            return Object.keys(
-                this.spec.paths[this.api.endpoint.path][this.api.endpoint.method].requestBody.content[
-                    'application/json'
-                ].schema.properties
-            ).map(key => {
-                const elem =
-                    this.spec.paths[this.api.endpoint.path][this.api.endpoint.method].requestBody.content[
-                        'application/json'
-                    ].schema.properties[key];
-                return {
-                    name: key,
-                    type: elem.type === 'string' ? 'query' : elem.type,
-                    required: elem.required,
-                };
-            });
+            return this.plugin.xanoManager.parseSpecEndpointBody(this.spec, this.api.endpoint);
         },
     },
     watch: {
