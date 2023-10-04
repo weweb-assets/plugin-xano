@@ -77,12 +77,7 @@ export default {
         let url = endpoint.path;
         for (const key in parameters) url = url.replace(`{${key}}`, parameters[key]);
 
-        /* wwEditor:start */
-        if (wwUtils) {
-            wwUtils.log({ label: 'Endpoint', preview: `${endpoint.method.toUpperCase()} - ${url}` });
-            if (Object.keys(body).length) wwUtils.log({ label: 'Payload', preview: body });
-        }
-        /* wwEditor:end */
+        wwUtils?.log('info', `[Xano] Requesting ${endpoint.method.toUpperCase()} - ${url}`,  { type: 'request', preview: body });
 
         return await axios({
             method: endpoint.method,
