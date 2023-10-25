@@ -78,6 +78,22 @@
         :model-value="api.parameters[parameter.name]"
         @update:modelValue="setProp('parameters', { ...api.parameters, [parameter.name]: $event })"
     />
+    <wwEditorFormRow v-for="(key, index) in legacyEndpointParameters" :key="index">
+        <wwEditorInputRow
+            :label="key"
+            type="query"
+            placeholder="Enter a value"
+            bindable
+            :isEditable="false"
+            :model-value="api.parameters[key]"
+        />
+        <div class="flex items-center justify-between body-3 text-red-500">
+            This parameter doesn't exist anymore
+            <button type="button" class="ww-editor-button -icon -small -tertiary -red" @click="removeParam([key])">
+                <wwEditorIcon small name="trash" />
+            </button>
+        </div>
+    </wwEditorFormRow>
     <wwEditorInputRow
         v-for="(elem, index) in endpointBody"
         :key="index"
@@ -90,6 +106,22 @@
         :model-value="api.body[elem.name]"
         @update:modelValue="setProp('body', { ...api.body, [elem.name]: $event })"
     />
+    <wwEditorFormRow v-for="(key, index) in legacyEndpointBody" :key="index">
+        <wwEditorInputRow
+            :label="key"
+            type="query"
+            placeholder="Enter a value"
+            bindable
+            :isEditable="false"
+            :model-value="api.body[key]"
+        />
+        <div class="flex items-center justify-between body-3 text-red-500">
+            This field doesn't exist anymore
+            <button type="button" class="ww-editor-button -icon -small -tertiary -red" @click="removeBody([key])">
+                <wwEditorIcon small name="trash" />
+            </button>
+        </div>
+    </wwEditorFormRow>
     <wwLoader :loading="isLoading" />
 </template>
 
@@ -157,6 +189,14 @@ export default {
         endpointBody() {
             return this.plugin.xanoManager.parseSpecEndpointBody(this.spec, this.api.endpoint);
         },
+        legacyEndpointParameters() {
+            const fields = this.endpointParameters.map(field => field.name);
+            return Object.keys(this.api.parameters).filter(key => !fields.includes(key));
+        },
+        legacyEndpointBody() {
+            const fields = this.endpointBody.map(field => field.name);
+            return Object.keys(this.api.body).filter(key => !fields.includes(key));
+        },
     },
     watch: {
         apiGroupUrl() {
@@ -170,6 +210,20 @@ export default {
         setEndpoint(endpoint) {
             const [method, path] = endpoint.split(/-(.+)/);
             this.setProp('endpoint', { method, path });
+        },
+        removeParam(keys) {
+            const parameters = { ...this.parameters };
+            for (const key of keys) {
+                delete parameters[key];
+            }
+            this.setProp('parameters', parameters);
+        },
+        removeBody(keys) {
+            const body = { ...this.body };
+            for (const key of keys) {
+                delete body[key];
+            }
+            this.setProp('body', body);
         },
         async refreshManager() {
             try {
