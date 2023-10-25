@@ -90,7 +90,7 @@
     />
     <wwEditorFormRow v-for="(key, index) in legacyEndpointParameters" :key="index" :label="key">
         <template #append-label>
-            <div class="flex items-center justify-end body-3 text-red-500">
+            <div class="flex items-center justify-end w-full body-3 text-red-500">
                 This parameter doesn't exist anymore
                 <button
                     type="button"
@@ -134,7 +134,7 @@
     />
     <wwEditorFormRow v-for="(key, index) in legacyEndpointBody" :key="index" :label="key">
         <template #append-label>
-            <div class="flex items-center justify-end body-3 text-red-500">
+            <div class="flex items-center justify-end w-full body-3 text-red-500">
                 This field doesn't exist anymore
                 <button
                     type="button"

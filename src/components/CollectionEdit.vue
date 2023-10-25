@@ -78,21 +78,26 @@
         :model-value="api.parameters[parameter.name]"
         @update:modelValue="setProp('parameters', { ...api.parameters, [parameter.name]: $event })"
     />
-    <wwEditorFormRow v-for="(key, index) in legacyEndpointParameters" :key="index">
+    <wwEditorFormRow v-for="(key, index) in legacyEndpointParameters" :key="index" :label="key">
+        <template #append-label>
+            <div class="flex items-center justify-end w-full body-3 text-red-500">
+                This parameter doesn't exist anymore
+                <button
+                    type="button"
+                    class="ww-editor-button -icon -small -tertiary -red ml-1"
+                    @click="removeParam([key])"
+                >
+                    <wwEditorIcon small name="trash" />
+                </button>
+            </div>
+        </template>
         <wwEditorInputRow
-            :label="key"
             type="query"
             placeholder="Enter a value"
             bindable
             :isEditable="false"
             :model-value="api.parameters[key]"
         />
-        <div class="flex items-center justify-between body-3 text-red-500">
-            This parameter doesn't exist anymore
-            <button type="button" class="ww-editor-button -icon -small -tertiary -red" @click="removeParam([key])">
-                <wwEditorIcon small name="trash" />
-            </button>
-        </div>
     </wwEditorFormRow>
     <wwEditorInputRow
         v-for="(elem, index) in endpointBody"
@@ -106,21 +111,26 @@
         :model-value="api.body[elem.name]"
         @update:modelValue="setProp('body', { ...api.body, [elem.name]: $event })"
     />
-    <wwEditorFormRow v-for="(key, index) in legacyEndpointBody" :key="index">
+    <wwEditorFormRow v-for="(key, index) in legacyEndpointBody" :key="index" :label="key">
+        <template #append-label>
+            <div class="flex items-center justify-end w-full body-3 text-red-500">
+                This field doesn't exist anymore
+                <button
+                    type="button"
+                    class="ww-editor-button -icon -small -tertiary -red ml-1"
+                    @click="removeBody([key])"
+                >
+                    <wwEditorIcon small name="trash" />
+                </button>
+            </div>
+        </template>
         <wwEditorInputRow
-            :label="key"
             type="query"
             placeholder="Enter a value"
             bindable
             :isEditable="false"
             :model-value="api.body[key]"
         />
-        <div class="flex items-center justify-between body-3 text-red-500">
-            This field doesn't exist anymore
-            <button type="button" class="ww-editor-button -icon -small -tertiary -red" @click="removeBody([key])">
-                <wwEditorIcon small name="trash" />
-            </button>
-        </div>
     </wwEditorFormRow>
     <wwLoader :loading="isLoading" />
 </template>
