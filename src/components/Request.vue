@@ -101,13 +101,7 @@
                 </button>
             </div>
         </template>
-        <wwEditorInputRow
-            type="query"
-            placeholder="Enter a value"
-            bindable
-            :isEditable="false"
-            :model-value="parameters[key]"
-        />
+        <wwEditorInputRow type="query" bindable :model-value="parameters[key]" />
     </wwEditorFormRow>
     <wwEditorInputRow
         v-if="endpointBody.length"
@@ -145,13 +139,7 @@
                 </button>
             </div>
         </template>
-        <wwEditorInputRow
-            type="query"
-            placeholder="Enter a value"
-            bindable
-            :isEditable="false"
-            :model-value="body[key]"
-        />
+        <wwEditorInputRow type="query" bindable :model-value="body[key]" />
     </wwEditorFormRow>
     <wwLoader :loading="isLoading" />
 </template>

@@ -91,13 +91,7 @@
                 </button>
             </div>
         </template>
-        <wwEditorInputRow
-            type="query"
-            placeholder="Enter a value"
-            bindable
-            :isEditable="false"
-            :model-value="api.parameters[key]"
-        />
+        <wwEditorInputRow type="query" bindable :model-value="api.parameters[key]" />
     </wwEditorFormRow>
     <wwEditorInputRow
         v-for="(elem, index) in endpointBody"
@@ -124,13 +118,7 @@
                 </button>
             </div>
         </template>
-        <wwEditorInputRow
-            type="query"
-            placeholder="Enter a value"
-            bindable
-            :isEditable="false"
-            :model-value="api.body[key]"
-        />
+        <wwEditorInputRow type="query" bindable :model-value="api.body[key]" />
     </wwEditorFormRow>
     <wwLoader :loading="isLoading" />
 </template>
@@ -222,14 +210,14 @@ export default {
             this.setProp('endpoint', { method, path });
         },
         removeParam(keys) {
-            const parameters = { ...this.parameters };
+            const parameters = { ...this.api.parameters };
             for (const key of keys) {
                 delete parameters[key];
             }
             this.setProp('parameters', parameters);
         },
         removeBody(keys) {
-            const body = { ...this.body };
+            const body = { ...this.api.body };
             for (const key of keys) {
                 delete body[key];
             }
