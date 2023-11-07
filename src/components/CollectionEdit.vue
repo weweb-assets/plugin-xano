@@ -118,7 +118,12 @@
                 </button>
             </div>
         </template>
-        <wwEditorInputRow type="query" bindable :model-value="api.body[key]" />
+        <wwEditorInputRow
+            type="query"
+            bindable
+            :model-value="api.body[key]"
+            @update:modelValue="setProp('body', { ...api.body, [key]: $event })"
+        />
     </wwEditorFormRow>
     <wwLoader :loading="isLoading" />
 </template>
