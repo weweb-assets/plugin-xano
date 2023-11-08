@@ -293,7 +293,7 @@ export default {
                 }
             }
             for (const field of bodyFields) {
-                body[field] = body[field] || null;
+                body[field] = body[field] ?? null;
             }
 
             this.$emit('update:args', { ...this.args, bodyFields, body });
@@ -313,7 +313,7 @@ export default {
             for (const key of keys) {
                 delete body[key];
             }
-            const bodyFields = this.bodyFields.filter(field => !keys.includes(field.name));
+            const bodyFields = this.bodyFields.filter(field => !keys.includes(field));
             this.$emit('update:args', { ...this.args, body, bodyFields });
         },
         async refreshManager() {
