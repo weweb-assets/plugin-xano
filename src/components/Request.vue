@@ -76,7 +76,7 @@
             />
         </template>
     </wwEditorInputRow>
-    <wwEditorFormRow v-for="(key, index) in legacyEndpointParameters" :key="index" :label="key">
+    <wwEditorFormRow v-for="(key, index) in legacyEndpointParameters" :key="key" :label="key">
         <template #append-label>
             <div class="flex items-center justify-end w-full body-3 text-red-500">
                 This parameter doesn't exist anymore
@@ -93,7 +93,7 @@
     </wwEditorFormRow>
     <wwEditorInputRow
         v-for="(parameter, index) in endpointParameters"
-        :key="index"
+        :key="parameter.name"
         :label="parameter.name"
         type="query"
         placeholder="Enter a value"
@@ -115,7 +115,7 @@
         placeholder="All body fields"
         @update:modelValue="setBodyFields"
     />
-    <wwEditorFormRow v-for="(key, index) in legacyEndpointBody" :key="index" :label="key">
+    <wwEditorFormRow v-for="(key, index) in legacyEndpointBody" :key="key" :label="key">
         <template #append-label>
             <div class="flex items-center justify-end w-full body-3 text-red-500">
                 This field doesn't exist anymore
@@ -137,7 +137,7 @@
     </wwEditorFormRow>
     <wwEditorInputRow
         v-for="(elem, index) in endpointBodyFiltered"
-        :key="index"
+        :key="elem.name"
         :label="elem.name"
         :type="elem.type || 'string'"
         placeholder="Enter a value"
