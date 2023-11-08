@@ -241,7 +241,7 @@ export default {
             );
         },
         legacyEndpointBody() {
-            const fields = this.endpointBodyFiltered.map(field => field.name);
+            const fields = this.endpointBody.map(field => field.name);
             return Object.keys(this.body).filter(key => !fields.includes(key));
         },
         bodyFieldOptions() {
