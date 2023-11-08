@@ -76,18 +76,6 @@
             />
         </template>
     </wwEditorInputRow>
-    <wwEditorInputRow
-        v-for="(parameter, index) in endpointParameters"
-        :key="index"
-        :label="parameter.name"
-        type="query"
-        placeholder="Enter a value"
-        bindable
-        :binding-validation="parameter.bindingValidation"
-        :required="parameter.required"
-        :model-value="parameters[parameter.name]"
-        @update:modelValue="setParameters({ ...parameters, [parameter.name]: $event })"
-    />
     <wwEditorFormRow v-for="(key, index) in legacyEndpointParameters" :key="index" :label="key">
         <template #append-label>
             <div class="flex items-center justify-end w-full body-3 text-red-500">
@@ -104,6 +92,19 @@
         <wwEditorInputRow type="query" bindable :model-value="parameters[key]" />
     </wwEditorFormRow>
     <wwEditorInputRow
+        v-for="(parameter, index) in endpointParameters"
+        :key="index"
+        :label="parameter.name"
+        type="query"
+        placeholder="Enter a value"
+        bindable
+        :binding-validation="parameter.bindingValidation"
+        :required="parameter.required"
+        :model-value="parameters[parameter.name]"
+        @update:modelValue="setParameters({ ...parameters, [parameter.name]: $event })"
+    />
+
+    <wwEditorInputRow
         v-if="endpointBody.length"
         label="Body fields"
         type="select"
@@ -113,18 +114,6 @@
         :model-value="bodyFields"
         placeholder="All body fields"
         @update:modelValue="setBodyFields"
-    />
-    <wwEditorInputRow
-        v-for="(elem, index) in endpointBodyFiltered"
-        :key="index"
-        :label="elem.name"
-        :type="elem.type || 'string'"
-        placeholder="Enter a value"
-        bindable
-        :binding-validation="elem.bindingValidation"
-        :required="elem.required"
-        :model-value="body[elem.name]"
-        @update:modelValue="setBody({ ...body, [elem.name]: $event })"
     />
     <wwEditorFormRow v-for="(key, index) in legacyEndpointBody" :key="index" :label="key">
         <template #append-label>
@@ -146,6 +135,19 @@
             @update:modelValue="setBody({ ...body, [key]: $event })"
         />
     </wwEditorFormRow>
+    <wwEditorInputRow
+        v-for="(elem, index) in endpointBodyFiltered"
+        :key="index"
+        :label="elem.name"
+        :type="elem.type || 'string'"
+        placeholder="Enter a value"
+        bindable
+        :binding-validation="elem.bindingValidation"
+        :required="elem.required"
+        :model-value="body[elem.name]"
+        @update:modelValue="setBody({ ...body, [elem.name]: $event })"
+    />
+
     <wwLoader :loading="isLoading" />
 </template>
 
@@ -239,7 +241,7 @@ export default {
             );
         },
         legacyEndpointBody() {
-            const fields = this.endpointBody.map(field => field.name);
+            const fields = this.endpointBodyFiltered.map(field => field.name);
             return Object.keys(this.body).filter(key => !fields.includes(key));
         },
         bodyFieldOptions() {
@@ -283,8 +285,18 @@ export default {
             this.$emit('update:args', { ...this.args, body });
         },
         setBodyFields(bodyFields) {
-            this.$emit('update:args', { ...this.args, bodyFields });
-            this.$nextTick(() => this.removeBody(this.legacyEndpointBody));
+            const body = { ...this.body };
+
+            for (const bodyKey in body) {
+                if (!bodyFields.includes(bodyKey)) {
+                    delete body[bodyKey];
+                }
+            }
+            for (const field of bodyFields) {
+                body[field] = body[field] || null;
+            }
+
+            this.$emit('update:args', { ...this.args, bodyFields, body });
         },
         setDataType(dataType) {
             this.$emit('update:args', { ...this.args, dataType });
@@ -301,7 +313,8 @@ export default {
             for (const key of keys) {
                 delete body[key];
             }
-            this.setBody({ ...body });
+            const bodyFields = this.bodyFields.filter(field => !keys.includes(field.name));
+            this.$emit('update:args', { ...this.args, body, bodyFields });
         },
         async refreshManager() {
             try {

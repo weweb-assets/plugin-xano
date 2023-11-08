@@ -66,18 +66,6 @@
             />
         </template>
     </wwEditorInputRow>
-    <wwEditorInputRow
-        v-for="(parameter, index) in endpointParameters"
-        :key="index"
-        :label="parameter.name"
-        type="query"
-        placeholder="Enter a value"
-        :bindable="collection.mode === 'dynamic'"
-        :binding-validation="parameter.bindingValidation"
-        :required="parameter.required"
-        :model-value="api.parameters[parameter.name]"
-        @update:modelValue="setProp('parameters', { ...api.parameters, [parameter.name]: $event })"
-    />
     <wwEditorFormRow v-for="(key, index) in legacyEndpointParameters" :key="index" :label="key">
         <template #append-label>
             <div class="flex items-center justify-end w-full body-3 text-red-500">
@@ -94,17 +82,18 @@
         <wwEditorInputRow type="query" bindable :model-value="api.parameters[key]" />
     </wwEditorFormRow>
     <wwEditorInputRow
-        v-for="(elem, index) in endpointBody"
+        v-for="(parameter, index) in endpointParameters"
         :key="index"
-        :label="elem.name"
-        :type="elem.type || 'string'"
+        :label="parameter.name"
+        type="query"
         placeholder="Enter a value"
         :bindable="collection.mode === 'dynamic'"
-        :binding-validation="elem.bindingValidation"
-        :required="elem.required"
-        :model-value="api.body[elem.name]"
-        @update:modelValue="setProp('body', { ...api.body, [elem.name]: $event })"
+        :binding-validation="parameter.bindingValidation"
+        :required="parameter.required"
+        :model-value="api.parameters[parameter.name]"
+        @update:modelValue="setProp('parameters', { ...api.parameters, [parameter.name]: $event })"
     />
+
     <wwEditorFormRow v-for="(key, index) in legacyEndpointBody" :key="index" :label="key">
         <template #append-label>
             <div class="flex items-center justify-end w-full body-3 text-red-500">
@@ -125,6 +114,19 @@
             @update:modelValue="setProp('body', { ...api.body, [key]: $event })"
         />
     </wwEditorFormRow>
+    <wwEditorInputRow
+        v-for="(elem, index) in endpointBody"
+        :key="index"
+        :label="elem.name"
+        :type="elem.type || 'string'"
+        placeholder="Enter a value"
+        :bindable="collection.mode === 'dynamic'"
+        :binding-validation="elem.bindingValidation"
+        :required="elem.required"
+        :model-value="api.body[elem.name]"
+        @update:modelValue="setProp('body', { ...api.body, [elem.name]: $event })"
+    />
+
     <wwLoader :loading="isLoading" />
 </template>
 
