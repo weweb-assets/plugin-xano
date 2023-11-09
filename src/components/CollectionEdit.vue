@@ -195,10 +195,12 @@ export default {
             return this.plugin.xanoManager.parseSpecEndpointBody(this.spec, this.api.endpoint);
         },
         legacyEndpointParameters() {
+            if (this.isLoading) return [];
             const fields = this.endpointParameters.map(field => field.name);
             return Object.keys(this.api.parameters).filter(key => !fields.includes(key));
         },
         legacyEndpointBody() {
+            if (this.isLoading) return [];
             const fields = this.endpointBody.map(field => field.name);
             return Object.keys(this.api.body).filter(key => !fields.includes(key));
         },

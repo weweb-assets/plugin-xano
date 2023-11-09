@@ -76,7 +76,7 @@
             />
         </template>
     </wwEditorInputRow>
-    <wwEditorFormRow v-for="(key, index) in legacyEndpointParameters" :key="key" :label="key">
+    <wwEditorFormRow v-for="(key, index) in legacyEndpointParameters" :key="'legacy_param_' + key" :label="key">
         <template #append-label>
             <div class="flex items-center justify-end w-full body-3 text-red-500">
                 This parameter doesn't exist anymore
@@ -93,7 +93,7 @@
     </wwEditorFormRow>
     <wwEditorInputRow
         v-for="(parameter, index) in endpointParameters"
-        :key="parameter.name"
+        :key="'param_' + parameter.name"
         :label="parameter.name"
         type="query"
         placeholder="Enter a value"
@@ -115,7 +115,7 @@
         placeholder="All body fields"
         @update:modelValue="setBodyFields"
     />
-    <wwEditorFormRow v-for="(key, index) in legacyEndpointBody" :key="key" :label="key">
+    <wwEditorFormRow v-for="(key, index) in legacyEndpointBody" :key="'legacy_body_' + key" :label="key">
         <template #append-label>
             <div class="flex items-center justify-end w-full body-3 text-red-500">
                 This field doesn't exist anymore
@@ -137,7 +137,7 @@
     </wwEditorFormRow>
     <wwEditorInputRow
         v-for="(elem, index) in endpointBodyFiltered"
-        :key="elem.name"
+        :key="'body_' + elem.name"
         :label="elem.name"
         :type="elem.type || 'string'"
         placeholder="Enter a value"
@@ -229,6 +229,7 @@ export default {
             return this.plugin.xanoManager.parseSpecEndpointParameters(this.spec, this.endpoint);
         },
         legacyEndpointParameters() {
+            if (this.isLoading) return [];
             const fields = this.endpointParameters.map(field => field.name);
             return Object.keys(this.parameters).filter(key => !fields.includes(key));
         },
@@ -241,6 +242,7 @@ export default {
             );
         },
         legacyEndpointBody() {
+            if (this.isLoading) return [];
             const fields = this.endpointBody.map(field => field.name);
             return Object.keys(this.body).filter(key => !fields.includes(key));
         },
@@ -274,6 +276,7 @@ export default {
                 bodyFields: [],
                 endpoint: { method, path },
             });
+            this.$nextTick(this.refreshBody);
         },
         setHeaders(headers) {
             this.$emit('update:args', { ...this.args, headers });
@@ -285,18 +288,8 @@ export default {
             this.$emit('update:args', { ...this.args, body });
         },
         setBodyFields(bodyFields) {
-            const body = { ...this.body };
-
-            for (const bodyKey in body) {
-                if (!bodyFields.includes(bodyKey)) {
-                    delete body[bodyKey];
-                }
-            }
-            for (const field of bodyFields) {
-                body[field] = body[field] ?? null;
-            }
-
-            this.$emit('update:args', { ...this.args, bodyFields, body });
+            this.$emit('update:args', { ...this.args, bodyFields });
+            this.$nextTick(this.refreshBody);
         },
         setDataType(dataType) {
             this.$emit('update:args', { ...this.args, dataType });
@@ -315,6 +308,21 @@ export default {
             }
             const bodyFields = this.bodyFields.filter(field => !keys.includes(field));
             this.$emit('update:args', { ...this.args, body, bodyFields });
+        },
+        refreshBody() {
+            const body = { ...this.body };
+            const fields = [...this.legacyEndpointBody, ...this.endpointBodyFiltered.map(field => field.name)];
+
+            for (const bodyKey in body) {
+                if (!fields.includes(bodyKey)) {
+                    delete body[bodyKey];
+                }
+            }
+            for (const field of fields) {
+                body[field] = body[field] ?? null;
+            }
+
+            this.$emit('update:args', { ...this.args, body });
         },
         async refreshManager() {
             try {
