@@ -276,6 +276,7 @@ export default {
                 bodyFields: [],
                 endpoint: { method, path },
             });
+            this.nextTick(() => this.setBody({}));
         },
         setHeaders(headers) {
             this.$emit('update:args', { ...this.args, headers });
@@ -284,10 +285,11 @@ export default {
             this.$emit('update:args', { ...this.args, parameters });
         },
         setBody(body) {
-            this.$emit('update:args', { ...this.args, body });
+            this.$emit('update:args', { ...this.args, body: this.sanitizeBody(body, this.bodyFields) });
         },
         setBodyFields(bodyFields) {
-            this.$emit('update:args', { ...this.args, bodyFields });
+            const body = this.sanitizeBody({ ...this.body }, bodyFields);
+            this.$emit('update:args', { ...this.args, bodyFields, body });
         },
         setDataType(dataType) {
             this.$emit('update:args', { ...this.args, dataType });
