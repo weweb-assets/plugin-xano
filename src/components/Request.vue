@@ -269,10 +269,15 @@ export default {
         },
         setEndpoint(endpoint) {
             const [method, path] = endpoint.split(/-(.+)/);
+            // build initial body
+            const body = this.sanitizeBody(
+                { ...this.body },
+                this.plugin.xanoManager.parseSpecEndpointBody(this.spec, this.endpoint).map(field => field.name)
+            );
             this.$emit('update:args', {
                 ...this.args,
                 parameters: {},
-                body: {},
+                body,
                 bodyFields: [],
                 endpoint: { method, path },
             });
@@ -287,8 +292,8 @@ export default {
             this.$emit('update:args', { ...this.args, body });
         },
         setBodyFields(bodyFields) {
-            this.$emit('update:args', { ...this.args, bodyFields });
-            this.$nextTick(() => this.refreshBody());
+            const body = this.sanitizeBody({ ...this.body }, [...bodyFields, ...this.legacyEndpointBody]);
+            this.$emit('update:args', { ...this.args, bodyFields, body });
         },
         setDataType(dataType) {
             this.$emit('update:args', { ...this.args, dataType });
@@ -308,10 +313,7 @@ export default {
             const bodyFields = this.bodyFields.filter(field => !keys.includes(field));
             this.$emit('update:args', { ...this.args, body, bodyFields });
         },
-        refreshBody() {
-            const body = { ...this.body };
-            const fields = [...this.legacyEndpointBody, ...this.endpointBodyFiltered.map(field => field.name)];
-
+        sanitizeBody(body, fields) {
             for (const bodyKey in body) {
                 if (!fields.includes(bodyKey)) {
                     delete body[bodyKey];
@@ -321,7 +323,7 @@ export default {
                 body[field] = body[field] || null;
             }
 
-            this.$emit('update:args', { ...this.args, body });
+            return body;
         },
         async refreshManager() {
             try {
