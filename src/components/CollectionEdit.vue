@@ -66,7 +66,7 @@
             />
         </template>
     </wwEditorInputRow>
-    <wwEditorFormRow v-for="(key, index) in legacyEndpointParameters" :key="index" :label="key">
+    <wwEditorFormRow v-for="(key, index) in legacyParameters" :key="index" :label="key">
         <template #append-label>
             <div class="flex items-center justify-end w-full body-3 text-red-500">
                 This parameter doesn't exist anymore
@@ -94,7 +94,7 @@
         @update:modelValue="setProp('parameters', { ...api.parameters, [parameter.name]: $event })"
     />
 
-    <wwEditorFormRow v-for="(key, index) in legacyEndpointBody" :key="index" :label="key">
+    <wwEditorFormRow v-for="(key, index) in legacyBody" :key="index" :label="key">
         <template #append-label>
             <div class="flex items-center justify-end w-full body-3 text-red-500">
                 This field doesn't exist anymore
@@ -194,12 +194,12 @@ export default {
         endpointBody() {
             return this.plugin.xanoManager.parseSpecEndpointBody(this.spec, this.api.endpoint);
         },
-        legacyEndpointParameters() {
+        legacyParameters() {
             if (this.isLoading) return [];
             const fields = this.endpointParameters.map(field => field.name);
             return Object.keys(this.api.parameters).filter(key => !fields.includes(key));
         },
-        legacyEndpointBody() {
+        legacyBody() {
             if (this.isLoading) return [];
             const fields = this.endpointBody.map(field => field.name);
             return Object.keys(this.api.body).filter(key => !fields.includes(key));

@@ -285,11 +285,11 @@ export default {
             this.$emit('update:args', { ...this.args, parameters });
         },
         setBody(body) {
-            this.$emit('update:args', { ...this.args, body: this.sanitizeBody(body, this.bodyFields) });
+            this.$emit('update:args', { ...this.args, body: this.sanitizeBody({ ...body }) });
         },
         setBodyFields(bodyFields) {
-            const body = this.sanitizeBody({ ...this.body }, bodyFields);
-            this.$emit('update:args', { ...this.args, bodyFields, body });
+            this.$emit('update:args', { ...this.args, bodyFields });
+            this.nextTick(() => this.setBody(this.body));
         },
         setDataType(dataType) {
             this.$emit('update:args', { ...this.args, dataType });
@@ -309,7 +309,8 @@ export default {
             const bodyFields = this.bodyFields.filter(field => !keys.includes(field));
             this.$emit('update:args', { ...this.args, body, bodyFields });
         },
-        sanitizeBody(body, fields) {
+        sanitizeBody(body) {
+            const fields = [...this.endpointBodyFiltered.map(f => f.name), ...this.legecyBody];
             for (const bodyKey in body) {
                 if (!fields.includes(bodyKey)) {
                     delete body[bodyKey];
