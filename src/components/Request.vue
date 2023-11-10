@@ -76,7 +76,7 @@
             />
         </template>
     </wwEditorInputRow>
-    <wwEditorFormRow v-for="(key, index) in legacyEndpointParameters" :key="'legacy_param_' + key" :label="key">
+    <wwEditorFormRow v-for="(key, index) in legacyParameters" :key="'legacy_param_' + key" :label="key">
         <template #append-label>
             <div class="flex items-center justify-end w-full body-3 text-red-500">
                 This parameter doesn't exist anymore
@@ -115,7 +115,7 @@
         placeholder="All body fields"
         @update:modelValue="setBodyFields"
     />
-    <wwEditorFormRow v-for="(key, index) in legacyEndpointBody" :key="'legacy_body_' + key" :label="key">
+    <wwEditorFormRow v-for="(key, index) in legacyBody" :key="'legacy_body_' + key" :label="key">
         <template #append-label>
             <div class="flex items-center justify-end w-full body-3 text-red-500">
                 This field doesn't exist anymore
@@ -228,7 +228,7 @@ export default {
         endpointParameters() {
             return this.plugin.xanoManager.parseSpecEndpointParameters(this.spec, this.endpoint);
         },
-        legacyEndpointParameters() {
+        legacyParameters() {
             if (this.isLoading) return [];
             const fields = this.endpointParameters.map(field => field.name);
             return Object.keys(this.parameters).filter(key => !fields.includes(key));
@@ -241,7 +241,7 @@ export default {
                 item => !this.bodyFields || !this.bodyFields.length || this.bodyFields.includes(item.name)
             );
         },
-        legacyEndpointBody() {
+        legacyBody() {
             if (this.isLoading) return [];
             const fields = this.endpointBody.map(field => field.name);
             return Object.keys(this.body).filter(key => !fields.includes(key));
@@ -269,15 +269,10 @@ export default {
         },
         setEndpoint(endpoint) {
             const [method, path] = endpoint.split(/-(.+)/);
-            // build initial body
-            const body = this.sanitizeBody(
-                { ...this.body },
-                this.plugin.xanoManager.parseSpecEndpointBody(this.spec, this.endpoint).map(field => field.name)
-            );
             this.$emit('update:args', {
                 ...this.args,
                 parameters: {},
-                body,
+                body: {},
                 bodyFields: [],
                 endpoint: { method, path },
             });
@@ -292,8 +287,7 @@ export default {
             this.$emit('update:args', { ...this.args, body });
         },
         setBodyFields(bodyFields) {
-            const body = this.sanitizeBody({ ...this.body }, [...bodyFields, ...this.legacyEndpointBody]);
-            this.$emit('update:args', { ...this.args, bodyFields, body });
+            this.$emit('update:args', { ...this.args, bodyFields });
         },
         setDataType(dataType) {
             this.$emit('update:args', { ...this.args, dataType });
