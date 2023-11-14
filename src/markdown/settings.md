@@ -2,12 +2,15 @@
 
 ## Configuration
 
-To start working with Xano data in WeWeb, we invite you to:
+To start working with Xano data in WeWeb, we invite you to paste your [Xano personal access token](https://docs.xano.com/metadata-api):
 
-- paste your [Xano Metadata API key](https://docs.xano.com/metadata-api):
+![Xano access token vs key ID](https://docs.weweb.io/assets/xano-access-token-c78fc45c.png)
+
+You will then be able to:
 - select the Xano instance you want to connect
 - add the custom domain of your instance (if you have one)
 - select the workspace you want to connect
+
 
 ## Advanced settings
 
