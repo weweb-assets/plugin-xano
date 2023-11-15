@@ -66,6 +66,21 @@
             />
         </template>
     </wwEditorInputRow>
+    <wwEditorFormRow v-for="(key, index) in legacyParameters" :key="index" :label="key">
+        <template #append-label>
+            <div class="flex items-center justify-end w-full body-3 text-red-500">
+                This parameter doesn't exist anymore
+                <button
+                    type="button"
+                    class="ww-editor-button -icon -small -tertiary -red ml-1"
+                    @click="removeParam([key])"
+                >
+                    <wwEditorIcon small name="trash" />
+                </button>
+            </div>
+        </template>
+        <wwEditorInputRow type="query" bindable :model-value="api.parameters[key]" />
+    </wwEditorFormRow>
     <wwEditorInputRow
         v-for="(parameter, index) in endpointParameters"
         :key="index"
@@ -78,6 +93,27 @@
         :model-value="api.parameters[parameter.name]"
         @update:modelValue="setProp('parameters', { ...api.parameters, [parameter.name]: $event })"
     />
+
+    <wwEditorFormRow v-for="(key, index) in legacyBody" :key="index" :label="key">
+        <template #append-label>
+            <div class="flex items-center justify-end w-full body-3 text-red-500">
+                This field doesn't exist anymore
+                <button
+                    type="button"
+                    class="ww-editor-button -icon -small -tertiary -red ml-1"
+                    @click="removeBody([key])"
+                >
+                    <wwEditorIcon small name="trash" />
+                </button>
+            </div>
+        </template>
+        <wwEditorInputRow
+            type="query"
+            bindable
+            :model-value="api.body[key]"
+            @update:modelValue="setProp('body', { ...api.body, [key]: $event })"
+        />
+    </wwEditorFormRow>
     <wwEditorInputRow
         v-for="(elem, index) in endpointBody"
         :key="index"
@@ -90,6 +126,7 @@
         :model-value="api.body[elem.name]"
         @update:modelValue="setProp('body', { ...api.body, [elem.name]: $event })"
     />
+
     <wwLoader :loading="isLoading" />
 </template>
 
@@ -157,6 +194,16 @@ export default {
         endpointBody() {
             return this.plugin.xanoManager.parseSpecEndpointBody(this.spec, this.api.endpoint);
         },
+        legacyParameters() {
+            if (this.isLoading) return [];
+            const fields = this.endpointParameters.map(field => field.name);
+            return Object.keys(this.api.parameters).filter(key => !fields.includes(key));
+        },
+        legacyBody() {
+            if (this.isLoading) return [];
+            const fields = this.endpointBody.map(field => field.name);
+            return Object.keys(this.api.body).filter(key => !fields.includes(key));
+        },
     },
     watch: {
         apiGroupUrl() {
@@ -170,6 +217,20 @@ export default {
         setEndpoint(endpoint) {
             const [method, path] = endpoint.split(/-(.+)/);
             this.setProp('endpoint', { method, path });
+        },
+        removeParam(keys) {
+            const parameters = { ...this.api.parameters };
+            for (const key of keys) {
+                delete parameters[key];
+            }
+            this.setProp('parameters', parameters);
+        },
+        removeBody(keys) {
+            const body = { ...this.api.body };
+            for (const key of keys) {
+                delete body[key];
+            }
+            this.setProp('body', body);
         },
         async refreshManager() {
             try {

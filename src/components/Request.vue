@@ -76,9 +76,24 @@
             />
         </template>
     </wwEditorInputRow>
+    <wwEditorFormRow v-for="(key, index) in legacyParameters" :key="'legacy_param_' + key" :label="key">
+        <template #append-label>
+            <div class="flex items-center justify-end w-full body-3 text-red-500">
+                This parameter doesn't exist anymore
+                <button
+                    type="button"
+                    class="ww-editor-button -icon -small -tertiary -red ml-1"
+                    @click="removeParam([key])"
+                >
+                    <wwEditorIcon small name="trash" />
+                </button>
+            </div>
+        </template>
+        <wwEditorInputRow type="query" bindable :model-value="parameters[key]" />
+    </wwEditorFormRow>
     <wwEditorInputRow
         v-for="(parameter, index) in endpointParameters"
-        :key="index"
+        :key="'param_' + parameter.name"
         :label="parameter.name"
         type="query"
         placeholder="Enter a value"
@@ -88,6 +103,7 @@
         :model-value="parameters[parameter.name]"
         @update:modelValue="setParameters({ ...parameters, [parameter.name]: $event })"
     />
+
     <wwEditorInputRow
         v-if="endpointBody.length"
         label="Body fields"
@@ -99,9 +115,29 @@
         placeholder="All body fields"
         @update:modelValue="setBodyFields"
     />
+    <wwEditorFormRow v-for="(key, index) in legacyBody" :key="'legacy_body_' + key" :label="key">
+        <template #append-label>
+            <div class="flex items-center justify-end w-full body-3 text-red-500">
+                This field doesn't exist anymore
+                <button
+                    type="button"
+                    class="ww-editor-button -icon -small -tertiary -red ml-1"
+                    @click="removeBody([key])"
+                >
+                    <wwEditorIcon small name="trash" />
+                </button>
+            </div>
+        </template>
+        <wwEditorInputRow
+            type="query"
+            bindable
+            :model-value="body[key]"
+            @update:modelValue="setBody({ ...body, [key]: $event })"
+        />
+    </wwEditorFormRow>
     <wwEditorInputRow
         v-for="(elem, index) in endpointBodyFiltered"
-        :key="index"
+        :key="'body_' + elem.name"
         :label="elem.name"
         :type="elem.type || 'string'"
         placeholder="Enter a value"
@@ -111,6 +147,7 @@
         :model-value="body[elem.name]"
         @update:modelValue="setBody({ ...body, [elem.name]: $event })"
     />
+
     <wwLoader :loading="isLoading" />
 </template>
 
@@ -174,7 +211,7 @@ export default {
             return this.args.parameters || {};
         },
         bodyFields() {
-            return this.args.bodyFields;
+            return this.args.bodyFields || [];
         },
         body() {
             return this.args.body || {};
@@ -191,6 +228,11 @@ export default {
         endpointParameters() {
             return this.plugin.xanoManager.parseSpecEndpointParameters(this.spec, this.endpoint);
         },
+        legacyParameters() {
+            if (this.isLoading) return [];
+            const fields = this.endpointParameters.map(field => field.name);
+            return Object.keys(this.parameters).filter(key => !fields.includes(key));
+        },
         endpointBody() {
             return this.plugin.xanoManager.parseSpecEndpointBody(this.spec, this.endpoint);
         },
@@ -198,6 +240,11 @@ export default {
             return this.endpointBody.filter(
                 item => !this.bodyFields || !this.bodyFields.length || this.bodyFields.includes(item.name)
             );
+        },
+        legacyBody() {
+            if (this.isLoading) return [];
+            const fields = this.endpointBody.map(field => field.name);
+            return Object.keys(this.body).filter(key => !fields.includes(key));
         },
         bodyFieldOptions() {
             return this.endpointBody.map(item => ({ label: item.name, value: item.name }));
@@ -229,6 +276,7 @@ export default {
                 bodyFields: [],
                 endpoint: { method, path },
             });
+            this.$nextTick(() => this.setBody({}));
         },
         setHeaders(headers) {
             this.$emit('update:args', { ...this.args, headers });
@@ -237,22 +285,42 @@ export default {
             this.$emit('update:args', { ...this.args, parameters });
         },
         setBody(body) {
-            for (const bodyKey in body) {
-                if (!this.endpointBodyFiltered.find(field => field.name === bodyKey)) {
-                    delete body[bodyKey];
-                }
-            }
-            for (const field of this.endpointBodyFiltered) {
-                body[field.name] = body[field.name] || null;
-            }
-            this.$emit('update:args', { ...this.args, body });
+            this.$emit('update:args', { ...this.args, body: this.sanitizeBody({ ...body }) });
         },
         setBodyFields(bodyFields) {
             this.$emit('update:args', { ...this.args, bodyFields });
-            this.$nextTick(() => this.setBody({ ...this.body }));
+            this.$nextTick(() => this.setBody(this.body));
         },
         setDataType(dataType) {
             this.$emit('update:args', { ...this.args, dataType });
+        },
+        removeParam(keys) {
+            const parameters = { ...this.parameters };
+            for (const key of keys) {
+                delete parameters[key];
+            }
+            this.setParameters({ ...parameters });
+        },
+        removeBody(keys) {
+            const body = { ...this.body };
+            for (const key of keys) {
+                delete body[key];
+            }
+            const bodyFields = this.bodyFields.filter(field => !keys.includes(field));
+            this.$emit('update:args', { ...this.args, body, bodyFields });
+        },
+        sanitizeBody(body) {
+            const fields = [...this.endpointBodyFiltered.map(f => f.name), ...this.legacyBody];
+            for (const bodyKey in body) {
+                if (!fields.includes(bodyKey)) {
+                    delete body[bodyKey];
+                }
+            }
+            for (const field of fields) {
+                body[field] = body[field] || null;
+            }
+
+            return body;
         },
         async refreshManager() {
             try {
