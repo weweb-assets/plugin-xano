@@ -2,4 +2,5 @@
 
 This plugin will let you:
 
--   Add a collection
+-   Add a collection with Xano data
+-   Create, update, delete records in Xano
