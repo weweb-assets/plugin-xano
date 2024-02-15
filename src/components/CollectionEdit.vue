@@ -1,44 +1,40 @@
 <template>
-    <div class="flex items-center">
-        <wwEditorFormRow label="Api group" required class="-full">
-            <div class="flex items-center">
-                <wwEditorInput
-                    type="select"
-                    placeholder="Select an api group"
-                    required
-                    :model-value="api.apiGroupUrl"
-                    :options="apiGroupsOptions"
-                    @update:modelValue="setProp('apiGroupUrl', $event)"
-                />
-                <button type="button" class="ww-editor-button -primary -small -icon m-left" @click="refreshManager">
-                    <wwEditorIcon name="refresh" medium />
-                </button>
-            </div>
-        </wwEditorFormRow>
-    </div>
-    <div class="flex items-center">
-        <wwEditorFormRow label="Endpoint" required class="-full">
-            <div class="flex items-center">
-                <wwEditorInput
-                    type="select"
-                    full
-                    placeholder="Select an endpoint"
-                    required
-                    :model-value="endpointValue"
-                    :options="endpointsOptions"
-                    @update:modelValue="setEndpoint"
-                />
-                <button
-                    type="button"
-                    class="ww-editor-button -primary -small -icon m-left"
-                    @click="refreshSpec"
-                    :disabled="!api.apiGroupUrl"
-                >
-                    <wwEditorIcon name="refresh" medium />
-                </button>
-            </div>
-        </wwEditorFormRow>
-    </div>
+    <wwEditorFormRow label="Api group" required class="-full">
+        <div class="flex items-center">
+            <wwEditorInput
+                type="select"
+                placeholder="Select an api group"
+                required
+                :model-value="api.apiGroupUrl"
+                :options="apiGroupsOptions"
+                @update:modelValue="setProp('apiGroupUrl', $event)"
+            />
+            <button type="button" class="ww-editor-button -primary -small -icon m-left" @click="refreshManager">
+                <wwEditorIcon name="refresh" medium />
+            </button>
+        </div>
+    </wwEditorFormRow>
+    <wwEditorFormRow label="Endpoint" required class="-full">
+        <div class="flex items-center">
+            <wwEditorInput
+                type="select"
+                full
+                placeholder="Select an endpoint"
+                required
+                :model-value="endpointValue"
+                :options="endpointsOptions"
+                @update:modelValue="setEndpoint"
+            />
+            <button
+                type="button"
+                class="ww-editor-button -primary -small -icon m-left"
+                @click="refreshSpec"
+                :disabled="!api.apiGroupUrl"
+            >
+                <wwEditorIcon name="refresh" medium />
+            </button>
+        </div>
+    </wwEditorFormRow>
     <wwEditorInputRow
         label="Headers"
         type="array"
