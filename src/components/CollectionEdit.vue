@@ -9,7 +9,7 @@
                 :options="apiGroupsOptions"
                 @update:modelValue="setProp('apiGroupUrl', $event)"
             />
-            <button type="button" class="ww-editor-button -primary -small -icon m-left" @click="refreshManager">
+            <button type="button" class="ww-editor-button -primary -small -icon ml-2" @click="refreshManager">
                 <wwEditorIcon name="refresh" medium />
             </button>
         </div>
@@ -27,7 +27,7 @@
             />
             <button
                 type="button"
-                class="ww-editor-button -primary -small -icon m-left"
+                class="ww-editor-button -primary -small -icon ml-2"
                 @click="refreshSpec"
                 :disabled="!api.apiGroupUrl"
             >
