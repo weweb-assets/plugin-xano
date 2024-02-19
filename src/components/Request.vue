@@ -12,8 +12,8 @@
     </div>
     <wwEditorFormRow label="Api group" required class="-full">
         <div class="flex items-center">
-            <wwEditorInput
-                type="select"
+            <wwEditorInputTextSelect
+                class="w-100"
                 placeholder="Select an api group"
                 required
                 :model-value="apiGroupUrl"
@@ -27,8 +27,8 @@
     </wwEditorFormRow>
     <wwEditorFormRow label="Endpoint" required class="-full">
         <div class="flex items-center">
-            <wwEditorInput
-                type="select"
+            <wwEditorInputTextSelect
+                class="w-100"
                 placeholder="Select an endpoint"
                 required
                 :model-value="endpointValue"
