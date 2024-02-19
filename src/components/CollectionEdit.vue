@@ -1,8 +1,8 @@
 <template>
     <wwEditorFormRow label="Api group" required class="-full">
         <div class="flex items-center">
-            <wwEditorInput
-                type="select"
+            <wwEditorInputTextSelect
+                class="w-100"
                 placeholder="Select an api group"
                 required
                 :model-value="api.apiGroupUrl"
@@ -16,9 +16,8 @@
     </wwEditorFormRow>
     <wwEditorFormRow label="Endpoint" required class="-full">
         <div class="flex items-center">
-            <wwEditorInput
-                type="select"
-                full
+            <wwEditorInputTextSelect
+                class="w-100"
                 placeholder="Select an endpoint"
                 required
                 :model-value="endpointValue"
