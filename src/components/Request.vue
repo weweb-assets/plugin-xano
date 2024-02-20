@@ -10,43 +10,41 @@
             </wwEditorFormRow>
         </div>
     </div>
-    <div class="flex items-center">
-        <div class="w-100 -full">
-            <wwEditorInputRow
-                label="Api group"
-                type="select"
+    <wwEditorFormRow label="Api group" required class="-full">
+        <div class="flex items-center">
+            <wwEditorInputTextSelect
+                class="w-100"
                 placeholder="Select an api group"
                 required
                 :model-value="apiGroupUrl"
                 :options="apiGroupsOptions"
                 @update:modelValue="setApiGroupUrl"
             />
+            <button type="button" class="ww-editor-button -primary -small -icon ml-2" @click="refreshManager">
+                <wwEditorIcon name="refresh" medium />
+            </button>
         </div>
-        <button type="button" class="ww-editor-button -small -primary ml-2 mt-3" @click="refreshManager">
-            refresh
-        </button>
-    </div>
-    <div class="flex items-center">
-        <div class="w-100 -full">
-            <wwEditorInputRow
-                label="Endpoint"
-                type="select"
+    </wwEditorFormRow>
+    <wwEditorFormRow label="Endpoint" required class="-full">
+        <div class="flex items-center">
+            <wwEditorInputTextSelect
+                class="w-100"
                 placeholder="Select an endpoint"
                 required
                 :model-value="endpointValue"
                 :options="endpointsOptions"
                 @update:modelValue="setEndpoint"
             />
+            <button
+                type="button"
+                class="ww-editor-button -primary -small -icon ml-2"
+                @click="refreshSpec"
+                :disabled="!apiGroupUrl"
+            >
+                <wwEditorIcon name="refresh" medium />
+            </button>
         </div>
-        <button
-            type="button"
-            class="ww-editor-button -small -primary ml-2 mt-3"
-            @click="refreshSpec"
-            :disabled="!apiGroupUrl"
-        >
-            refresh
-        </button>
-    </div>
+    </wwEditorFormRow>
     <wwEditorInputRow
         label="Headers"
         type="array"
