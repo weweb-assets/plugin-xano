@@ -10,7 +10,7 @@
             </wwEditorFormRow>
         </div>
     </div>
-    <wwEditorFormRow label="Api group" required class="-full">
+    <wwEditorFormRow label="Api group" required>
         <div class="flex items-center">
             <wwEditorInputTextSelect
                 class="w-100"
@@ -25,7 +25,7 @@
             </button>
         </div>
     </wwEditorFormRow>
-    <wwEditorFormRow label="Endpoint" required class="-full">
+    <wwEditorFormRow label="Endpoint" required>
         <div class="flex items-center">
             <wwEditorInputTextSelect
                 class="w-100"
