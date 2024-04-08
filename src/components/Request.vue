@@ -76,7 +76,7 @@
     </wwEditorInputRow>
     <wwEditorFormRow>
         <div class="flex items-center">
-            <wwEditorInputSwitch :model-value="isWithCredentials" @update:modelValue="setIsWithCredentials" />
+            <wwEditorInputSwitch :model-value="withCredentials" @update:modelValue="setWithCredentials" />
             <div class="body-2 ml-2">Send credentials (cookies)</div>
             <wwEditorQuestionMark
                 tooltip-position="top-left"
@@ -216,8 +216,8 @@ export default {
         headers() {
             return this.args.headers || [];
         },
-        isWithCredentials() {
-            return this.args.isWithCredentials || false;
+        withCredentials() {
+            return this.args.withCredentials || false;
         },
         parameters() {
             return this.args.parameters || {};
@@ -306,8 +306,8 @@ export default {
         setDataType(dataType) {
             this.$emit('update:args', { ...this.args, dataType });
         },
-        setIsWithCredentials(isWithCredentials) {
-            this.$emit('update:args', { ...this.args, isWithCredentials });
+        setWithCredentials(withCredentials) {
+            this.$emit('update:args', { ...this.args, withCredentials });
         },
         removeParam(keys) {
             const parameters = { ...this.parameters };

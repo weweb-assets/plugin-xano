@@ -75,7 +75,7 @@ export default {
     /*=============================================m_ÔÔ_m=============================================\
         Xano API
     \================================================================================================*/
-    async request({ apiGroupUrl, endpoint, headers, isWithCredentials, parameters, body, dataType }, wwUtils) {
+    async request({ apiGroupUrl, endpoint, headers, withCredentials, parameters, body, dataType }, wwUtils) {
         const authToken = wwLib.wwPlugins.xanoAuth && wwLib.wwPlugins.xanoAuth.accessToken;
 
         let url = endpoint.path;
@@ -93,7 +93,7 @@ export default {
             params: parameters,
             data: body,
             headers: buildXanoHeaders({ authToken, dataType }, headers),
-            withCredentials: isWithCredentials,
+            withCredentials: this.settings.publicData.withCredentials || withCredentials,
         });
     },
     // Ensure everything use the same base domain

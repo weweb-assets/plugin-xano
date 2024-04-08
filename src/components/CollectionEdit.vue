@@ -66,8 +66,8 @@
     <wwEditorFormRow>
         <div class="flex items-center">
             <wwEditorInputSwitch
-                :model-value="api.isWithCredentials"
-                @update:modelValue="setProp('isWithCredentials', $event)"
+                :model-value="api.withCredentials"
+                @update:modelValue="setProp('withCredentials', $event)"
             />
             <div class="body-2 ml-2">Send credentials (cookies)</div>
             <wwEditorQuestionMark
@@ -180,7 +180,7 @@ export default {
             return {
                 endpoint: null,
                 headers: [],
-                isWithCredentials: false,
+                withCredentials: false,
                 parameters: {},
                 body: {},
                 ...this.config,
