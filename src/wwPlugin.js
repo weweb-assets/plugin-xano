@@ -75,13 +75,16 @@ export default {
     /*=============================================m_ÔÔ_m=============================================\
         Xano API
     \================================================================================================*/
-    async request({ apiGroupUrl, endpoint, headers, parameters, body, dataType }, wwUtils) {
+    async request({ apiGroupUrl, endpoint, headers, withCredentials, parameters, body, dataType }, wwUtils) {
         const authToken = wwLib.wwPlugins.xanoAuth && wwLib.wwPlugins.xanoAuth.accessToken;
 
         let url = endpoint.path;
         for (const key in parameters) url = url.replace(`{${key}}`, parameters[key]);
 
-        wwUtils?.log('info', `[Xano] Requesting ${endpoint.method.toUpperCase()} - ${url}`,  { type: 'request', preview: body });
+        wwUtils?.log('info', `[Xano] Requesting ${endpoint.method.toUpperCase()} - ${url}`, {
+            type: 'request',
+            preview: body,
+        });
 
         return await axios({
             method: endpoint.method,
@@ -90,6 +93,7 @@ export default {
             params: parameters,
             data: body,
             headers: buildXanoHeaders({ authToken, dataType }, headers),
+            withCredentials: this.settings.publicData.withCredentials || withCredentials,
         });
     },
     // Ensure everything use the same base domain
