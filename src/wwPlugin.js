@@ -20,7 +20,7 @@ export default {
     /*=============================================m_ÔÔ_m=============================================\
         Plugin API
     \================================================================================================*/
-    async onLoad(settings) {
+    async _onLoad(settings) {
         /* wwEditor:start */
         await this.initManager(settings);
         /* wwEditor:end */
