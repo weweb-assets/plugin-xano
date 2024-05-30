@@ -8,15 +8,6 @@
         :model-value="channel"
         @update:modelValue="setChannel"
     />
-    <wwEditorInputRow
-        type="query"
-        label="Message"
-        placeholder="Message"
-        bindable
-        small
-        :model-value="message"
-        @update:modelValue="setMessage"
-    />
 </template>
 
 <script>
@@ -30,16 +21,10 @@ export default {
         channel() {
             return this.args.channel || [];
         },
-        message() {
-            return this.args.message || [];
-        },
     },
     methods: {
         setChannel(channel) {
             this.$emit('update:args', { ...this.args, channel });
-        },
-        setMessage(message) {
-            this.$emit('update:args', { ...this.args, message });
         },
     },
 };

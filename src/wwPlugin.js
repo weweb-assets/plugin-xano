@@ -22,6 +22,7 @@ import { XanoClient } from '@xano/js-sdk';
 export default {
     xanoManager: null,
     xanoClient: null,
+    channels: {},
     /*=============================================m_ÔÔ_m=============================================\
         Plugin API
     \================================================================================================*/
@@ -30,7 +31,7 @@ export default {
         await this.initManager(settings);
         /* wwEditor:end */
         this.xanoClient = new XanoClient({
-            instanceBaseUrl: settings.publicData.customDomain || settings.publicData.domain,
+            instanceBaseUrl: 'https://' + (settings.publicData.customDomain || settings.publicData.domain),
             realtimeConnectionHash: settings.publicData.realtimeConnectionHash,
         });
     },
@@ -108,7 +109,7 @@ export default {
     listenChannel({ channel }) {
         this.channels[channel] = this.xanoClient.channel(channel);
         this.channels[channel].on(action => {
-            wwLib.wwApp.executeTrigger(this.id + 'realtime', { channel, action });
+            wwLib.executeTrigger(this.id + '-realtime', { channel, action });
         });
     },
     sendChannel({ channel, message }) {
