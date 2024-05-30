@@ -17,7 +17,7 @@ import DevApi from './api/developer.class';
 import MetaApi from './api/metadata.class';
 /* wwEditor:end */
 
-import { XanoClient } from 'xano';
+import { XanoClient } from '@xano/js-sdk';
 
 export default {
     xanoManager: null,

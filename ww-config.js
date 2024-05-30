@@ -52,7 +52,7 @@ export default {
     },
     triggers: [
         {
-            name: 'On realtime event',
+            label: 'On realtime event',
             value: 'realtime',
         },
     ],
