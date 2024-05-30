@@ -50,6 +50,12 @@ export default {
             },
         },
     },
+    triggers: [
+        {
+            name: 'On realtime event',
+            value: 'realtime',
+        },
+    ],
     actions: [
         {
             name: 'Request',
@@ -63,6 +69,22 @@ export default {
             isAsync: true,
             /* wwEditor:start */
             edit: () => import('./src/components/Request.vue'),
+            /* wwEditor:end */
+        },
+        {
+            name: 'Realtime | Start listening channel',
+            code: 'listenChannel',
+            parameters: [{ name: 'channel' }],
+            /* wwEditor:start */
+            edit: () => import('./src/components/ListenChannel.vue'),
+            /* wwEditor:end */
+        },
+        {
+            name: 'Realtime | Send channel event',
+            code: 'sendChannel',
+            parameters: [{ name: 'channel' }, { name: 'event' }],
+            /* wwEditor:start */
+            edit: () => import('./src/components/SendChannel.vue'),
             /* wwEditor:end */
         },
     ],

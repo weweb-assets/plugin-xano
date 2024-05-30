@@ -10,13 +10,18 @@ import './components/Branching/SettingsSummary.vue';
 import './components/GlobalHeaders/SettingsEdit.vue';
 import './components/GlobalHeaders/SettingsSummary.vue';
 import './components/Request.vue';
+import './components/ListenChannel.vue';
+import './components/SendChannel.vue';
 
 import DevApi from './api/developer.class';
 import MetaApi from './api/metadata.class';
 /* wwEditor:end */
 
+import { XanoClient } from 'xano';
+
 export default {
     xanoManager: null,
+    xanoClient: null,
     /*=============================================m_ÔÔ_m=============================================\
         Plugin API
     \================================================================================================*/
@@ -24,6 +29,10 @@ export default {
         /* wwEditor:start */
         await this.initManager(settings);
         /* wwEditor:end */
+        this.xanoClient = new XanoClient({
+            instanceBaseUrl: settings.publicData.customDomain || settings.publicData.domain,
+            realtimeConnectionHash: settings.publicData.realtimeConnectionHash,
+        });
     },
     /*=============================================m_ÔÔ_m=============================================\
         Editor API
@@ -95,6 +104,16 @@ export default {
             headers: buildXanoHeaders({ authToken, dataType }, headers),
             withCredentials: this.settings.publicData.withCredentials || withCredentials,
         });
+    },
+    listenChannel({ channel }) {
+        this.channels[channel] = this.xanoClient.channel(channel);
+        this.channels[channel].on(action => {
+            wwLib.wwApp.executeTrigger(this.id + 'realtime', { channel, action });
+        });
+    },
+    sendChannel({ channel, message }) {
+        if (!this.channels[channel]) throw new Error(`Channel ${channel} is not registered.`);
+        this.channels[channel].message(message);
     },
     // Ensure everything use the same base domain
     resolveUrl(url) {

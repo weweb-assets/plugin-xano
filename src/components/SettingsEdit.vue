@@ -76,6 +76,12 @@
             :options="workspacesOptions"
             @update:modelValue="changeWorkspace"
         />
+        <wwEditorInputRow
+            label="Realtime connection hash"
+            type="query"
+            :model-value="settings.publicData.realtimeConnectionHash"
+            @update:modelValue="setRealtimeConnectionHash"
+        />
     </div>
     <wwLoader :loading="isLoading" />
 </template>
@@ -207,6 +213,12 @@ export default {
             this.$emit('update:settings', {
                 ...this.settings,
                 publicData: { ...this.settings.publicData, customDomain: value },
+            });
+        },
+        setRealtimeConnectionHash(value) {
+            this.$emit('update:settings', {
+                ...this.settings,
+                publicData: { ...this.settings.publicData, realtimeConnectionHash: value },
             });
         },
     },
