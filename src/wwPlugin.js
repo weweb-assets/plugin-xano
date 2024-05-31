@@ -106,9 +106,11 @@ export default {
             withCredentials: this.settings.publicData.withCredentials || withCredentials,
         });
     },
-    openRealtimeChannel({ channel, presence = false }) {
+    openRealtimeChannel({ channel, presence = false, history = false, queueOfflineActions = true }) {
         this.channels[channel] = this.xanoClient.channel(channel, {
-            presence: true,
+            presence,
+            history,
+            queueOfflineActions,
         });
         this.channels[channel].on(
             event => {
