@@ -80,7 +80,7 @@ export default {
         {
             name: 'Realtime | Open channel',
             code: 'openRealtimeChannel',
-            parameters: [{ name: 'channel' }],
+            parameters: [{ name: 'channel' }, { name: 'presence', type: 'boolean' }],
             /* wwEditor:start */
             edit: () => import('./src/components/RealtimeOpenChannel.vue'),
             /* wwEditor:end */

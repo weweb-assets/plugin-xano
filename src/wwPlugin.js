@@ -106,8 +106,10 @@ export default {
             withCredentials: this.settings.publicData.withCredentials || withCredentials,
         });
     },
-    openRealtimeChannel({ channel }) {
-        this.channels[channel] = this.xanoClient.channel(channel);
+    openRealtimeChannel({ channel, presence = false }) {
+        this.channels[channel] = this.xanoClient.channel(channel, {
+            presence: true,
+        });
         this.channels[channel].on(
             event => {
                 wwLib.executeTrigger(this.id + '-realtime', { channel, event });

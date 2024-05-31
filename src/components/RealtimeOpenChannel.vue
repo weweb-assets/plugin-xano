@@ -8,6 +8,15 @@
         :model-value="channel"
         @update:modelValue="setChannel"
     />
+    <wwEditorInputRow
+        type="onoff"
+        label="Presence"
+        placeholder="Listen presence"
+        bindable
+        small
+        :model-value="presence"
+        @update:modelValue="setPresence"
+    />
 </template>
 
 <script>
@@ -19,12 +28,18 @@ export default {
     emits: ['update:args'],
     computed: {
         channel() {
-            return this.args.channel || [];
+            return this.args.channel || '';
+        },
+        presence() {
+            return this.args.presence || false;
         },
     },
     methods: {
         setChannel(channel) {
             this.$emit('update:args', { ...this.args, channel });
+        },
+        setPresence(presence) {
+            this.$emit('update:args', { ...this.args, presence });
         },
     },
 };
