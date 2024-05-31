@@ -54,6 +54,7 @@ export default {
         {
             label: 'On realtime event',
             value: 'realtime',
+            event: { channel: '', event: { client: null, action: '', options: {}, payload: null } },
         },
     ],
     actions: [
@@ -72,19 +73,19 @@ export default {
             /* wwEditor:end */
         },
         {
-            name: 'Realtime | Start listening channel',
-            code: 'listenChannel',
+            name: 'Realtime | Open channel',
+            code: 'openRealtimeChannel',
             parameters: [{ name: 'channel' }],
             /* wwEditor:start */
-            edit: () => import('./src/components/ListenChannel.vue'),
+            edit: () => import('./src/components/RealtimeOpenChannel.vue'),
             /* wwEditor:end */
         },
         {
-            name: 'Realtime | Send channel event',
-            code: 'sendChannel',
-            parameters: [{ name: 'channel' }, { name: 'event' }],
+            name: 'Realtime | Send message in channel',
+            code: 'sendRealtimeMessage',
+            parameters: [{ name: 'channel' }, { name: 'message' }],
             /* wwEditor:start */
-            edit: () => import('./src/components/SendChannel.vue'),
+            edit: () => import('./src/components/RealtimeSendMessage.vue'),
             /* wwEditor:end */
         },
     ],

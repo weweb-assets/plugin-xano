@@ -10,8 +10,8 @@ import './components/Branching/SettingsSummary.vue';
 import './components/GlobalHeaders/SettingsEdit.vue';
 import './components/GlobalHeaders/SettingsSummary.vue';
 import './components/Request.vue';
-import './components/ListenChannel.vue';
-import './components/SendChannel.vue';
+import './components/RealtimeOpenChannel.vue';
+import './components/RealtimeSendMessage.vue';
 
 import DevApi from './api/developer.class';
 import MetaApi from './api/metadata.class';
@@ -106,14 +106,15 @@ export default {
             withCredentials: this.settings.publicData.withCredentials || withCredentials,
         });
     },
-    listenChannel({ channel }) {
+    openRealtimeChannel({ channel }) {
         this.channels[channel] = this.xanoClient.channel(channel);
-        this.channels[channel].on(action => {
-            wwLib.executeTrigger(this.id + '-realtime', { channel, action });
+        this.channels[channel].on(event => {
+            wwLib.executeTrigger(this.id + '-realtime', { channel, event });
         });
     },
-    sendChannel({ channel, message }) {
-        if (!this.channels[channel]) throw new Error(`Channel ${channel} is not registered.`);
+    sendRealtimeMessage({ channel, message }) {
+        if (!this.channels[channel])
+            throw new Error(`Channel ${channel} is not registered. Please open the channel first.`);
         this.channels[channel].message(message);
     },
     // Ensure everything use the same base domain
