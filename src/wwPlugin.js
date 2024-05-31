@@ -108,9 +108,14 @@ export default {
     },
     openRealtimeChannel({ channel }) {
         this.channels[channel] = this.xanoClient.channel(channel);
-        this.channels[channel].on(event => {
-            wwLib.executeTrigger(this.id + '-realtime', { channel, event });
-        });
+        this.channels[channel].on(
+            event => {
+                wwLib.executeTrigger(this.id + '-realtime', { channel, event });
+            },
+            event => {
+                wwLib.executeTrigger(this.id + '-realtime-error', { channel, event });
+            }
+        );
     },
     sendRealtimeMessage({ channel, message }) {
         if (!this.channels[channel])
