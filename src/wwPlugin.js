@@ -127,6 +127,7 @@ export default {
         if (!this.channels[channel])
             throw new Error(`Channel ${channel} is not registered. Please open the channel first.`);
         this.channels[channel].destroy();
+        this.channels[channel] = null;
     },
     sendRealtimeMessage({ channel, message }) {
         if (!this.channels[channel])
