@@ -11,6 +11,7 @@ import './components/GlobalHeaders/SettingsEdit.vue';
 import './components/GlobalHeaders/SettingsSummary.vue';
 import './components/Request.vue';
 import './components/RealtimeOpenChannel.vue';
+import './components/RealtimeCloseChannel.vue';
 import './components/RealtimeSendMessage.vue';
 
 import DevApi from './api/developer.class';
@@ -115,11 +116,17 @@ export default {
         this.channels[channel].on(
             event => {
                 wwLib.executeTrigger(this.id + '-realtime', { channel, event });
+                wwLib.executeTrigger(this.id + '-realtime-' + event.action, { channel, event });
             },
             event => {
                 wwLib.executeTrigger(this.id + '-realtime-error', { channel, event });
             }
         );
+    },
+    closeRealtimeChannel({ channel }) {
+        if (!this.channels[channel])
+            throw new Error(`Channel ${channel} is not registered. Please open the channel first.`);
+        this.channels[channel].destroy();
     },
     sendRealtimeMessage({ channel, message }) {
         if (!this.channels[channel])

@@ -55,6 +55,16 @@ export default {
             label: 'On realtime event',
             value: 'realtime',
             event: { channel: '', event: { client: null, action: '', options: {}, payload: null } },
+            types: [
+                'connection_status',
+                'error',
+                'event',
+                'join',
+                'leave',
+                'message',
+                'presence_full',
+                'presence_update',
+            ],
         },
         {
             label: 'On realtime error',
@@ -83,6 +93,14 @@ export default {
             parameters: [{ name: 'channel' }, { name: 'presence', type: 'boolean' }],
             /* wwEditor:start */
             edit: () => import('./src/components/RealtimeOpenChannel.vue'),
+            /* wwEditor:end */
+        },
+        {
+            name: 'Realtime | Close channel',
+            code: 'closeRealtimeChannel',
+            parameters: [{ name: 'channel' }],
+            /* wwEditor:start */
+            edit: () => import('./src/components/RealtimeCloseChannel.vue'),
             /* wwEditor:end */
         },
         {
