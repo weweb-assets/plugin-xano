@@ -58,7 +58,7 @@ export default {
     /*=============================================m_ÔÔ_m=============================================\
         Collection API
     \================================================================================================*/
-    async fetchCollection(collection) {
+    async _fetchCollection(collection) {
         if (collection.mode === 'dynamic') {
             try {
                 const { data } = await this.request(collection.config);
