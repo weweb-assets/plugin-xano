@@ -68,7 +68,7 @@ export default {
         },
         {
             label: 'On realtime error',
-            value: 'realtime-error',
+            value: 'realtime-on-error',
             event: { channel: '', event: { client: null, action: '', options: {}, payload: null } },
         },
     ],

@@ -119,7 +119,7 @@ export default {
                 wwLib.executeTrigger(this.id + '-realtime-' + event.action, { channel, event });
             },
             event => {
-                wwLib.executeTrigger(this.id + '-realtime-error', { channel, event });
+                wwLib.executeTrigger(this.id + '-realtime-on-error', { channel, event });
             }
         );
     },
