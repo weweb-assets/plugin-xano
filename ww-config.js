@@ -59,17 +59,13 @@ export default {
                 'connection_status',
                 'error',
                 'event',
+                'history',
                 'join',
                 'leave',
                 'message',
                 'presence_full',
                 'presence_update',
             ],
-        },
-        {
-            label: 'On realtime error',
-            value: 'realtime-on-error',
-            event: { channel: '', event: { client: null, action: '', options: {}, payload: null } },
         },
     ],
     actions: [
@@ -104,11 +100,27 @@ export default {
             /* wwEditor:end */
         },
         {
-            name: 'Realtime | Send message in channel',
+            name: 'Realtime | Send message',
             code: 'sendRealtimeMessage',
             parameters: [{ name: 'channel' }, { name: 'message' }],
             /* wwEditor:start */
             edit: () => import('./src/components/RealtimeSendMessage.vue'),
+            /* wwEditor:end */
+        },
+        {
+            name: 'Realtime | Get presence',
+            code: 'getRealtimePresence',
+            parameters: [{ name: 'channel' }, { name: 'message' }],
+            /* wwEditor:start */
+            edit: () => import('./src/components/RealtimeGetPresence.vue'),
+            /* wwEditor:end */
+        },
+        {
+            name: 'Realtime | Request history',
+            code: 'requestRealtimeHistory',
+            parameters: [{ name: 'channel' }, { name: 'message' }],
+            /* wwEditor:start */
+            edit: () => import('./src/components/RealtimeRequestHistory.vue'),
             /* wwEditor:end */
         },
     ],
