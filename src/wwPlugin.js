@@ -117,12 +117,12 @@ export default {
         });
         this.channels[channel].on(
             event => {
-                wwLib.executeTrigger(this.id + '-realtime', { channel, event });
-                wwLib.executeTrigger(this.id + '-realtime-' + event.action, { channel, event });
+                wwLib.wwWorkflow.executeTrigger(this.id + '-realtime', { channel, event });
+                wwLib.wwWorkflow.executeTrigger(this.id + '-realtime-' + event.action, { channel, event });
             },
             event => {
-                wwLib.executeTrigger(this.id + '-realtime', { channel, event });
-                wwLib.executeTrigger(this.id + '-realtime-' + event.action, { channel, event });
+                wwLib.wwWorkflow.executeTrigger(this.id + '-realtime', { channel, event });
+                wwLib.wwWorkflow.executeTrigger(this.id + '-realtime-' + event.action, { channel, event });
             }
         );
     },
