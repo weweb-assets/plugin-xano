@@ -13,6 +13,8 @@ import './components/Request.vue';
 import './components/RealtimeOpenChannel.vue';
 import './components/RealtimeCloseChannel.vue';
 import './components/RealtimeSendMessage.vue';
+import './components/RealtimeGetPresence.vue';
+import './components/RealtimeRequestHistory.vue';
 
 import DevApi from './api/developer.class';
 import MetaApi from './api/metadata.class';
@@ -130,10 +132,26 @@ export default {
         this.channels[channel].destroy();
         this.channels[channel] = null;
     },
-    sendRealtimeMessage({ channel, message }) {
+    getRealtimePresence({ channel }) {
         if (!this.channels[channel])
             throw new Error(`Channel ${channel} is not registered. Please open the channel first.`);
-        this.channels[channel].message(message);
+        return this.channels[channel].getPresence();
+    },
+    requestRealtimeHistory({ channel }) {
+        if (!this.channels[channel])
+            throw new Error(`Channel ${channel} is not registered. Please open the channel first.`);
+        return this.channels[channel].history();
+    },
+    sendRealtimeMessage({ channel, message, authenticatedOnly = false, socketId = null }) {
+        if (!this.channels[channel])
+            throw new Error(`Channel ${channel} is not registered. Please open the channel first.`);
+        if (socketId) {
+            const client = this.channels[channel].getPresence()?.find(p => p.socketId === socketId);
+            if (!client) throw new Error(`SocketId ${socketId} not found in channel ${channel}`);
+            client.message(message);
+        } else {
+            this.channels[channel].message(message, { authenticated: authenticatedOnly, socketId });
+        }
     },
     // Ensure everything use the same base domain
     resolveUrl(url) {
