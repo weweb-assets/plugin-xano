@@ -116,13 +116,17 @@ export default {
             queueOfflineActions,
         });
         this.channels[channel].on(
-            event => {
-                wwLib.wwWorkflow.executeTrigger(this.id + '-realtime', { channel, event });
-                wwLib.wwWorkflow.executeTrigger(this.id + '-realtime-' + event.action, { channel, event });
+            rawEvent => {
+                wwLib.wwWorkflow.executeTrigger(this.id + '-realtime', {
+                    event: { channel, type: rawEvent.action, rawEvent },
+                    conditions: { type: rawEvent.action, channel },
+                });
             },
-            event => {
-                wwLib.wwWorkflow.executeTrigger(this.id + '-realtime', { channel, event });
-                wwLib.wwWorkflow.executeTrigger(this.id + '-realtime-' + event.action, { channel, event });
+            rawEvent => {
+                wwLib.wwWorkflow.executeTrigger(this.id + '-realtime', {
+                    event: { channel, type: rawEvent.action, rawEvent },
+                    conditions: { type: rawEvent.action, channel },
+                });
             }
         );
     },
