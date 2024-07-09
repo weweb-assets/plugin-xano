@@ -4,7 +4,7 @@
 
 To start working with Xano data in WeWeb, we invite you to paste your [Xano personal access token](https://docs.xano.com/metadata-api):
 
-![Xano access token vs key ID](https://docs.weweb.io/assets/xano-access-token-hXRNU255.png)
+![Xano access token vs key ID](https://docs.weweb.io/assets/xano-access-token.CFdE1Tbn.png)
 
 You will then be able to select the Xano instance & workspace you want to connect.
 
