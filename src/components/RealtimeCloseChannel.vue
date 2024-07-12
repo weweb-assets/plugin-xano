@@ -5,6 +5,7 @@
         placeholder="Channel name"
         bindable
         small
+        required
         :model-value="channel"
         @update:modelValue="setChannel"
     />

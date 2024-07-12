@@ -5,12 +5,14 @@
         placeholder="Channel name"
         bindable
         small
+        required
         :model-value="channel"
         @update:modelValue="setChannel"
     />
     <wwEditorInputRow
         type="onoff"
         label="Listen to presence"
+        tooltip="Subscribes to channel presence to see who else is in the channel and events when others join/leave."
         bindable
         small
         :model-value="presence"
@@ -19,6 +21,7 @@
     <wwEditorInputRow
         type="onoff"
         label="Get history on join"
+        tooltip="Returns the channel message history on join (if its enabled on a channel)"
         bindable
         small
         :model-value="history"
@@ -27,6 +30,7 @@
     <wwEditorInputRow
         type="onoff"
         label="Queue offline actions"
+        tooltip="In the event of a disconnect, or when sending actions before the channel connection is established, actions will be put in a queue and sent as soon as the connection is established"
         bindable
         small
         :model-value="queueOfflineActions"

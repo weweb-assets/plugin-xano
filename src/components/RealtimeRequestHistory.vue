@@ -5,9 +5,14 @@
         placeholder="Channel name"
         bindable
         small
+        required
         :model-value="channel"
         @update:modelValue="setChannel"
     />
+    <div class="content-secondary body-sm">
+        Sends a message to realtime requesting the latest channel history. You have to setup a workflow on `history`
+        event type to listen the response.
+    </div>
 </template>
 
 <script>

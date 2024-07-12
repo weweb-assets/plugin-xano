@@ -146,16 +146,10 @@ export default {
             throw new Error(`Channel ${channel} is not registered. Please open the channel first.`);
         return this.channels[channel].history();
     },
-    sendRealtimeMessage({ channel, message, authenticatedOnly = false, socketId = null }) {
+    sendRealtimeMessage({ channel, message, audience = 'public', socketId = null }) {
         if (!this.channels[channel])
             throw new Error(`Channel ${channel} is not registered. Please open the channel first.`);
-        if (socketId) {
-            const client = this.channels[channel].getPresence()?.find(p => p.socketId === socketId);
-            if (!client) throw new Error(`SocketId ${socketId} not found in channel ${channel}`);
-            client.message(message);
-        } else {
-            this.channels[channel].message(message, { authenticated: authenticatedOnly, socketId });
-        }
+        this.channels[channel].message(message, { authenticated: audience === 'authenticated', socketId });
     },
     // Ensure everything use the same base domain
     resolveUrl(url) {
