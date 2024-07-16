@@ -54,10 +54,14 @@ export default {
         {
             label: 'On realtime event',
             value: 'realtime',
-            event: { channel: '', type: 'message', event: { client: null, action: '', options: {}, payload: null } },
+            event: {
+                channel: 'My channel name',
+                type: 'message',
+                data: { client: null, action: '', options: {}, payload: null },
+            },
             conditions: [
                 {
-                    name: 'Type',
+                    name: 'Event type',
                     key: 'type',
                     type: 'TextSelect',
                     options: [
@@ -74,10 +78,9 @@ export default {
                     ],
                 },
                 {
-                    name: 'Channel',
+                    name: 'Channel name',
                     key: 'channel',
                     type: 'Text',
-                    placeholder: 'Channel name',
                 },
             ],
         },
