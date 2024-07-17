@@ -109,6 +109,43 @@ export default {
             withCredentials: this.settings.publicData.withCredentials || withCredentials,
         });
     },
+    async requestStreaming({ apiGroupUrl, endpoint, withCredentials, parameter, streamVariableId }, wwUtils) {
+        let path = endpoint.path;
+        for (const key in parameters) path = path.replace(`{${key}}`, parameters[key]);
+
+        wwUtils?.log('info', `[Xano] Requesting ${endpoint.method.toUpperCase()} - ${url}`, {
+            type: 'request',
+            preview: body,
+        });
+        const url =
+            this.resolveUrl(apiGroupUrl) +
+            (getCurrentBranch() ? `:${getCurrentBranch()}/` : '/') +
+            path +
+            (parameters ? `?${new URLSearchParams(parameters || {}).toString()}` : '');
+        const request = new EventSource(url, {
+            withCredentials: this.settings.publicData.withCredentials || withCredentials,
+        });
+        return new Promise((resolve, reject) => {
+            request.onmessage = e => {
+                if (e.data === '[DONE]') {
+                    request.close();
+                    resolve(wwLib.wwVariable.getValue('9165bd4e-c546-4b76-b9b8-f4ad048ce330'));
+                    return;
+                }
+                // Parse the incoming message as JSON
+                const response = JSON.parse(e.data);
+                if (response.choices[0].delta.content) {
+                    wwLib.wwVariable.updateValue(streamVariableId, [
+                        ...wwLib.wwVariable.getValue('9165bd4e-c546-4b76-b9b8-f4ad048ce330'),
+                        response.choices[0].delta.content,
+                    ]);
+                }
+            };
+            request.onerror = e => {
+                reject(e);
+            };
+        });
+    },
     openRealtimeChannel({ channel, presence = false, history = false, queueOfflineActions = true }) {
         this.channels[channel] = this.xanoClient.channel(channel, {
             presence,
