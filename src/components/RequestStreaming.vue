@@ -150,7 +150,9 @@ export default {
             }));
         },
         endpointsOptions() {
-            return this.plugin.xanoManager.parseSpecEndpoints(this.spec);
+            return this.plugin.xanoManager
+                .parseSpecEndpoints(this.spec)
+                .filter(endpoint => endpoint.label.startsWith('GET'));
         },
         endpointParameters() {
             return this.plugin.xanoManager.parseSpecEndpointParameters(this.spec, this.endpoint);
