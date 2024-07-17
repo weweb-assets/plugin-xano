@@ -98,6 +98,10 @@ export default {
         args: { type: Object, default: () => {} },
     },
     emits: ['update:args'],
+    setup() {
+        const { website: websiteVariables } = wwLib.wwVariable.useEditorVariables();
+        return { websiteVariables };
+    },
     data() {
         return {
             isLoading: false,
@@ -163,7 +167,7 @@ export default {
             return this.args.streamVariableId;
         },
         wwVariableOptions() {
-            return Object.values(wwLib.$store.getters['data/getVariables'])
+            return Object.values(this.websiteVariables)
                 .filter(variable => variable.type === 'array')
                 .map(variable => ({
                     label: variable.name,
