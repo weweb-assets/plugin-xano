@@ -52,7 +52,7 @@ export default {
     },
     triggers: [
         {
-            label: 'On realtime event',
+            label: 'On realtime - All events',
             value: 'realtime',
             event: {
                 channel: 'My channel name',
@@ -65,18 +65,185 @@ export default {
                     key: 'type',
                     type: 'TextSelect',
                     options: [
-                        { label: 'All', value: null },
+                        { label: 'All events', value: null },
                         { label: 'Connection status', value: 'connection_status' },
                         { label: 'Error', value: 'error' },
                         { label: 'Event', value: 'event' },
                         { label: 'History', value: 'history' },
-                        { label: 'Join', value: 'join' },
-                        { label: 'Leave', value: 'leave' },
                         { label: 'Message', value: 'message' },
                         { label: 'Presence full', value: 'presence_full' },
                         { label: 'Presence update', value: 'presence_update' },
                     ],
                 },
+                {
+                    name: 'Channel name',
+                    key: 'channel',
+                    type: 'Text',
+                },
+            ],
+        },
+        {
+            label: 'On realtime - connection status',
+            value: 'realtime:connection_status',
+            event: {
+                channel: 'My channel name',
+                data: { action: 'connection_status', options: {}, payload: { status: 'disconnected' } },
+            },
+            conditions: [
+                {
+                    name: 'Channel name',
+                    key: 'channel',
+                    type: 'Text',
+                },
+            ],
+        },
+        {
+            label: 'On realtime - presence full',
+            value: 'realtime:presence_full',
+            event: {
+                channel: 'My channel name',
+                data: {
+                    client: null,
+                    action: 'presence_full',
+                    options: {},
+                    payload: {
+                        presence: [{ socketId: 'A socket id', extras: {}, permissions: { dbo_id: 0, row_id: 0 } }],
+                    },
+                },
+            },
+            conditions: [
+                {
+                    name: 'Channel name',
+                    key: 'channel',
+                    type: 'Text',
+                },
+            ],
+        },
+        {
+            label: 'On realtime - presence update',
+            value: 'realtime:presence_update',
+            event: {
+                channel: 'My channel name',
+                data: {
+                    client: null,
+                    action: 'presence_full',
+                    options: { channel: '' },
+                    payload: {
+                        action: 'join',
+                        presence: {
+                            socketId: 'A socket id',
+                            extras: {},
+                            permissions: { dbo_id: 0, row_id: 0 },
+                        },
+                    },
+                },
+            },
+            conditions: [
+                {
+                    name: 'Channel name',
+                    key: 'channel',
+                    type: 'Text',
+                },
+                {
+                    name: 'Event',
+                    key: 'event',
+                    type: 'TextSelect',
+                    options: [
+                        { label: 'All events', value: null },
+                        { label: 'Join', value: 'join' },
+                        { label: 'Leave', value: 'leave' },
+                    ],
+                },
+            ],
+        },
+        {
+            label: 'On realtime - message',
+            value: 'realtime:message',
+            event: {
+                channel: 'My channel name',
+                data: {
+                    action: 'message',
+                    options: { authenticated: false, socketId: null, channel: '' },
+                    client: { socketId: 'A socket id', extras: {}, permissions: { dbo_id: 0, row_id: 0 } },
+                    payload: 'message',
+                },
+            },
+            conditions: [
+                {
+                    name: 'Channel name',
+                    key: 'channel',
+                    type: 'Text',
+                },
+            ],
+        },
+        {
+            label: 'On realtime - event',
+            value: 'realtime:event',
+            event: {
+                channel: 'My channel name',
+                data: {
+                    action: 'event',
+                    options: {},
+                    client: null,
+                    payload: 'event',
+                },
+            },
+            conditions: [
+                {
+                    name: 'Channel name',
+                    key: 'channel',
+                    type: 'Text',
+                },
+            ],
+        },
+        {
+            label: 'On realtime - history',
+            value: 'realtime:history',
+            event: {
+                channel: 'My channel name',
+                data: {
+                    action: 'history',
+                    options: { channel: '' },
+                    client: null,
+                    payload: {
+                        history: [
+                            {
+                                action: 'message 1',
+                                options: { authenticated: false, socketId: null, channel: '' },
+                                client: { socketId: 'A socket id', extras: {}, permissions: { dbo_id: 0, row_id: 0 } },
+                                payload: 'message',
+                            },
+                            {
+                                action: 'message 2',
+                                options: { authenticated: false, socketId: null, channel: '' },
+                                client: { socketId: 'A socket id', extras: {}, permissions: { dbo_id: 0, row_id: 0 } },
+                                payload: 'message',
+                            },
+                        ],
+                    },
+                },
+            },
+            conditions: [
+                {
+                    name: 'Channel name',
+                    key: 'channel',
+                    type: 'Text',
+                },
+            ],
+        },
+        {
+            label: 'On realtime - error',
+            value: 'realtime:error',
+            event: {
+                channel: 'My channel name',
+                data: {
+                    action: 'event',
+                    options: { channel: '' },
+                    client: null,
+                    payload: { message: 'error message' },
+                },
+            },
+            conditions: [
                 {
                     name: 'Channel name',
                     key: 'channel',

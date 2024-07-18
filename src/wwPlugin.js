@@ -158,11 +158,19 @@ export default {
                     event: { channel, type: event.action, data: event },
                     conditions: { type: event.action, channel },
                 });
+                wwLib.wwWorkflow.executeTrigger(this.id + '-realtime:' + event.action, {
+                    event: { channel, data: event },
+                    conditions: { channel },
+                });
             },
             event => {
                 wwLib.wwWorkflow.executeTrigger(this.id + '-realtime', {
                     event: { channel, type: event.action, data: event },
                     conditions: { type: event.action, channel },
+                });
+                wwLib.wwWorkflow.executeTrigger(this.id + '-realtime:error', {
+                    event: { channel, data: event },
+                    conditions: { channel },
                 });
             }
         );
