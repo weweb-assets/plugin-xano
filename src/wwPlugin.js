@@ -115,7 +115,7 @@ export default {
 
         const url =
             this.resolveUrl(apiGroupUrl) +
-            (getCurrentBranch() ? `:${getCurrentBranch()}/` : '/') +
+            (getCurrentBranch() ? `:${getCurrentBranch()}/` : '') +
             path +
             (parameters ? `?${new URLSearchParams(parameters || {}).toString()}` : '');
         wwUtils?.log('info', `[Xano] Requesting (streaming) ${endpoint.method.toUpperCase()} - ${url}`, {
@@ -128,19 +128,16 @@ export default {
             request.onmessage = e => {
                 if (e.data === '[DONE]') {
                     request.close();
-                    resolve(wwLib.wwVariable.getValue('9165bd4e-c546-4b76-b9b8-f4ad048ce330'));
-                    return;
+                    return resolve(wwLib.wwVariable.getValue(streamVariableId));
                 }
-                // Parse the incoming message as JSON
-                const response = JSON.parse(e.data);
-                if (response.choices[0].delta.content) {
-                    wwLib.wwVariable.updateValue(streamVariableId, [
-                        ...wwLib.wwVariable.getValue('9165bd4e-c546-4b76-b9b8-f4ad048ce330'),
-                        response.choices[0].delta.content,
-                    ]);
-                }
+
+                wwLib.wwVariable.updateValue(streamVariableId, [
+                    ...wwLib.wwVariable.getValue(streamVariableId),
+                    e.data,
+                ]);
             };
             request.onerror = e => {
+                request.close();
                 reject(e);
             };
         });
