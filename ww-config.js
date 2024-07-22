@@ -14,7 +14,7 @@ export default {
                         (!settings.publicData.customDomain || !settings.publicData.customDomain.includes('http'))
                     );
                 },
-                onSave: 'initManager',
+                onSave: 'init',
             },
             {
                 label: 'Data Source',

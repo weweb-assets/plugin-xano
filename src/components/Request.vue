@@ -92,12 +92,16 @@
             <wwEditorInputSwitch
                 :model-value="forcedCredentials || withCredentials"
                 @update:modelValue="setWithCredentials"
-                :disabled="forcedCredentials"
+                :disabled="forcedCredentials || dataType === 'text/event-stream'"
             />
             <div class="body-sm ml-2">Include credentials (cookies)</div>
             <wwEditorQuestionMark
                 tooltip-position="top-left"
-                forced-content="Cookies will be sent automatically. Your Xano endpoint API group need to have CORS configured with the proper headers for this to works. 1) Access-Control-Allow-Credentials must be true, 2) Access-Control-Allow-Origin must be set to your editor and production link, not wildcard. [See Xano documentation](https://docs.xano.com/api/the-basics/api-groups#cors-management)"
+                :forced-content="
+                    dataType === 'text/event-stream'
+                        ? 'It cannot be set here for text/event-stream content type, you still can set it at the plugin level'
+                        : 'Cookies will be sent automatically. Your Xano endpoint API group need to have CORS configured with the proper headers for this to works. </br>1) Access-Control-Allow-Credentials must be true </br>2) Access-Control-Allow-Origin must be set to your editor and production link, not wildcard. </br>[See Xano documentation](https://docs.xano.com/api/the-basics/api-groups#cors-management)</br>'
+                "
                 class="ml-auto text-stale-500"
             />
         </div>

@@ -30,13 +30,24 @@ export default {
         Plugin API
     \================================================================================================*/
     async _onLoad(settings) {
+        this.init(settings);
+    },
+    async init(settings) {
         /* wwEditor:start */
         await this.initManager(settings);
         /* wwEditor:end */
         this.xanoClient = new XanoClient({
             instanceBaseUrl: 'https://' + (settings.publicData.customDomain || settings.publicData.domain),
             realtimeConnectionHash: settings.publicData.realtimeConnectionHash,
+            customAxiosRequestConfig: {
+                withCredentials: settings.publicData.withCredentials,
+            },
         });
+        if (wwLib.wwPlugins.xanoAuth?.accessToken) {
+            this.xanoClient.setAuthToken(wwLib.wwPlugins.xanoAuth.accessToken);
+            this.xanoClient.setRealtimeAuthToken(wwLib.wwPlugins.xanoAuth.accessToken);
+            this.xanoClient.realtimeReconnect();
+        }
     },
     /*=============================================m_ÔÔ_m=============================================\
         Editor API
