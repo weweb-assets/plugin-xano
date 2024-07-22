@@ -109,7 +109,7 @@ export default {
             withCredentials: this.settings.publicData.withCredentials || withCredentials,
         });
     },
-    async requestStreaming({ apiGroupUrl, endpoint, withCredentials, parameter, streamVariableId }, wwUtils) {
+    async requestStreaming({ apiGroupUrl, endpoint, withCredentials, parameters, streamVariableId }, wwUtils) {
         let path = endpoint.path;
         for (const key in parameters) path = path.replace(`{${key}}`, parameters[key]);
 

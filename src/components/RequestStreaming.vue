@@ -57,7 +57,7 @@
         :options="wwVariableOptions"
         :model-value="streamVariableId"
         @update:modelValue="setStreamVariableId"
-        @action="$event?.onAction()"
+        @action="action => action?.onAction()"
         required
     />
     <wwEditorFormRow v-for="(key, index) in legacyParameters" :key="'legacy_param_' + key" :label="key">
@@ -203,7 +203,6 @@ export default {
                 bodyFields: [],
                 endpoint: { method, path },
             });
-            this.$nextTick(() => this.setBody({}));
         },
         setParameters(parameters) {
             this.$emit('update:args', { ...this.args, parameters });
