@@ -268,19 +268,6 @@ export default {
             /* wwEditor:end */
         },
         {
-            name: 'Request with streaming',
-            code: 'requestStreaming',
-            parameters: [
-                { name: 'apiGroup', type: 'string' },
-                { name: 'endpoint', type: 'object' },
-                { name: 'parameters', type: 'object' },
-            ],
-            isAsync: true,
-            /* wwEditor:start */
-            edit: () => import('./src/components/RequestStreaming.vue'),
-            /* wwEditor:end */
-        },
-        {
             name: 'Realtime | Open channel',
             code: 'openRealtimeChannel',
             parameters: [{ name: 'channel' }, { name: 'presence', type: 'boolean' }],

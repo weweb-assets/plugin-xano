@@ -88,58 +88,45 @@ export default {
     /*=============================================m_ÔÔ_m=============================================\
         Xano API
     \================================================================================================*/
-    async request({ apiGroupUrl, endpoint, headers, withCredentials, parameters, body, dataType }, wwUtils) {
+    async request(
+        { apiGroupUrl, endpoint, headers, withCredentials, parameters, body, dataType, streamVariableId },
+        wwUtils
+    ) {
         const authToken = wwLib.wwPlugins.xanoAuth && wwLib.wwPlugins.xanoAuth.accessToken;
 
-        let url = endpoint.path;
-        for (const key in parameters) url = url.replace(`{${key}}`, parameters[key]);
+        let path = endpoint.path;
+        for (const key in parameters) path = path.replace(`{${key}}`, parameters[key]);
 
-        wwUtils?.log('info', `[Xano] Requesting ${endpoint.method.toUpperCase()} - ${url}`, {
+        wwUtils?.log('info', `[Xano] Requesting ${endpoint.method.toUpperCase()} - ${path}`, {
             type: 'request',
-            preview: body,
+            preview: { headers, parameters, body },
         });
+
+        if (dataType === 'text/event-stream') {
+            await this.xanoClient.request({
+                endpoint: this.resolveUrl(apiGroupUrl) + path,
+                method: endpoint.method,
+                urlParams: parameters,
+                bodyParams: endpoint.method === 'get' ? null : body,
+                headerParams: buildXanoHeaders({}, headers),
+                streamingCallback: response => {
+                    wwLib.wwVariable.updateValue(streamVariableId, [
+                        ...wwLib.wwVariable.getValue(streamVariableId),
+                        response?.data,
+                    ]);
+                },
+            });
+            return wwLib.wwVariable.getValue(streamVariableId);
+        }
 
         return await axios({
             method: endpoint.method,
             baseURL: this.resolveUrl(apiGroupUrl),
-            url,
+            url: path,
             params: parameters,
             data: body,
             headers: buildXanoHeaders({ authToken, dataType }, headers),
             withCredentials: this.settings.publicData.withCredentials || withCredentials,
-        });
-    },
-    async requestStreaming({ apiGroupUrl, endpoint, withCredentials, parameters, streamVariableId }, wwUtils) {
-        let path = endpoint.path;
-        for (const key in parameters) path = path.replace(`{${key}}`, parameters[key]);
-
-        const url =
-            this.resolveUrl(apiGroupUrl) +
-            (getCurrentBranch() ? `:${getCurrentBranch()}/` : '') +
-            path +
-            (parameters ? `?${new URLSearchParams(parameters || {}).toString()}` : '');
-        wwUtils?.log('info', `[Xano] Requesting (streaming) ${endpoint.method.toUpperCase()} - ${url}`, {
-            type: 'request',
-        });
-        const request = new EventSource(url, {
-            withCredentials: this.settings.publicData.withCredentials || withCredentials,
-        });
-        return new Promise((resolve, reject) => {
-            request.onmessage = e => {
-                if (e.data === '[DONE]') {
-                    request.close();
-                    return resolve(wwLib.wwVariable.getValue(streamVariableId));
-                }
-
-                wwLib.wwVariable.updateValue(streamVariableId, [
-                    ...wwLib.wwVariable.getValue(streamVariableId),
-                    e.data,
-                ]);
-            };
-            request.onerror = e => {
-                request.close();
-                reject(e);
-            };
         });
     },
     openRealtimeChannel({ channel, presence = false, history = false, queueOfflineActions = true }) {

@@ -1,15 +1,4 @@
 <template>
-    <div class="flex items-center">
-        <div class="w-100 -full">
-            <wwEditorFormRow label="Content type">
-                <wwEditorInputTextSelect
-                    :options="dataTypeOptions"
-                    :model-value="dataType"
-                    @update:modelValue="setDataType"
-                />
-            </wwEditorFormRow>
-        </div>
-    </div>
     <wwEditorFormRow label="Api group" required>
         <div class="flex items-center">
             <wwEditorInputTextSelect
@@ -45,6 +34,30 @@
             </button>
         </div>
     </wwEditorFormRow>
+    <div class="flex items-center">
+        <div class="w-100 -full">
+            <wwEditorFormRow label="Content type">
+                <wwEditorInputTextSelect
+                    :options="dataTypeOptions"
+                    :model-value="dataType"
+                    @update:modelValue="setDataType"
+                />
+            </wwEditorFormRow>
+        </div>
+    </div>
+    <wwEditorInputRow
+        v-if="dataType === 'text/event-stream'"
+        label="Stream variable"
+        placeholder="Select an array variable"
+        type="select"
+        :actions="wwVariableActions"
+        :options="wwVariableOptions"
+        :model-value="streamVariableId"
+        @update:modelValue="setStreamVariableId"
+        @action="action => action?.onAction()"
+        required
+        tooltip="The array variable that will receive the stream data"
+    />
     <wwEditorInputRow
         label="Headers"
         type="array"
@@ -171,6 +184,10 @@ export default {
         args: { type: Object, default: () => {} },
     },
     emits: ['update:args'],
+    setup() {
+        const { website: websiteVariables } = wwLib.wwVariable.useEditorVariables();
+        return { websiteVariables };
+    },
     data() {
         return {
             isLoading: false,
@@ -184,6 +201,7 @@ export default {
                 { label: 'multipart/form-data', value: 'multipart/form-data' },
                 { label: 'text/plain', value: 'text/plain' },
                 { label: 'text/html', value: 'text/html' },
+                { label: 'text/event-stream', value: 'text/event-stream' },
             ],
         };
     },
@@ -268,6 +286,17 @@ export default {
         forcedCredentials() {
             return this.plugin.settings?.publicData.withCredentials;
         },
+        streamVariableId() {
+            return this.args.streamVariableId;
+        },
+        wwVariableOptions() {
+            return Object.values(this.websiteVariables)
+                .filter(variable => variable.type === 'array')
+                .map(variable => ({
+                    label: variable.name,
+                    value: variable.id,
+                }));
+        },
     },
     watch: {
         apiGroupUrl() {
@@ -283,7 +312,6 @@ export default {
                 bodyFields: [],
                 endpoint: null,
                 apiGroupUrl,
-                dataType: null,
             });
         },
         setEndpoint(endpoint) {
@@ -315,6 +343,9 @@ export default {
         },
         setWithCredentials(withCredentials) {
             this.$emit('update:args', { ...this.args, withCredentials });
+        },
+        setStreamVariableId(streamVariableId) {
+            this.$emit('update:args', { ...this.args, streamVariableId });
         },
         removeParam(keys) {
             const parameters = { ...this.parameters };
