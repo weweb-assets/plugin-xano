@@ -11,7 +11,7 @@
         "serve": "weweb serve"
     },
     "dependencies": {
-        "@xano/js-sdk": "^1.0.35"
+        "@xano/js-sdk": "2.0.1"
     },
     "devDependencies": {
         "@vue/eslint-config-prettier": "^6.0.0",
