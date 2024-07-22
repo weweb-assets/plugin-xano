@@ -113,15 +113,14 @@ export default {
         let path = endpoint.path;
         for (const key in parameters) path = path.replace(`{${key}}`, parameters[key]);
 
-        wwUtils?.log('info', `[Xano] Requesting ${endpoint.method.toUpperCase()} - ${url}`, {
-            type: 'request',
-            preview: body,
-        });
         const url =
             this.resolveUrl(apiGroupUrl) +
             (getCurrentBranch() ? `:${getCurrentBranch()}/` : '/') +
             path +
             (parameters ? `?${new URLSearchParams(parameters || {}).toString()}` : '');
+        wwUtils?.log('info', `[Xano] Requesting (streaming) ${endpoint.method.toUpperCase()} - ${url}`, {
+            type: 'request',
+        });
         const request = new EventSource(url, {
             withCredentials: this.settings.publicData.withCredentials || withCredentials,
         });
