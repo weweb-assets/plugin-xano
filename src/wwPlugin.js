@@ -97,10 +97,12 @@ export default {
         let path = endpoint.path;
         for (const key in parameters) path = path.replace(`{${key}}`, parameters[key]);
 
+        /* wwEditor:start */
         wwUtils?.log('info', `[Xano] Requesting ${endpoint.method.toUpperCase()} - ${path}`, {
             type: 'request',
             preview: { headers, parameters, body },
         });
+        /* wwEditor:end */
 
         if (dataType === 'text/event-stream') {
             await this.xanoClient.request({
