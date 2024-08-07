@@ -42,7 +42,7 @@
         @update:modelValue="setSocketId"
         tooltip="You can find the source socket id in every message received. You can get the list of every connected clients by using the `Get Presence` action."
     />
-    <div class="content-secondary body-sm">
+    <div class="content-secondary body-sm mb-2">
         {{
             audience === 'public'
                 ? 'Every users in the channel will receive the message'

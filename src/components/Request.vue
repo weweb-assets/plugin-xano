@@ -50,7 +50,7 @@
         label="Stream variable"
         placeholder="Select an array variable"
         type="select"
-        :actions="wwVariableActions"
+        :actions="[{ icon: 'plus', label: 'Create variable', onAction: createWwVariable }]"
         :options="wwVariableOptions"
         :model-value="streamVariableId"
         @update:modelValue="setStreamVariableId"
@@ -62,6 +62,10 @@
         label="Headers"
         type="array"
         :model-value="headers"
+        :binding-validation="{
+            type: 'array',
+            tooltip: 'An array containing objects formatted as following `[ { key: "key", value: "value" } ]`',
+        }"
         bindable
         @update:modelValue="setHeaders"
         @add-item="setHeaders([...(headers || []), {}])"
@@ -299,6 +303,7 @@ export default {
                 .map(variable => ({
                     label: variable.name,
                     value: variable.id,
+                    icon: 'array',
                 }));
         },
     },
@@ -400,6 +405,14 @@ export default {
             } finally {
                 this.isLoading = false;
             }
+        },
+        createWwVariable() {
+            // eslint-disable-next-line vue/custom-event-name-casing
+            wwLib.$emit('wwTopBar:open', 'WEBSITE_DATA');
+            // eslint-disable-next-line vue/custom-event-name-casing
+            wwLib.$emit('wwTopBar:data:setMenu', 'variables');
+            // eslint-disable-next-line vue/custom-event-name-casing
+            this.$nextTick(() => wwLib.$emit('wwTopBar:data:variables:setVariable', null));
         },
     },
 };

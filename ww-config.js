@@ -61,23 +61,9 @@ export default {
             },
             conditions: [
                 {
-                    name: 'Event type',
-                    key: 'type',
-                    type: 'TextSelect',
-                    options: [
-                        { label: 'All events', value: null },
-                        { label: 'Connection status', value: 'connection_status' },
-                        { label: 'Error', value: 'error' },
-                        { label: 'Event', value: 'event' },
-                        { label: 'History', value: 'history' },
-                        { label: 'Message', value: 'message' },
-                        { label: 'Presence full', value: 'presence_full' },
-                        { label: 'Presence update', value: 'presence_update' },
-                    ],
-                },
-                {
                     name: 'Channel name',
                     key: 'channel',
+                    placeholder: 'Default: all channels',
                     type: 'Text',
                 },
             ],
@@ -93,6 +79,7 @@ export default {
                 {
                     name: 'Channel name',
                     key: 'channel',
+                    placeholder: 'Default: all channels',
                     type: 'Text',
                 },
             ],
@@ -115,6 +102,7 @@ export default {
                 {
                     name: 'Channel name',
                     key: 'channel',
+                    placeholder: 'Default: all channels',
                     type: 'Text',
                 },
             ],
@@ -142,6 +130,7 @@ export default {
                 {
                     name: 'Channel name',
                     key: 'channel',
+                    placeholder: 'Default: all channels',
                     type: 'Text',
                 },
                 {
@@ -172,6 +161,7 @@ export default {
                 {
                     name: 'Channel name',
                     key: 'channel',
+                    placeholder: 'Default: all channels',
                     type: 'Text',
                 },
             ],
@@ -192,6 +182,7 @@ export default {
                 {
                     name: 'Channel name',
                     key: 'channel',
+                    placeholder: 'Default: all channels',
                     type: 'Text',
                 },
             ],
@@ -227,6 +218,7 @@ export default {
                 {
                     name: 'Channel name',
                     key: 'channel',
+                    placeholder: 'Default: all channels',
                     type: 'Text',
                 },
             ],
@@ -247,6 +239,7 @@ export default {
                 {
                     name: 'Channel name',
                     key: 'channel',
+                    placeholder: 'Default: all channels',
                     type: 'Text',
                 },
             ],
