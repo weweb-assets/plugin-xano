@@ -64,7 +64,7 @@
         :model-value="headers"
         :binding-validation="{
             type: 'array',
-            tooltip: 'An array containing objects formatted as following `[ { key: "key", value: "value" } ]`',
+            tooltip: `An array containing objects formatted as following \`[{ key: 'header-key', value: 'header-value' }]\``,
         }"
         bindable
         @update:modelValue="setHeaders"
