@@ -54,7 +54,7 @@
         :options="wwVariableOptions"
         :model-value="streamVariableId"
         @update:modelValue="setStreamVariableId"
-        @action="onAction"
+        @action="action => action?.onAction()"
         required
         tooltip="The array variable that will receive the stream data"
     />
@@ -406,16 +406,10 @@ export default {
                 this.isLoading = false;
             }
         },
-        onAction(action) {
-            action.onAction && action.onAction();
-        },
         createWwVariable() {
-            // eslint-disable-next-line vue/custom-event-name-casing
-            wwLib.$emit('wwTopBar:open', 'WEBSITE_DATA');
-            // eslint-disable-next-line vue/custom-event-name-casing
-            wwLib.$emit('wwTopBar:data:setMenu', 'variables');
-            // eslint-disable-next-line vue/custom-event-name-casing
-            this.$nextTick(() => wwLib.$emit('wwTopBar:data:variables:setVariable', null));
+            wwLib.wwPopupSidebars.open({ name: 'NAVIGATOR' });
+            wwLib.$emit('wwTopBar:navigator:tab', 'data');
+            wwLib.$emit('wwTopBar:navigator:data:variables:set', null);
         },
     },
 };
