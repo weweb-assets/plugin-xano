@@ -155,6 +155,7 @@ export default {
         });
     },
     openRealtimeChannel({ channel, presence = false, history = false, queueOfflineActions = true }) {
+        if (this.channels[channel]) this.closeRealtimeChannel({ channel });
         this.channels[channel] = this.xanoClient.channel(channel, {
             presence,
             history,
@@ -184,8 +185,7 @@ export default {
         );
     },
     closeRealtimeChannel({ channel }) {
-        if (!this.channels[channel])
-            throw new Error(`Channel ${channel} is not registered. Please open the channel first.`);
+        if (!this.channels[channel]) return;
         this.channels[channel].destroy();
         this.channels[channel] = null;
     },
