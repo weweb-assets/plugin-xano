@@ -54,7 +54,7 @@
         :options="wwVariableOptions"
         :model-value="streamVariableId"
         @update:modelValue="setStreamVariableId"
-        @action="action => action?.onAction()"
+        @action="onAction"
         required
         tooltip="The array variable that will receive the stream data"
     />
@@ -405,6 +405,9 @@ export default {
             } finally {
                 this.isLoading = false;
             }
+        },
+        onAction(action) {
+            action.onAction && action.onAction();
         },
         createWwVariable() {
             // eslint-disable-next-line vue/custom-event-name-casing

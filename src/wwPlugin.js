@@ -124,7 +124,7 @@ export default {
                 headerParams: buildXanoHeaders({}, headers),
                 streamingCallback: response => {
                     wwLib.wwVariable.updateValue(streamVariableId, [
-                        ...wwLib.wwVariable.getValue(streamVariableId),
+                        ...(wwLib.wwVariable.getValue(streamVariableId) || []),
                         response?.data,
                     ]);
                 },
