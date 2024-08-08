@@ -63,7 +63,11 @@ export default {
                 {
                     name: 'Channel name',
                     key: 'channel',
-                    placeholder: 'Default: all channels',
+                    placeholder: 'Default: All channels',
+                    bindingValidation: {
+                        type: 'string',
+                        tooltip: 'A channel name as a string',
+                    },
                     type: 'Text',
                 },
             ],
@@ -79,7 +83,11 @@ export default {
                 {
                     name: 'Channel name',
                     key: 'channel',
-                    placeholder: 'Default: all channels',
+                    placeholder: 'Default: All channels',
+                    bindingValidation: {
+                        type: 'string',
+                        tooltip: 'A channel name as a string',
+                    },
                     type: 'Text',
                 },
             ],
@@ -102,7 +110,11 @@ export default {
                 {
                     name: 'Channel name',
                     key: 'channel',
-                    placeholder: 'Default: all channels',
+                    placeholder: 'Default: All channels',
+                    bindingValidation: {
+                        type: 'string',
+                        tooltip: 'A channel name as a string',
+                    },
                     type: 'Text',
                 },
             ],
@@ -130,12 +142,21 @@ export default {
                 {
                     name: 'Channel name',
                     key: 'channel',
-                    placeholder: 'Default: all channels',
+                    placeholder: 'Default: All channels',
+                    bindingValidation: {
+                        type: 'string',
+                        tooltip: 'A channel name as a string',
+                    },
                     type: 'Text',
                 },
                 {
-                    name: 'Event',
+                    name: 'Event type',
                     key: 'event',
+                    placeholder: 'Default: All events',
+                    bindingValidation: {
+                        type: 'string',
+                        tooltip: 'An event type as a string (join | leave)',
+                    },
                     type: 'TextSelect',
                     options: [
                         { label: 'All events', value: null },
@@ -161,7 +182,11 @@ export default {
                 {
                     name: 'Channel name',
                     key: 'channel',
-                    placeholder: 'Default: all channels',
+                    placeholder: 'Default: All channels',
+                    bindingValidation: {
+                        type: 'string',
+                        tooltip: 'A channel name as a string',
+                    },
                     type: 'Text',
                 },
             ],
@@ -182,7 +207,11 @@ export default {
                 {
                     name: 'Channel name',
                     key: 'channel',
-                    placeholder: 'Default: all channels',
+                    placeholder: 'Default: All channels',
+                    bindingValidation: {
+                        type: 'string',
+                        tooltip: 'A channel name as a string',
+                    },
                     type: 'Text',
                 },
             ],
@@ -218,7 +247,11 @@ export default {
                 {
                     name: 'Channel name',
                     key: 'channel',
-                    placeholder: 'Default: all channels',
+                    placeholder: 'Default: All channels',
+                    bindingValidation: {
+                        type: 'string',
+                        tooltip: 'A channel name as a string',
+                    },
                     type: 'Text',
                 },
             ],
@@ -239,7 +272,11 @@ export default {
                 {
                     name: 'Channel name',
                     key: 'channel',
-                    placeholder: 'Default: all channels',
+                    placeholder: 'Default: All channels',
+                    bindingValidation: {
+                        type: 'string',
+                        tooltip: 'A channel name as a string',
+                    },
                     type: 'Text',
                 },
             ],
