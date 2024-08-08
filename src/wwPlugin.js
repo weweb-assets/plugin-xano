@@ -116,20 +116,32 @@ export default {
         /* wwEditor:end */
 
         if (dataType === 'text/event-stream') {
-            await this.xanoClient.request({
-                endpoint: this.resolveUrl(apiGroupUrl) + path,
-                method: endpoint.method,
-                urlParams: parameters,
-                bodyParams: endpoint.method === 'get' ? null : body,
-                headerParams: buildXanoHeaders({}, headers),
-                streamingCallback: response => {
-                    wwLib.wwVariable.updateValue(streamVariableId, [
-                        ...(wwLib.wwVariable.getValue(streamVariableId) || []),
-                        response?.data,
-                    ]);
-                },
-            });
-            return wwLib.wwVariable.getValue(streamVariableId);
+            try {
+                await this.xanoClient.request({
+                    endpoint: this.resolveUrl(apiGroupUrl) + path,
+                    method: endpoint.method,
+                    urlParams: parameters,
+                    bodyParams: endpoint.method === 'get' ? null : body,
+                    headerParams: buildXanoHeaders({}, headers),
+                    streamingCallback: response => {
+                        wwLib.wwVariable.updateValue(streamVariableId, [
+                            ...(wwLib.wwVariable.getValue(streamVariableId) || []),
+                            response?.data,
+                        ]);
+                    },
+                });
+
+                return wwLib.wwVariable.getValue(streamVariableId);
+            } catch (error) {
+                throw error.getResponse
+                    ? {
+                          name: error.name,
+                          stack: error.stack,
+                          message: error.message,
+                          response: error?.getResponse(),
+                      }
+                    : error;
+            }
         }
 
         return await axios({
