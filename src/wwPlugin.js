@@ -138,7 +138,9 @@ export default {
                           name: error.name,
                           stack: error.stack,
                           message: error.message,
-                          response: error?.getResponse(),
+                          response: {
+                              status: error?.getResponse()?.status,
+                          },
                       }
                     : error;
             }
