@@ -11,6 +11,12 @@
             <span class="truncate">{{ workspaceName }}</span>
         </div>
     </wwEditorFormRow>
+    <wwEditorFormRow label="Realtime connection hash">
+        <div class="flex items-center">
+            <div><wwEditorIcon large name="key" class="mr-2" /></div>
+            <span class="truncate">{{ realtimeConnectionHash }}</span>
+        </div>
+    </wwEditorFormRow>
     <wwLoader :loading="isLoading" />
 </template>
 
@@ -24,6 +30,7 @@ export default {
         isLoading: false,
         instanceName: null,
         workspaceName: null,
+        realtimeConnectionHash: null,
     }),
     mounted() {
         if (this.plugin.xanoManager.hasFailed()) {
@@ -38,6 +45,7 @@ export default {
         this.plugin.xanoManager.onReady(() => {
             this.instanceName = this.plugin.xanoManager.getInstance()?.name || 'None';
             this.workspaceName = this.plugin.xanoManager.getWorkspace()?.name || 'None';
+            this.realtimeConnectionHash = this.settings.publicData.realtimeConnectionHash || 'None';
             this.isLoading = false;
         });
     },
