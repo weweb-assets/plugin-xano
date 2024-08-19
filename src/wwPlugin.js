@@ -10,20 +10,44 @@ import './components/Branching/SettingsSummary.vue';
 import './components/GlobalHeaders/SettingsEdit.vue';
 import './components/GlobalHeaders/SettingsSummary.vue';
 import './components/Request.vue';
+import './components/RealtimeOpenChannel.vue';
+import './components/RealtimeCloseChannel.vue';
+import './components/RealtimeSendMessage.vue';
+import './components/RealtimeGetPresence.vue';
+import './components/RealtimeRequestHistory.vue';
 
 import DevApi from './api/developer.class';
 import MetaApi from './api/metadata.class';
 /* wwEditor:end */
 
+import { XanoClient } from '@xano/js-sdk';
+
 export default {
     xanoManager: null,
+    xanoClient: null,
+    channels: {},
     /*=============================================m_ÔÔ_m=============================================\
         Plugin API
     \================================================================================================*/
     async _onLoad(settings) {
+        this.init(settings);
+    },
+    async init(settings) {
         /* wwEditor:start */
         await this.initManager(settings);
         /* wwEditor:end */
+        this.xanoClient = new XanoClient({
+            instanceBaseUrl: 'https://' + (settings.publicData.customDomain || settings.publicData.domain),
+            realtimeConnectionHash: settings.publicData.realtimeConnectionHash,
+            customAxiosRequestConfig: {
+                withCredentials: settings.publicData.withCredentials,
+            },
+        });
+        if (wwLib.wwPlugins.xanoAuth?.accessToken) {
+            this.xanoClient.setAuthToken(wwLib.wwPlugins.xanoAuth.accessToken);
+            this.xanoClient.setRealtimeAuthToken(wwLib.wwPlugins.xanoAuth.accessToken);
+            this.xanoClient.realtimeReconnect();
+        }
     },
     /*=============================================m_ÔÔ_m=============================================\
         Editor API
@@ -75,26 +99,112 @@ export default {
     /*=============================================m_ÔÔ_m=============================================\
         Xano API
     \================================================================================================*/
-    async request({ apiGroupUrl, endpoint, headers, withCredentials, parameters, body, dataType }, wwUtils) {
+    async request(
+        { apiGroupUrl, endpoint, headers, withCredentials, parameters, body, dataType, streamVariableId },
+        wwUtils
+    ) {
         const authToken = wwLib.wwPlugins.xanoAuth && wwLib.wwPlugins.xanoAuth.accessToken;
 
-        let url = endpoint.path;
-        for (const key in parameters) url = url.replace(`{${key}}`, parameters[key]);
+        let path = endpoint.path;
+        for (const key in parameters) path = path.replace(`{${key}}`, parameters[key]);
 
-        wwUtils?.log('info', `[Xano] Requesting ${endpoint.method.toUpperCase()} - ${url}`, {
+        /* wwEditor:start */
+        wwUtils?.log('info', `[Xano] Requesting ${endpoint.method.toUpperCase()} - ${path}`, {
             type: 'request',
-            preview: body,
+            preview: { headers, parameters, body },
         });
+        /* wwEditor:end */
+
+        if (dataType === 'text/event-stream') {
+            try {
+                await this.xanoClient.request({
+                    endpoint: this.resolveUrl(apiGroupUrl) + path,
+                    method: endpoint.method,
+                    urlParams: parameters,
+                    bodyParams: endpoint.method === 'get' ? null : body,
+                    headerParams: buildXanoHeaders({}, headers),
+                    streamingCallback: response => {
+                        wwLib.wwVariable.updateValue(streamVariableId, [
+                            ...(wwLib.wwVariable.getValue(streamVariableId) || []),
+                            response?.data,
+                        ]);
+                    },
+                });
+
+                return wwLib.wwVariable.getValue(streamVariableId);
+            } catch (error) {
+                throw error.getResponse
+                    ? {
+                          name: error.name,
+                          stack: error.stack,
+                          message: error.message,
+                          response: {
+                              status: error?.getResponse()?.status,
+                          },
+                      }
+                    : error;
+            }
+        }
 
         return await axios({
             method: endpoint.method,
             baseURL: this.resolveUrl(apiGroupUrl),
-            url,
+            url: path,
             params: parameters,
             data: body,
             headers: buildXanoHeaders({ authToken, dataType }, headers),
             withCredentials: this.settings.publicData.withCredentials || withCredentials,
         });
+    },
+    openRealtimeChannel({ channel, presence = false, history = false, queueOfflineActions = true }) {
+        if (this.channels[channel]) this.closeRealtimeChannel({ channel });
+        this.channels[channel] = this.xanoClient.channel(channel, {
+            presence,
+            history,
+            queueOfflineActions,
+        });
+        this.channels[channel].on(
+            event => {
+                wwLib.wwWorkflow.executeTrigger(this.id + '-realtime', {
+                    event: { channel, type: event.action, data: event },
+                    conditions: { type: event.action, channel },
+                });
+                wwLib.wwWorkflow.executeTrigger(this.id + '-realtime:' + event.action, {
+                    event: { channel, data: event },
+                    conditions: { channel },
+                });
+            },
+            event => {
+                wwLib.wwWorkflow.executeTrigger(this.id + '-realtime', {
+                    event: { channel, type: event.action, data: event },
+                    conditions: { type: event.action, channel },
+                });
+                wwLib.wwWorkflow.executeTrigger(this.id + '-realtime:error', {
+                    event: { channel, data: event },
+                    conditions: { channel },
+                });
+            }
+        );
+    },
+    closeRealtimeChannel({ channel }) {
+        if (!this.channels[channel]) return;
+        this.channels[channel].destroy();
+        this.channels[channel] = null;
+    },
+    getRealtimePresence({ channel }) {
+        if (!this.channels[channel])
+            throw new Error(`Channel ${channel} is not registered. Please open the channel first.`);
+        return this.channels[channel].getPresence();
+    },
+    requestRealtimeHistory({ channel }) {
+        if (!this.channels[channel])
+            throw new Error(`Channel ${channel} is not registered. Please open the channel first.`);
+        return this.channels[channel].history();
+    },
+    sendRealtimeMessage({ channel, message, audience = 'public', socketId = null }) {
+        if (!this.channels[channel])
+            throw new Error(`Channel ${channel} is not registered. Please open the channel first.`);
+        this.channels[channel].message(message, { authenticated: audience === 'authenticated', socketId });
     },
     // Ensure everything use the same base domain
     resolveUrl(url) {

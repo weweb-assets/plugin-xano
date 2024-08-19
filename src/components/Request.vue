@@ -1,15 +1,4 @@
 <template>
-    <div class="flex items-center">
-        <div class="w-100 -full">
-            <wwEditorFormRow label="Content type">
-                <wwEditorInputTextSelect
-                    :options="dataTypeOptions"
-                    :model-value="dataType"
-                    @update:modelValue="setDataType"
-                />
-            </wwEditorFormRow>
-        </div>
-    </div>
     <wwEditorFormRow label="Api group" required>
         <div class="flex items-center">
             <wwEditorInputTextSelect
@@ -45,10 +34,38 @@
             </button>
         </div>
     </wwEditorFormRow>
+    <div class="flex items-center">
+        <div class="w-100 -full">
+            <wwEditorFormRow label="Content type">
+                <wwEditorInputTextSelect
+                    :options="dataTypeOptions"
+                    :model-value="dataType"
+                    @update:modelValue="setDataType"
+                />
+            </wwEditorFormRow>
+        </div>
+    </div>
+    <wwEditorInputRow
+        v-if="dataType === 'text/event-stream'"
+        label="Stream variable"
+        placeholder="Select an array variable"
+        type="select"
+        :actions="[{ icon: 'plus', label: 'Create variable', onAction: createWwVariable }]"
+        :options="wwVariableOptions"
+        :model-value="streamVariableId"
+        @update:modelValue="setStreamVariableId"
+        @action="action => action?.onAction()"
+        required
+        tooltip="The array variable that will receive the stream data"
+    />
     <wwEditorInputRow
         label="Headers"
         type="array"
         :model-value="headers"
+        :binding-validation="{
+            type: 'array',
+            tooltip: `An array containing objects formatted as following \`[{ key: 'header-key', value: 'header-value' }]\``,
+        }"
         bindable
         @update:modelValue="setHeaders"
         @add-item="setHeaders([...(headers || []), {}])"
@@ -79,12 +96,16 @@
             <wwEditorInputSwitch
                 :model-value="forcedCredentials || withCredentials"
                 @update:modelValue="setWithCredentials"
-                :disabled="forcedCredentials"
+                :disabled="forcedCredentials || dataType === 'text/event-stream'"
             />
             <div class="body-sm ml-2">Include credentials (cookies)</div>
             <wwEditorQuestionMark
                 tooltip-position="top-left"
-                forced-content="Cookies will be sent automatically. Your Xano endpoint API group need to have CORS configured with the proper headers for this to works. 1) Access-Control-Allow-Credentials must be true, 2) Access-Control-Allow-Origin must be set to your editor and production link, not wildcard. [See Xano documentation](https://docs.xano.com/api/the-basics/api-groups#cors-management)"
+                :forced-content="
+                    dataType === 'text/event-stream'
+                        ? 'It cannot be set here for text/event-stream content type, you still can set it at the plugin level'
+                        : 'Cookies will be sent automatically. Your Xano endpoint API group need to have CORS configured with the proper headers for this to works. </br>1) Access-Control-Allow-Credentials must be true </br>2) Access-Control-Allow-Origin must be set to your editor and production link, not wildcard. </br>[See Xano documentation](https://docs.xano.com/api/the-basics/api-groups#cors-management)</br>'
+                "
                 class="ml-auto text-stale-500"
             />
         </div>
@@ -171,6 +192,10 @@ export default {
         args: { type: Object, default: () => {} },
     },
     emits: ['update:args'],
+    setup() {
+        const { website: websiteVariables } = wwLib.wwVariable.useEditorVariables();
+        return { websiteVariables };
+    },
     data() {
         return {
             isLoading: false,
@@ -184,6 +209,7 @@ export default {
                 { label: 'multipart/form-data', value: 'multipart/form-data' },
                 { label: 'text/plain', value: 'text/plain' },
                 { label: 'text/html', value: 'text/html' },
+                { label: 'text/event-stream', value: 'text/event-stream' },
             ],
         };
     },
@@ -268,6 +294,18 @@ export default {
         forcedCredentials() {
             return this.plugin.settings?.publicData.withCredentials;
         },
+        streamVariableId() {
+            return this.args.streamVariableId;
+        },
+        wwVariableOptions() {
+            return Object.values(this.websiteVariables)
+                .filter(variable => variable.type === 'array')
+                .map(variable => ({
+                    label: variable.name,
+                    value: variable.id,
+                    icon: 'array',
+                }));
+        },
     },
     watch: {
         apiGroupUrl() {
@@ -283,7 +321,6 @@ export default {
                 bodyFields: [],
                 endpoint: null,
                 apiGroupUrl,
-                dataType: null,
             });
         },
         setEndpoint(endpoint) {
@@ -315,6 +352,9 @@ export default {
         },
         setWithCredentials(withCredentials) {
             this.$emit('update:args', { ...this.args, withCredentials });
+        },
+        setStreamVariableId(streamVariableId) {
+            this.$emit('update:args', { ...this.args, streamVariableId });
         },
         removeParam(keys) {
             const parameters = { ...this.parameters };
@@ -365,6 +405,11 @@ export default {
             } finally {
                 this.isLoading = false;
             }
+        },
+        createWwVariable() {
+            wwLib.wwPopupSidebars.open({ name: 'NAVIGATOR' });
+            wwLib.$emit('wwTopBar:navigator:tab', 'data');
+            wwLib.$emit('wwTopBar:navigator:data:variables:set', null);
         },
     },
 };
