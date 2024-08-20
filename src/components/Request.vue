@@ -82,7 +82,7 @@
     <wwEditorFormRow>
         <div class="flex items-center">
             <wwEditorInputSwitch
-                :model-value="(forcedCredentials || withCredentials) && !useStreaming"
+                :model-value="forcedCredentials || (withCredentials && !useStreaming)"
                 @update:modelValue="setWithCredentials"
                 :disabled="forcedCredentials || useStreaming"
             />
@@ -91,7 +91,7 @@
                 tooltip-position="top-left"
                 :forced-content="
                     useStreaming
-                        ? 'It cannot be set here for text/event-stream content type, you still can set it at the plugin level'
+                        ? 'It cannot be set locally here for streamed request, you still can set it globally at the plugin level'
                         : 'Cookies will be sent automatically. Your Xano endpoint API group need to have CORS configured with the proper headers for this to works. </br>1) Access-Control-Allow-Credentials must be true </br>2) Access-Control-Allow-Origin must be set to your editor and production link, not wildcard. </br>[See Xano documentation](https://docs.xano.com/api/the-basics/api-groups#cors-management)</br>'
                 "
                 class="ml-auto text-stale-500"
