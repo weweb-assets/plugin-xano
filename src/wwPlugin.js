@@ -100,7 +100,7 @@ export default {
         Xano API
     \================================================================================================*/
     async request(
-        { apiGroupUrl, endpoint, headers, withCredentials, parameters, body, dataType, streamVariableId },
+        { apiGroupUrl, endpoint, headers, withCredentials, parameters, body, dataType, useStreaming, streamVariableId },
         wwUtils
     ) {
         const authToken = wwLib.wwPlugins.xanoAuth && wwLib.wwPlugins.xanoAuth.accessToken;
@@ -115,14 +115,14 @@ export default {
         });
         /* wwEditor:end */
 
-        if (dataType === 'text/event-stream') {
+        if (useStreaming || dataType === 'text/event-stream') {
             try {
                 await this.xanoClient.request({
                     endpoint: this.resolveUrl(apiGroupUrl) + path,
                     method: endpoint.method,
                     urlParams: parameters,
                     bodyParams: endpoint.method === 'get' ? null : body,
-                    headerParams: buildXanoHeaders({}, headers),
+                    headerParams: buildXanoHeaders({ dataType }, headers),
                     streamingCallback: response => {
                         wwLib.wwVariable.updateValue(streamVariableId, [
                             ...(wwLib.wwVariable.getValue(streamVariableId) || []),

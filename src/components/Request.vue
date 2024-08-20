@@ -45,19 +45,7 @@
             </wwEditorFormRow>
         </div>
     </div>
-    <wwEditorInputRow
-        v-if="dataType === 'text/event-stream'"
-        label="Stream variable"
-        placeholder="Select an array variable"
-        type="select"
-        :actions="[{ icon: 'plus', label: 'Create variable', onAction: createWwVariable }]"
-        :options="wwVariableOptions"
-        :model-value="streamVariableId"
-        @update:modelValue="setStreamVariableId"
-        @action="action => action?.onAction()"
-        required
-        tooltip="The array variable that will receive the stream data"
-    />
+
     <wwEditorInputRow
         label="Headers"
         type="array"
@@ -94,22 +82,46 @@
     <wwEditorFormRow>
         <div class="flex items-center">
             <wwEditorInputSwitch
-                :model-value="forcedCredentials || withCredentials"
+                :model-value="forcedCredentials || (withCredentials && !useStreaming)"
                 @update:modelValue="setWithCredentials"
-                :disabled="forcedCredentials || dataType === 'text/event-stream'"
+                :disabled="forcedCredentials || useStreaming"
             />
             <div class="body-sm ml-2">Include credentials (cookies)</div>
             <wwEditorQuestionMark
                 tooltip-position="top-left"
                 :forced-content="
-                    dataType === 'text/event-stream'
-                        ? 'It cannot be set here for text/event-stream content type, you still can set it at the plugin level'
+                    useStreaming
+                        ? 'It cannot be set locally here for streamed request, you still can set it globally at the plugin level'
                         : 'Cookies will be sent automatically. Your Xano endpoint API group need to have CORS configured with the proper headers for this to works. </br>1) Access-Control-Allow-Credentials must be true </br>2) Access-Control-Allow-Origin must be set to your editor and production link, not wildcard. </br>[See Xano documentation](https://docs.xano.com/api/the-basics/api-groups#cors-management)</br>'
                 "
                 class="ml-auto text-stale-500"
             />
         </div>
     </wwEditorFormRow>
+    <wwEditorFormRow>
+        <div class="flex items-center">
+            <wwEditorInputSwitch :model-value="useStreaming" @update:modelValue="setUseStreaming" />
+            <div class="body-sm ml-2">Stream response</div>
+            <wwEditorQuestionMark
+                tooltip-position="top-left"
+                forced-content="The response will be streamed in real-time. You can use the stream variable to receive the data. It require the streaming feature to be enabled on your Xano endpoint."
+                class="ml-auto text-stale-500"
+            />
+        </div>
+    </wwEditorFormRow>
+    <wwEditorInputRow
+        v-if="useStreaming"
+        label="Stream variable"
+        placeholder="Select an array variable"
+        type="select"
+        :actions="[{ icon: 'plus', label: 'Create variable', onAction: createWwVariable }]"
+        :options="wwVariableOptions"
+        :model-value="streamVariableId"
+        @update:modelValue="setStreamVariableId"
+        @action="action => action?.onAction()"
+        required
+        tooltip="The array variable that will receive the stream data"
+    />
     <wwEditorFormRow v-for="(key, index) in legacyParameters" :key="'legacy_param_' + key" :label="key">
         <template #append-label>
             <div class="flex items-center justify-end w-full body-3 text-red-500">
@@ -209,7 +221,6 @@ export default {
                 { label: 'multipart/form-data', value: 'multipart/form-data' },
                 { label: 'text/plain', value: 'text/plain' },
                 { label: 'text/html', value: 'text/html' },
-                { label: 'text/event-stream', value: 'text/event-stream' },
             ],
         };
     },
@@ -248,6 +259,9 @@ export default {
         },
         withCredentials() {
             return this.args.withCredentials || false;
+        },
+        useStreaming() {
+            return this.args.useStreaming || false;
         },
         parameters() {
             return this.args.parameters || {};
@@ -352,6 +366,9 @@ export default {
         },
         setWithCredentials(withCredentials) {
             this.$emit('update:args', { ...this.args, withCredentials });
+        },
+        setUseStreaming(useStreaming) {
+            this.$emit('update:args', { ...this.args, useStreaming });
         },
         setStreamVariableId(streamVariableId) {
             this.$emit('update:args', { ...this.args, streamVariableId });
