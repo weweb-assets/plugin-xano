@@ -55,7 +55,7 @@ export default {
             label: 'On realtime - All events',
             value: 'realtime',
             event: {
-                channel: 'My channel name',
+                channel: '<channel-name>',
                 type: 'message',
                 data: { client: null, action: '', options: {}, payload: null },
             },
@@ -76,7 +76,7 @@ export default {
             label: 'On realtime - connection status',
             value: 'realtime:connection_status',
             event: {
-                channel: 'My channel name',
+                channel: '<channel-name>',
                 data: { action: 'connection_status', options: {}, payload: { status: 'disconnected' } },
             },
             conditions: [
@@ -96,13 +96,13 @@ export default {
             label: 'On realtime - presence full',
             value: 'realtime:presence_full',
             event: {
-                channel: 'My channel name',
+                channel: '<channel-name>',
                 data: {
                     client: null,
                     action: 'presence_full',
                     options: {},
                     payload: {
-                        presence: [{ socketId: 'A socket id', extras: {}, permissions: { dbo_id: 0, row_id: 0 } }],
+                        presence: [{ socketId: '<socket-id>', extras: {}, permissions: { dbo_id: 0, row_id: 0 } }],
                     },
                 },
             },
@@ -123,15 +123,15 @@ export default {
             label: 'On realtime - presence update',
             value: 'realtime:presence_update',
             event: {
-                channel: 'My channel name',
+                channel: '<channel-name>',
                 data: {
                     client: null,
                     action: 'presence_full',
-                    options: { channel: '' },
+                    options: { channel: '<channel-name>' },
                     payload: {
                         action: 'join',
                         presence: {
-                            socketId: 'A socket id',
+                            socketId: '<socket-id>',
                             extras: {},
                             permissions: { dbo_id: 0, row_id: 0 },
                         },
@@ -170,12 +170,12 @@ export default {
             label: 'On realtime - message',
             value: 'realtime:message',
             event: {
-                channel: 'My channel name',
+                channel: '<channel-name>',
                 data: {
                     action: 'message',
                     options: { authenticated: false, socketId: null, channel: '' },
-                    client: { socketId: 'A socket id', extras: {}, permissions: { dbo_id: 0, row_id: 0 } },
-                    payload: 'message',
+                    client: { socketId: '<socket-id>', extras: {}, permissions: { dbo_id: 0, row_id: 0 } },
+                    payload: '<message>',
                 },
             },
             conditions: [
@@ -195,15 +195,15 @@ export default {
             label: 'On realtime - event',
             value: 'realtime:event',
             event: {
-                channel: 'My channel name',
+                channel: '<channel-name>',
                 data: {
                     action: 'event',
                     options: {
-                        channel: 'Channel name',
+                        channel: '<channel-name>',
                     },
                     client: null,
                     payload: {
-                        data: 'event data',
+                        data: '<event-data>',
                         dbo_id: 0,
                         row_id: 0,
                     },
@@ -226,7 +226,7 @@ export default {
             label: 'On realtime - history',
             value: 'realtime:history',
             event: {
-                channel: 'My channel name',
+                channel: '<channel-name>',
                 data: {
                     action: 'history',
                     options: { channel: '' },
@@ -236,14 +236,14 @@ export default {
                             {
                                 action: 'message 1',
                                 options: { authenticated: false, socketId: null, channel: '' },
-                                client: { socketId: 'A socket id', extras: {}, permissions: { dbo_id: 0, row_id: 0 } },
-                                payload: 'message',
+                                client: { socketId: '<socket-id>', extras: {}, permissions: { dbo_id: 0, row_id: 0 } },
+                                payload: '<message>',
                             },
                             {
                                 action: 'message 2',
                                 options: { authenticated: false, socketId: null, channel: '' },
-                                client: { socketId: 'A socket id', extras: {}, permissions: { dbo_id: 0, row_id: 0 } },
-                                payload: 'message',
+                                client: { socketId: '<socket-id>', extras: {}, permissions: { dbo_id: 0, row_id: 0 } },
+                                payload: '<message>',
                             },
                         ],
                     },
@@ -266,12 +266,12 @@ export default {
             label: 'On realtime - error',
             value: 'realtime:error',
             event: {
-                channel: 'My channel name',
+                channel: '<channel-name>',
                 data: {
                     action: 'event',
-                    options: { channel: '' },
+                    options: { channel: '<channel-name>' },
                     client: null,
-                    payload: { message: 'error message' },
+                    payload: { message: '<error-message>' },
                 },
             },
             conditions: [
