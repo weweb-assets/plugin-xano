@@ -198,9 +198,15 @@ export default {
                 channel: 'My channel name',
                 data: {
                     action: 'event',
-                    options: {},
+                    options: {
+                        channel: 'Channel name',
+                    },
                     client: null,
-                    payload: 'event',
+                    payload: {
+                        data: 'event data',
+                        dbo_id: 0,
+                        row_id: 0,
+                    },
                 },
             },
             conditions: [
