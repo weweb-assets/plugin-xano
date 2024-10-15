@@ -22,9 +22,13 @@ import MetaApi from './api/metadata.class';
 
 import { XanoClient } from '@xano/js-sdk';
 
+const WEBSOCKET_SERVER_TRY_INTERVAL_IN_MS = 500;
+const WEBSOCKET_SERVER_MAX_TRY_INTERVAL = 10;
+
 export default {
     xanoManager: null,
     xanoClient: null,
+    websocketServerStatus: 'not ready', // 'not ready' > 'disconnected' > 'connecting' > 'connected'
     channels: {},
     /*=============================================m_ÔÔ_m=============================================\
         Plugin API
@@ -48,6 +52,7 @@ export default {
             this.xanoClient.setRealtimeAuthToken(wwLib.wwPlugins.xanoAuth.accessToken);
             this.xanoClient.realtimeReconnect();
         }
+        this.websocketServerStatus = 'disconnected';
     },
     /*=============================================m_ÔÔ_m=============================================\
         Editor API
@@ -135,13 +140,13 @@ export default {
             } catch (error) {
                 throw error.getResponse
                     ? {
-                          name: error.name,
-                          stack: error.stack,
-                          message: error.message,
-                          response: {
-                              status: error?.getResponse()?.status,
-                          },
-                      }
+                        name: error.name,
+                        stack: error.stack,
+                        message: error.message,
+                        response: {
+                            status: error?.getResponse()?.status,
+                        },
+                    }
                     : error;
             }
         }
@@ -156,40 +161,118 @@ export default {
             withCredentials: this.settings.publicData.withCredentials || withCredentials,
         });
     },
-    openRealtimeChannel({ channel, presence = false, history = false, queueOfflineActions = true }) {
-        if (this.channels[channel]) this.closeRealtimeChannel({ channel });
-        this.channels[channel] = this.xanoClient.channel(channel, {
-            presence,
-            history,
-            queueOfflineActions,
-        });
-        this.channels[channel].on(
-            event => {
-                wwLib.wwWorkflow.executeTrigger(this.id + '-realtime', {
-                    event: { channel, type: event.action, data: event },
-                    conditions: { type: event.action, channel },
-                });
-                wwLib.wwWorkflow.executeTrigger(this.id + '-realtime:' + event.action, {
-                    event: { channel, data: event },
-                    conditions: { channel },
-                });
-            },
-            event => {
-                wwLib.wwWorkflow.executeTrigger(this.id + '-realtime', {
-                    event: { channel, type: event.action, data: event },
-                    conditions: { type: event.action, channel },
-                });
-                wwLib.wwWorkflow.executeTrigger(this.id + '-realtime:error', {
-                    event: { channel, data: event },
-                    conditions: { channel },
-                });
+    async openRealtimeChannel({ channel, presence = false, history = false, queueOfflineActions = true }) {
+        const waitForServerStatus = async (condition, waitInterval, maxTryInterval) => {
+            let timeout = 0;
+            let maxTimeout = maxTryInterval;
+            await new Promise((resolve, reject) => {
+                if (condition()) {
+                    resolve();
+                    return;
+                }
+                const interval = setInterval(() => {
+                    if (condition()) {
+                        clearInterval(interval);
+                        resolve();
+                    }
+                    if (timeout >= maxTimeout) {
+                        clearInterval(interval);
+
+                        wwLib.wwLog.error(`Timeout during [${channel}] channel connexion for waiting the server status`);
+                        reject('Timeout');
+                    }
+                    timeout++;
+                }, waitInterval);
+            });
+        }
+
+        // 1 : Check if the websocket server is ready to connect
+        switch (this.websocketServerStatus) {
+            // xanoClient is not initialized yet -> wait for it
+            case 'not ready':
+                await waitForServerStatus(
+                    () => this.websocketServerStatus === 'disconnected' || this.websocketServerStatus === 'connected',
+                    WEBSOCKET_SERVER_TRY_INTERVAL_IN_MS,
+                    WEBSOCKET_SERVER_MAX_TRY_INTERVAL
+                );
+                break;
+            // xanoClient is not connected to realtime server yet -> wait for it
+            case 'connecting':
+                await waitForServerStatus(
+                    () => this.websocketServerStatus === 'connected',
+                    WEBSOCKET_SERVER_TRY_INTERVAL_IN_MS,
+                    WEBSOCKET_SERVER_MAX_TRY_INTERVAL
+                );
+                break;
+        }
+
+        // 2 : if first time connecting, set the status to connecting
+        if (this.websocketServerStatus === 'disconnected') {
+            this.websocketServerStatus = 'connecting';
+        }
+
+        // 3 : Open the channel
+        return new Promise((resolve) => {
+            if (this.channels[channel]) {
+                wwLib.wwLog.log('Channel already open');
+                resolve();
+                return;
             }
-        );
+
+            this.channels[channel] = this.xanoClient.channel(channel, {
+                presence,
+                history,
+                queueOfflineActions,
+            }).on(
+                event => {
+                    wwLib.wwWorkflow.executeTrigger(this.id + '-realtime', {
+                        event: { channel, type: event.action, data: event },
+                        conditions: { type: event.action, channel },
+                    });
+                    wwLib.wwWorkflow.executeTrigger(this.id + '-realtime:' + event.action, {
+                        event: { channel, data: event },
+                        conditions: { channel },
+                    });
+                    if (event.payload.status === 'connected') {
+                        this.websocketServerStatus = 'connected';
+                        wwLib.wwLog.log('Connected to xano websocket server');
+                        wwLib.wwLog.log(`Channel [${channel}] connected`);
+                        resolve();
+                    }
+                },
+                error => {
+                    wwLib.wwWorkflow.executeTrigger(this.id + '-realtime', {
+                        event: { channel, type: error.action, data: error },
+                        conditions: { type: error.action, channel },
+                    });
+                    wwLib.wwWorkflow.executeTrigger(this.id + '-realtime:error', {
+                        event: { channel, data: error },
+                        conditions: { channel },
+                    });
+
+                    if (error.payload.message === 'No settings for channel name') {
+                        this.closeRealtimeChannel({ channel });
+                    }
+                }
+            );
+
+            if (this.websocketServerStatus === 'connected') {
+                wwLib.wwLog.log(`Channel [${channel}] connected`);
+                resolve();
+            }
+        });
     },
-    closeRealtimeChannel({ channel }) {
+    async closeRealtimeChannel({ channel }) {
         if (!this.channels[channel]) return;
-        this.channels[channel].destroy();
+        await this.channels[channel].destroy();
         this.channels[channel] = null;
+
+        // Update the websocket server status if no channel is open
+        const isAnyChannelOpen = Object.values(this.channels).some(channel => channel !== null);
+        if (!isAnyChannelOpen) {
+            this.websocketServerStatus = 'disconnected';
+        }
+
     },
     getRealtimePresence({ channel }) {
         if (!this.channels[channel])
