@@ -310,14 +310,14 @@ export default {
                     apiGroupUrl: {
                         type: 'string',
                         description:
-                            'The base URL of the Xano API group (e.g., "https://x8ki-letl-twmt.n7.xano.io/api:abcdef"). CRITICAL: select the correct API group base URL depending of the endpoint you want to use.',
-                        bindable: true,
+                            'The base URL of the Xano API group (e.g., "https://x8ki-letl-twmt.n7.xano.io/api:abcdef").',
+                        bindable: false,
                     },
                     endpoint: {
                         type: 'object',
                         description:
                             'The endpoint configuration object with required properties:\n- method: HTTP method (get, post, put, patch, delete)\n- path: Endpoint path with optional parameter placeholders (e.g., "/users/{userId}")',
-                        bindable: true,
+                        bindable: false,
                     },
                     headers: {
                         type: 'Array<{key: string, value: string}',

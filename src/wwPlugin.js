@@ -286,8 +286,8 @@ function buildXanoHeaders(
 function formatSpec(fullSpec) {
     return fullSpec.map(spec => {
         const result = {
-            name: spec.info.title,
-            baseUrl: spec.servers[0].url,
+            apiGroupName: spec.info.title,
+            apiGroupUrl: spec.servers[0].url,
             endpoints: {},
         };
 
@@ -298,6 +298,7 @@ function formatSpec(fullSpec) {
 
                 // Create endpoint info
                 const endpoint = {
+                    apiGroupUrl: spec.servers[0].url,
                     path,
                     method,
                     requiresAuth: details.security?.length > 0,
