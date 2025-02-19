@@ -310,7 +310,7 @@ export default {
                     apiGroupUrl: {
                         type: 'string',
                         description:
-                            'The base URL of the Xano API group (e.g., "https://x8ki-letl-twmt.n7.xano.io/api:abcdef")',
+                            'The base URL of the Xano API group (e.g., "https://x8ki-letl-twmt.n7.xano.io/api:abcdef"). CRITICAL: select the correct API group base URL depending of the endpoint you want to use.',
                         bindable: true,
                     },
                     endpoint: {
