@@ -334,7 +334,7 @@ export default {
                     body: {
                         type: 'object',
                         description:
-                            'Request body data. Only used for non-GET requests. Should be a JSON-serializable object. The values are bindable, but not the whole object.',
+                            'Request body data. Only used for non-GET requests. Should be a JSON-serializable object. The key values are bindable, but not the whole object. The object cannot be bind, you have to bind individual sub keys. eg. {email: <bind-email>, password: <bind-password>}',
                         bindable: false,
                     },
                     dataType: {
