@@ -318,11 +318,13 @@ export default {
             ];
         },
         wwVariableOptions() {
-            return this.wwVariables.map(variable => ({
-                label: variable.name,
-                value: variable.id,
-                icon: variable.type,
-            }));
+            return this.wwVariables
+                .filter(variable => variable.type === 'array')
+                .map(variable => ({
+                    label: variable.name,
+                    value: variable.id,
+                    icon: variable.type,
+                }));
         },
     },
     watch: {
