@@ -117,6 +117,12 @@ export default {
 
         if (useStreaming || dataType === 'text/event-stream') {
             try {
+                console.log(`[Xano] Starting streaming request for ${dataType === 'text/event-stream' ? 'SSE' : 'generic streaming'}`, {
+                    useStreaming, 
+                    dataType, 
+                    streamVariableId
+                });
+
                 await this.xanoClient.request({
                     endpoint: this.resolveUrl(apiGroupUrl) + path,
                     method: endpoint.method,
@@ -124,15 +130,44 @@ export default {
                     bodyParams: endpoint.method === 'get' ? null : body,
                     headerParams: buildXanoHeaders({ dataType }, headers),
                     streamingCallback: response => {
-                        wwLib.wwVariable.updateValue(streamVariableId, [
-                            ...(wwLib.wwVariable.getValue(streamVariableId) || []),
-                            response?.data,
-                        ]);
+                        console.log(`[Xano] Streaming data received:`, {
+                            responseType: typeof response,
+                            hasData: !!response?.data,
+                            dataType: typeof response?.data,
+                            dataLength: response?.data?.length || 'N/A',
+                            rawData: response?.data,
+                            fullResponse: response
+                        });
+
+                        const currentValue = wwLib.wwVariable.getValue(streamVariableId) || [];
+                        const newValue = [...currentValue, response?.data];
+                        
+                        wwLib.wwVariable.updateValue(streamVariableId, newValue);
+
+                        console.log(`[Xano] Updated stream variable:`, {
+                            streamVariableId,
+                            currentArrayLength: newValue.length,
+                            latestItem: response?.data
+                        });
                     },
                 });
 
-                return wwLib.wwVariable.getValue(streamVariableId);
+                const finalValue = wwLib.wwVariable.getValue(streamVariableId);
+                
+                console.log(`[Xano] Streaming request completed:`, {
+                    totalItems: finalValue?.length || 0,
+                    finalValue: finalValue
+                });
+
+                return finalValue;
             } catch (error) {
+                console.error(`[Xano] Streaming request failed:`, {
+                    error: error.message,
+                    hasResponse: !!error.getResponse,
+                    responseStatus: error?.getResponse()?.status,
+                    fullError: error
+                });
+
                 throw error.getResponse
                     ? {
                           name: error.name,
