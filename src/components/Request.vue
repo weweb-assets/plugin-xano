@@ -322,7 +322,7 @@ export default {
                 ...(this.componentVariables ? Object.values(this.componentVariables) : []),
             ];
         },
-        Options() {
+        wwVariableOptions() {
             return this.wwVariables
                 .filter(variable => variable.type === 'array')
                 .map(variable => {
