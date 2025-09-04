@@ -205,8 +205,8 @@ export default {
     },
     emits: ['update:args'],
     setup() {
-        const { website: websiteVariables } = wwLib.wwVariable.useEditorVariables();
-        return { websiteVariables };
+        const { website: websiteVariables, components: componentVariables } = wwLib.wwVariable.useEditorVariables();
+        return { websiteVariables, componentVariables };
     },
     data() {
         return {
@@ -311,14 +311,26 @@ export default {
         streamVariableId() {
             return this.args.streamVariableId;
         },
+        wwVariables() {
+            return [
+                ...(this.websiteVariables ? Object.values(this.websiteVariables) : []),
+                ...(this.componentVariables ? Object.values(this.componentVariables) : []),
+            ];
+        },
         wwVariableOptions() {
-            return Object.values(this.websiteVariables)
+            return this.wwVariables
                 .filter(variable => variable.type === 'array')
-                .map(variable => ({
-                    label: variable.name,
-                    value: variable.id,
-                    icon: 'array',
-                }));
+                .map(variable => {
+                    const labelPrefix = variable.componentType
+                        ? wwLib.wwElement.getComponentLabel(variable.componentType, variable.componentUid)
+                        : null;
+                    const label = labelPrefix ? `${labelPrefix} - ${variable.name}` : variable.name;
+                    return {
+                        label,
+                        value: variable.id,
+                        icon: variable.type,
+                    };
+                });
         },
     },
     watch: {

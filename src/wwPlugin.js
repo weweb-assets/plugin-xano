@@ -124,10 +124,20 @@ export default {
                     bodyParams: endpoint.method === 'get' ? null : body,
                     headerParams: buildXanoHeaders({ dataType }, headers),
                     streamingCallback: response => {
-                        wwLib.wwVariable.updateValue(streamVariableId, [
-                            ...(wwLib.wwVariable.getValue(streamVariableId) || []),
-                            response?.data,
-                        ]);
+                        // Parse JSON strings into objects
+                        let parsedData = response?.data;
+                        if (typeof response?.data === 'string') {
+                            try {
+                                parsedData = JSON.parse(response.data);
+                            } catch (error) {
+                                // Keep original string if parsing fails
+                            }
+                        }
+
+                        const currentValue = wwLib.wwVariable.getValue(streamVariableId) || [];
+                        const newValue = [...currentValue, parsedData];
+                        
+                        wwLib.wwVariable.updateValue(streamVariableId, newValue);
                     },
                 });
 
