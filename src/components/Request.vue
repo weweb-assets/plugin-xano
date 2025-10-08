@@ -315,14 +315,12 @@ export default {
             return [
                 ...(this.websiteVariables ? Object.values(this.websiteVariables) : []),
                 ...(this.componentVariables ? Object.values(this.componentVariables) : []),
-            ],filter(variable => {
+            ].filter(variable => {
                 if (variable.componentType === 'libraryComponent') return false;
                 return true;
             });;
         },
         wwVariableOptions() {
-            console.log('wwVariables', this.wwVariables);
-
             return this.wwVariables
                 .filter(variable => variable.type === 'array')
                 .map(variable => {
