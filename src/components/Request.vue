@@ -321,6 +321,8 @@ export default {
             });;
         },
         wwVariableOptions() {
+            console.log('wwVariables', this.wwVariables);
+
             return this.wwVariables
                 .filter(variable => variable.type === 'array')
                 .map(variable => {
