@@ -8,16 +8,18 @@ export default class {
     #instanceId = null;
     #workspaceId = null;
     #branch = null;
+    #customDomain = null;
 
     #instances = [];
     #workspaces = [];
     #apiGroups = [];
 
-    constructor(apiKey, instanceId, workspaceId, branch) {
+    constructor(apiKey, instanceId, workspaceId, branch, customDomain) {
         this.#apiKey = apiKey;
         this.#instanceId = instanceId;
         this.#workspaceId = workspaceId;
         this.#branch = branch;
+        this.#customDomain = customDomain;
     }
 
     async init() {
@@ -52,16 +54,18 @@ export default class {
     async #loadInstances() {
         this.#instances = [];
         if (!this.#apiKey) return;
-
-        const { data: instances } = await axios.get('https://app.xano.com/api:meta/instance', {
-            headers: { Authorization: `Bearer ${this.#apiKey}` },
-        });
-
-        this.#instances = instances;
+        try {
+            const { data: instances } = await axios.get('https://app.xano.com/api:meta/instance', {
+                headers: { Authorization: `Bearer ${this.#apiKey}` },
+            });
+            this.#instances = instances;
+        } catch (error) {
+            this.$instances = [];
+        }
     }
     async #loadWorkspaces() {
         this.#workspaces = [];
-        if (!this.#apiKey || !this.#instanceId || !this.#instances.length) return;
+        if (!this.#apiKey || !this.#instanceId) return;
 
         const instance = this.getInstance();
         if (!instance) return;
@@ -125,12 +129,17 @@ export default class {
      * PUBLIC GETTERS
      */
     getInstances() {
-        return this.#instances.map(instance => ({
+        return [...this.#instances.map(instance => ({
             id: instance.name,
             name: instance.display,
             baseDomain: instance.xano_domain,
             customDomain: instance.custom_domain,
-        }));
+        })), {
+            id: 'custom',
+            name: 'Custom',
+            baseDomain: this.#customDomain,
+            customDomain: this.#customDomain,
+        }];
     }
     getInstance() {
         return this.getInstances().find(instance => instance.id === this.#instanceId);
@@ -177,6 +186,7 @@ export default class {
             this.#instances = [];
             this.#workspaces = [];
             this.#apiGroups = [];
+            this.#customDomain = null;
             return;
         }
         await this.init();
@@ -201,6 +211,10 @@ export default class {
     async changeBranch(branch) {
         this.#branch = branch;
         await this.#loadApiGroups();
+    }
+    async changeCustomDomain(customDomain) {
+        this.#customDomain = customDomain;
+        await this.#loadWorkspaces();
     }
 
     /**

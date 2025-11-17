@@ -209,11 +209,11 @@ export default {
             this.sync();
             this.isLoading = false;
         },
-        setCustomDomain(value) {
-            this.$emit('update:settings', {
-                ...this.settings,
-                publicData: { ...this.settings.publicData, customDomain: value },
-            });
+        async setCustomDomain(value) {
+            this.isLoading = true;
+            await xanoManager.changeCustomDomain(value);
+            this.sync();
+            this.isLoading = false;
         },
         setRealtimeConnectionHash(value) {
             this.$emit('update:settings', {
