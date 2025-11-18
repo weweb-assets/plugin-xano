@@ -56,7 +56,7 @@ export default class {
         if (!this.#apiKey) return;
         try {
             const { data: instances } = await axios.get('https://app.xano.com/api:meta/instance', {
-                // headers: { Authorization: `Bearer ${this.#apiKey}` },
+                headers: { Authorization: `Bearer ${this.#apiKey}` },
             });
             this.#instances = instances;
         } catch (error) {
@@ -226,7 +226,7 @@ export default class {
         const specUrl = apiGroupUrl.replace('/api:', '/apispec:') + (branch ? ':' + branch : '') + '?type=json' + (apiGroup?.token ? '&token=' + apiGroup.token : '');
         try {
             const { data } = await axios.get(specUrl, {
-                headers: { Authorization: `Bearer ${this.#apiKey}` },
+                // headers: { Authorization: `Bearer ${this.#apiKey}` },
             });
             return data;
         } catch (error) {
