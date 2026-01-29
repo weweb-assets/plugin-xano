@@ -175,7 +175,7 @@ export default {
                 publicData: {
                     ...this.settings.publicData,
                     domain: xanoManager.getBaseDomain(),
-                    customDomain: xanoManager.getCustomDomain() || this.settings.publicData.customDomain,
+                    customDomain: xanoManager.getCustomDomain(),
                 },
             });
         },
