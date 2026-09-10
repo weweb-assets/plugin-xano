@@ -301,6 +301,68 @@ export default {
             isAsync: true,
             /* wwEditor:start */
             edit: () => import('./src/components/Request.vue'),
+            copilot: {
+                description:
+                    'Make a request to a Xano API endpoint. Can handle both regular REST requests and streaming responses. Automatically includes Xano authentication token if available.',
+                returns:
+                    'For regular requests: Axios response object containing { data, status, headers, config }. For streaming requests: Array of accumulated stream data accessed through the specified streamVariableId.',
+                schema: {
+                    apiGroupUrl: {
+                        type: 'string',
+                        description:
+                            'The base URL of the Xano API group (e.g., "https://x8ki-letl-twmt.n7.xano.io/api:abcdef").',
+                        bindable: false,
+                    },
+                    endpoint: {
+                        type: 'object',
+                        description:
+                            'The endpoint configuration object with required properties:\n- method: HTTP method (get, post, put, patch, delete)\n- path: Endpoint path with optional parameter placeholders (e.g., "/users/{userId}")',
+                        bindable: false,
+                    },
+                    headers: {
+                        type: 'Array<{key: string, value: string}',
+                        description:
+                            'Custom headers as key-value pairs, e.g., [{"Content-Type": "application/json"}]. Automatically includes Xano authentication token if available. key and value are bindable individually.',
+                        bindable: true,
+                    },
+                    parameters: {
+                        type: 'object',
+                        description:
+                            'URL parameters object serving two purposes: 1) Replace path placeholders (e.g., {userId} in path), 2) Add query parameters to URL. Example: {"userId": "123", "filter": "active"}. The values are bindable, but not the whole object.',
+                        bindable: false,
+                    },
+                    body: {
+                        type: 'object',
+                        description:
+                            'Request body data. Only used for non-GET requests. Should be a JSON-serializable object. The key values are bindable, but not the whole object. The object cannot be bind, you have to bind individual sub keys. eg. {email: {__wwType: "...", code: "..."}, password:  {__wwType: "...", code: "..."}}',
+                        bindable: false,
+                    },
+                    dataType: {
+                        type: 'string',
+                        description:
+                            'Content type for the request. Set to "text/event-stream" for SSE streaming. Default is "application/json"',
+                        bindable: true,
+                    },
+                    withCredentials: {
+                        type: 'boolean',
+                        description:
+                            'Include credentials (cookies) with the request. Falls back to plugin settings if not specified.',
+                        bindable: true,
+                    },
+                    useStreaming: {
+                        type: 'boolean',
+                        description:
+                            'Enable Server-Sent Events (SSE) streaming mode. When true, responses will be accumulated in the specified streamVariableId.',
+                        bindable: true,
+                    },
+                    streamVariableId: {
+                        type: 'string',
+                        description:
+                            'Required when useStreaming is true. The ID of the variable where streaming responses will be accumulated as an array.',
+                        bindable: true,
+                    },
+                },
+            },
             /* wwEditor:end */
         },
         {

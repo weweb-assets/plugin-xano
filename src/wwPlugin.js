@@ -26,6 +26,7 @@ export default {
     xanoManager: null,
     xanoClient: null,
     channels: {},
+    fullSpec: [],
     /*=============================================m_ÔÔ_m=============================================\
         Plugin API
     \================================================================================================*/
@@ -53,10 +54,16 @@ export default {
         Editor API
     \================================================================================================*/
     /* wwEditor:start */
+    _getCopilotContext() {
+        return {
+            apiDoc: formatSpec(this.fullSpec),
+        };
+    },
     async initManager(settings) {
         this.xanoManager = this.createManager(settings);
         try {
             await this.xanoManager.init();
+            this.fullSpec = await this.xanoManager.fetchFullSpec();
         } catch (error) {
             wwLib.wwNotification.open({
                 text: 'Failed to init Xano, please ensure your API key has the permission required.',
@@ -285,4 +292,83 @@ function buildXanoHeaders(
             .filter(header => !!header && !!header.key)
             .reduce((curr, next) => ({ ...curr, [next.key]: next.value }), {}),
     };
+}
+
+function formatSpec(fullSpec) {
+    return fullSpec.map(spec => {
+        const result = {
+            apiGroupName: spec.info.title,
+            apiGroupUrl: spec.servers[0].url,
+            endpoints: {},
+        };
+
+        // Process all paths
+        for (const [path, methods] of Object.entries(spec.paths)) {
+            for (const [method, details] of Object.entries(methods)) {
+                const endpointKey = `${method}${path.replace(/\//g, '_')}`;
+
+                // Create endpoint info
+                const endpoint = {
+                    apiGroupUrl: spec.servers[0].url,
+                    path,
+                    method,
+                    requiresAuth: details.security?.length > 0,
+                    summary: details.summary,
+                };
+
+                // Add path parameters if any
+                if (details.parameters?.length) {
+                    endpoint.pathParams = details.parameters
+                        .filter(p => p.in === 'path')
+                        .map(p => ({
+                            name: p.name,
+                            type: p.schema.type,
+                            required: p.required,
+                        }));
+                }
+
+                // Add query parameters if any
+                if (details.parameters?.length) {
+                    endpoint.queryParams = details.parameters
+                        .filter(p => p.in === 'query')
+                        .map(p => ({
+                            name: p.name,
+                            type: p.schema.type,
+                            required: p.required,
+                        }));
+                }
+
+                // Add request body if exists
+                const requestBody = details.requestBody?.content['application/json']?.schema;
+                if (requestBody) {
+                    endpoint.requestSchema = {
+                        type: requestBody.type,
+                        properties: Object.entries(requestBody.properties).map(([key, value]) => ({
+                            name: key,
+                            type: value.type,
+                            description: value.description,
+                            enum: value.enum,
+                            required: requestBody.required?.includes(key),
+                        })),
+                    };
+                }
+
+                // Add response schema if exists
+                const responseSchema = details.responses['200']?.content['application/json']?.schema;
+                if (responseSchema) {
+                    endpoint.responseSchema = {
+                        type: responseSchema.type,
+                        properties:
+                            responseSchema.type === 'array'
+                                ? responseSchema.items.properties
+                                : responseSchema.properties,
+                    };
+                }
+
+                result.endpoints[endpointKey] = endpoint;
+            }
+        }
+
+        return result;
+    });
 }
