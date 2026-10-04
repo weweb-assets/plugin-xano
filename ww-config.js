@@ -76,21 +76,9 @@ export default {
             label: 'On realtime - connection status',
             value: 'realtime:connection_status',
             event: {
-                channel: '<channel-name>',
                 data: { action: 'connection_status', options: {}, payload: { status: 'disconnected' } },
             },
-            conditions: [
-                {
-                    name: 'Channel name',
-                    key: 'channel',
-                    placeholder: 'Default: All channels',
-                    bindingValidation: {
-                        type: 'string',
-                        tooltip: 'A channel name as a string',
-                    },
-                    type: 'Text',
-                },
-            ],
+            conditions: [],
         },
         {
             label: 'On realtime - presence full',
@@ -307,6 +295,7 @@ export default {
             name: 'Realtime | Open channel',
             code: 'openRealtimeChannel',
             parameters: [{ name: 'channel' }, { name: 'presence', type: 'boolean' }],
+            isAsync: true,
             /* wwEditor:start */
             edit: () => import('./src/components/RealtimeOpenChannel.vue'),
             /* wwEditor:end */
@@ -315,6 +304,7 @@ export default {
             name: 'Realtime | Close channel',
             code: 'closeRealtimeChannel',
             parameters: [{ name: 'channel' }],
+            isAsync: true,
             /* wwEditor:start */
             edit: () => import('./src/components/RealtimeCloseChannel.vue'),
             /* wwEditor:end */
