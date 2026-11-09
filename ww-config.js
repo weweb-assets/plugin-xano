@@ -301,6 +301,37 @@ export default {
             isAsync: true,
             /* wwEditor:start */
             edit: () => import('./src/components/Request.vue'),
+            copilot: {
+                description: "Make a request to a Xano API endpoint",
+                returns: "Promise<object>",
+                schema: {
+                    apiGroupUrl: {
+                        type: "string",
+                        description: "The base URL of the API group",
+                        bindable: true
+                    },
+                    endpoint: {
+                        type: "object",
+                        description: "The endpoint configuration containing method and path",
+                        bindable: false
+                    },
+                    headers: {
+                        type: "array",
+                        description: "Custom headers to send with the request",
+                        bindable: true
+                    },
+                    parameters: {
+                        type: "object", 
+                        description: "URL parameters to include in the request",
+                        bindable: true
+                    },
+                    body: {
+                        type: "object",
+                        description: "Request body data",
+                        bindable: true
+                    }
+                }
+            },
             /* wwEditor:end */
         },
         {
@@ -309,6 +340,32 @@ export default {
             parameters: [{ name: 'channel' }, { name: 'presence', type: 'boolean' }],
             /* wwEditor:start */
             edit: () => import('./src/components/RealtimeOpenChannel.vue'),
+            copilot: {
+                description: "Opens a realtime channel connection",
+                returns: "void",
+                schema: {
+                    channel: {
+                        type: "string",
+                        description: "The name of the channel to open",
+                        bindable: true
+                    },
+                    presence: {
+                        type: "boolean",
+                        description: "Whether to enable presence detection",
+                        bindable: true
+                    },
+                    history: {
+                        type: "boolean",
+                        description: "Whether to fetch message history on join",
+                        bindable: true
+                    },
+                    queueOfflineActions: {
+                        type: "boolean",
+                        description: "Whether to queue actions when offline",
+                        bindable: true
+                    }
+                }
+            },
             /* wwEditor:end */
         },
         {
@@ -317,6 +374,17 @@ export default {
             parameters: [{ name: 'channel' }],
             /* wwEditor:start */
             edit: () => import('./src/components/RealtimeCloseChannel.vue'),
+            copilot: {
+                description: "Closes an open realtime channel",
+                returns: "void", 
+                schema: {
+                    channel: {
+                        type: "string",
+                        description: "The name of the channel to close",
+                        bindable: true
+                    }
+                }
+            },
             /* wwEditor:end */
         },
         {
@@ -325,6 +393,32 @@ export default {
             parameters: [{ name: 'channel' }, { name: 'message' }],
             /* wwEditor:start */
             edit: () => import('./src/components/RealtimeSendMessage.vue'),
+            copilot: {
+                description: "Sends a message through a realtime channel",
+                returns: "void",
+                schema: {
+                    channel: {
+                        type: "string", 
+                        description: "The channel to send the message to",
+                        bindable: true
+                    },
+                    message: {
+                        type: "any",
+                        description: "The message content to send",
+                        bindable: true
+                    },
+                    audience: {
+                        type: "string",
+                        description: "The target audience (public/authenticated/private)",
+                        bindable: true
+                    },
+                    socketId: {
+                        type: "string",
+                        description: "The specific socket ID for private messages",
+                        bindable: true
+                    }
+                }
+            },
             /* wwEditor:end */
         },
         {
@@ -333,6 +427,17 @@ export default {
             parameters: [{ name: 'channel' }, { name: 'message' }],
             /* wwEditor:start */
             edit: () => import('./src/components/RealtimeGetPresence.vue'),
+            copilot: {
+                description: "Gets the presence information for a channel",
+                returns: "object",
+                schema: {
+                    channel: {
+                        type: "string",
+                        description: "The channel to get presence information for",
+                        bindable: true
+                    }
+                }
+            },
             /* wwEditor:end */
         },
         {
@@ -341,6 +446,17 @@ export default {
             parameters: [{ name: 'channel' }, { name: 'message' }],
             /* wwEditor:start */
             edit: () => import('./src/components/RealtimeRequestHistory.vue'),
+            copilot: {
+                description: "Requests message history for a channel",
+                returns: "void",
+                schema: {
+                    channel: {
+                        type: "string",
+                        description: "The channel to request history for",
+                        bindable: true
+                    }
+                }
+            },
             /* wwEditor:end */
         },
     ],
