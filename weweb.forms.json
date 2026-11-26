@@ -1,0 +1,765 @@
+{
+    "schemaVersion": 1,
+    "features": {
+        "datasource": true
+    },
+    "settings": {
+        "groups": [
+            {
+                "key": "connection",
+                "label": "Configuration"
+            },
+            {
+                "key": "dataSource",
+                "label": "Data source"
+            },
+            {
+                "key": "branch",
+                "label": "Branching"
+            },
+            {
+                "key": "headers",
+                "label": "Global headers"
+            }
+        ],
+        "fields": [
+            {
+                "key": "connection",
+                "type": "connection",
+                "label": "Xano connection",
+                "group": "connection",
+                "operation": "xano.connection",
+                "required": true
+            },
+            {
+                "key": "domain",
+                "type": "display",
+                "label": "Instance domain",
+                "group": "connection",
+                "publicPath": ["domain"]
+            },
+            {
+                "key": "realtimeConnectionHash",
+                "type": "text",
+                "label": "Realtime connection hash",
+                "group": "connection",
+                "storage": "publicData"
+            },
+            {
+                "key": "xDataSourceProd",
+                "type": "text",
+                "label": "In production",
+                "group": "dataSource",
+                "storage": "publicData"
+            },
+            {
+                "key": "xDataSourceStaging",
+                "type": "text",
+                "label": "In staging",
+                "group": "dataSource",
+                "storage": "publicData"
+            },
+            {
+                "key": "xDataSourceEditor",
+                "type": "text",
+                "label": "In editor",
+                "group": "dataSource",
+                "storage": "publicData"
+            },
+            {
+                "key": "xBranchProd",
+                "type": "text",
+                "label": "In production",
+                "group": "branch",
+                "storage": "publicData"
+            },
+            {
+                "key": "xBranchStaging",
+                "type": "text",
+                "label": "In staging",
+                "group": "branch",
+                "storage": "publicData"
+            },
+            {
+                "key": "xBranchEditor",
+                "type": "text",
+                "label": "In editor",
+                "group": "branch",
+                "storage": "publicData"
+            },
+            {
+                "key": "globalHeaders",
+                "type": "list",
+                "label": "Global headers",
+                "storage": "publicData",
+                "group": "headers",
+                "bindable": true,
+                "item": {
+                    "type": "record",
+                    "fields": [
+                        {
+                            "key": "key",
+                            "type": "text",
+                            "label": "Key",
+                            "bindable": true
+                        },
+                        {
+                            "key": "value",
+                            "type": "text",
+                            "label": "Value",
+                            "bindable": true
+                        }
+                    ]
+                }
+            },
+            {
+                "key": "withCredentials",
+                "type": "boolean",
+                "label": "Send cookies with requests",
+                "group": "headers",
+                "storage": "publicData"
+            }
+        ],
+        "summary": [
+            {
+                "field": "domain",
+                "label": "Domain"
+            }
+        ]
+    },
+    "actions": [
+        {
+            "code": "request",
+            "name": "Request",
+            "isAsync": true,
+            "parameters": [
+                {
+                    "name": "apiGroup",
+                    "type": "string"
+                },
+                {
+                    "name": "endpoint",
+                    "type": "object"
+                },
+                {
+                    "name": "parameters",
+                    "type": "object"
+                },
+                {
+                    "name": "body",
+                    "type": "object"
+                }
+            ],
+            "form": {
+                "fields": [
+                    {
+                        "key": "endpoint",
+                        "type": "resource",
+                        "label": "Endpoint",
+                        "operation": "xano.endpoint",
+                        "endpointSource": "request"
+                    },
+                    {
+                        "key": "dataType",
+                        "type": "choice",
+                        "label": "Content type",
+                        "choices": [
+                            {
+                                "value": "application/json",
+                                "label": "application/json"
+                            },
+                            {
+                                "value": "application/x-www-form-urlencoded",
+                                "label": "application/x-www-form-urlencoded"
+                            },
+                            {
+                                "value": "application/javascript",
+                                "label": "application/javascript"
+                            },
+                            {
+                                "value": "application/xml",
+                                "label": "application/xml"
+                            },
+                            {
+                                "value": "multipart/form-data",
+                                "label": "multipart/form-data"
+                            },
+                            {
+                                "value": "text/plain",
+                                "label": "text/plain"
+                            },
+                            {
+                                "value": "text/html",
+                                "label": "text/html"
+                            }
+                        ],
+                        "initial": "application/json"
+                    },
+                    {
+                        "key": "headers",
+                        "type": "list",
+                        "label": "Headers",
+                        "bindable": true,
+                        "item": {
+                            "type": "record",
+                            "fields": [
+                                {
+                                    "key": "key",
+                                    "type": "text",
+                                    "label": "Key",
+                                    "bindable": true
+                                },
+                                {
+                                    "key": "value",
+                                    "type": "text",
+                                    "label": "Value",
+                                    "bindable": true
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "key": "useStreaming",
+                        "type": "boolean",
+                        "label": "Enable streaming"
+                    },
+                    {
+                        "key": "withCredentials",
+                        "type": "boolean",
+                        "label": "Send cookies with requests",
+                        "forcedBySetting": "withCredentials",
+                        "disabledWhen": {
+                            "field": "useStreaming",
+                            "equals": true
+                        }
+                    },
+                    {
+                        "key": "streamVariableId",
+                        "type": "choice",
+                        "label": "Stream variable",
+                        "projectVariable": "array",
+                        "visibleWhen": {
+                            "field": "useStreaming",
+                            "equals": true
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "code": "openRealtimeChannel",
+            "name": "Realtime | Open channel",
+            "parameters": [
+                {
+                    "name": "channel"
+                },
+                {
+                    "name": "presence",
+                    "type": "boolean"
+                }
+            ],
+            "form": {
+                "fields": [
+                    {
+                        "key": "channel",
+                        "type": "text",
+                        "label": "Channel",
+                        "bindable": true
+                    },
+                    {
+                        "key": "presence",
+                        "type": "boolean",
+                        "label": "Listen to presence",
+                        "initial": false
+                    },
+                    {
+                        "key": "history",
+                        "type": "boolean",
+                        "label": "Get history on join",
+                        "initial": false
+                    },
+                    {
+                        "key": "queueOfflineActions",
+                        "type": "boolean",
+                        "label": "Queue offline actions",
+                        "initial": true
+                    }
+                ]
+            }
+        },
+        {
+            "code": "closeRealtimeChannel",
+            "name": "Realtime | Close channel",
+            "parameters": [
+                {
+                    "name": "channel"
+                }
+            ],
+            "form": {
+                "fields": [
+                    {
+                        "key": "channel",
+                        "type": "text",
+                        "label": "Channel",
+                        "bindable": true
+                    }
+                ]
+            }
+        },
+        {
+            "code": "sendRealtimeMessage",
+            "name": "Realtime | Send message",
+            "parameters": [
+                {
+                    "name": "channel"
+                },
+                {
+                    "name": "message"
+                }
+            ],
+            "form": {
+                "fields": [
+                    {
+                        "key": "channel",
+                        "type": "text",
+                        "label": "Channel",
+                        "bindable": true
+                    },
+                    {
+                        "key": "message",
+                        "type": "text",
+                        "label": "Message",
+                        "bindable": true
+                    },
+                    {
+                        "key": "audience",
+                        "type": "choice",
+                        "label": "Audience",
+                        "choices": [
+                            {
+                                "label": "Everyone",
+                                "value": "public"
+                            },
+                            {
+                                "label": "Authenticated",
+                                "value": "authenticated"
+                            },
+                            {
+                                "label": "Single",
+                                "value": "private"
+                            }
+                        ],
+                        "initial": "public",
+                        "clearOnChange": ["socketId"]
+                    },
+                    {
+                        "key": "socketId",
+                        "type": "text",
+                        "label": "Socket ID",
+                        "visibleWhen": {
+                            "field": "audience",
+                            "equals": "private"
+                        },
+                        "bindable": true
+                    }
+                ]
+            }
+        },
+        {
+            "code": "getRealtimePresence",
+            "name": "Realtime | Get presence",
+            "parameters": [
+                {
+                    "name": "channel"
+                },
+                {
+                    "name": "message"
+                }
+            ],
+            "form": {
+                "fields": [
+                    {
+                        "key": "channel",
+                        "type": "text",
+                        "label": "Channel",
+                        "bindable": true
+                    }
+                ]
+            }
+        },
+        {
+            "code": "requestRealtimeHistory",
+            "name": "Realtime | Request history",
+            "parameters": [
+                {
+                    "name": "channel"
+                },
+                {
+                    "name": "message"
+                }
+            ],
+            "form": {
+                "fields": [
+                    {
+                        "key": "channel",
+                        "type": "text",
+                        "label": "Channel",
+                        "bindable": true
+                    }
+                ]
+            }
+        }
+    ],
+    "triggers": [
+        {
+            "label": "On realtime - All events",
+            "value": "realtime",
+            "event": {
+                "channel": "channel-name",
+                "type": "message",
+                "data": {
+                    "client": null,
+                    "action": "",
+                    "options": {},
+                    "payload": null
+                }
+            },
+            "conditions": [
+                {
+                    "name": "Channel name",
+                    "key": "channel",
+                    "placeholder": "Default: All channels",
+                    "bindingValidation": {
+                        "type": "string",
+                        "tooltip": "A channel name as a string"
+                    },
+                    "type": "Text"
+                }
+            ]
+        },
+        {
+            "label": "On realtime - connection status",
+            "value": "realtime:connection_status",
+            "event": {
+                "channel": "channel-name",
+                "data": {
+                    "action": "connection_status",
+                    "options": {},
+                    "payload": {
+                        "status": "disconnected"
+                    }
+                }
+            },
+            "conditions": [
+                {
+                    "name": "Channel name",
+                    "key": "channel",
+                    "placeholder": "Default: All channels",
+                    "bindingValidation": {
+                        "type": "string",
+                        "tooltip": "A channel name as a string"
+                    },
+                    "type": "Text"
+                }
+            ]
+        },
+        {
+            "label": "On realtime - presence full",
+            "value": "realtime:presence_full",
+            "event": {
+                "channel": "channel-name",
+                "data": {
+                    "client": null,
+                    "action": "presence_full",
+                    "options": {},
+                    "payload": {
+                        "presence": [
+                            {
+                                "socketId": "socket-id",
+                                "extras": {},
+                                "permissions": {
+                                    "dbo_id": 0,
+                                    "row_id": 0
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            "conditions": [
+                {
+                    "name": "Channel name",
+                    "key": "channel",
+                    "placeholder": "Default: All channels",
+                    "bindingValidation": {
+                        "type": "string",
+                        "tooltip": "A channel name as a string"
+                    },
+                    "type": "Text"
+                }
+            ]
+        },
+        {
+            "label": "On realtime - presence update",
+            "value": "realtime:presence_update",
+            "event": {
+                "channel": "channel-name",
+                "data": {
+                    "client": null,
+                    "action": "presence_full",
+                    "options": {
+                        "channel": "channel-name"
+                    },
+                    "payload": {
+                        "action": "join",
+                        "presence": {
+                            "socketId": "socket-id",
+                            "extras": {},
+                            "permissions": {
+                                "dbo_id": 0,
+                                "row_id": 0
+                            }
+                        }
+                    }
+                }
+            },
+            "conditions": [
+                {
+                    "name": "Channel name",
+                    "key": "channel",
+                    "placeholder": "Default: All channels",
+                    "bindingValidation": {
+                        "type": "string",
+                        "tooltip": "A channel name as a string"
+                    },
+                    "type": "Text"
+                },
+                {
+                    "name": "Event type",
+                    "key": "event",
+                    "placeholder": "Default: All events",
+                    "bindingValidation": {
+                        "type": "string",
+                        "tooltip": "An event type as a string (join | leave)"
+                    },
+                    "type": "TextSelect",
+                    "options": [
+                        {
+                            "label": "All events",
+                            "value": null
+                        },
+                        {
+                            "label": "Join",
+                            "value": "join"
+                        },
+                        {
+                            "label": "Leave",
+                            "value": "leave"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "label": "On realtime - message",
+            "value": "realtime:message",
+            "event": {
+                "channel": "channel-name",
+                "data": {
+                    "action": "message",
+                    "options": {
+                        "authenticated": false,
+                        "socketId": null,
+                        "channel": ""
+                    },
+                    "client": {
+                        "socketId": "socket-id",
+                        "extras": {},
+                        "permissions": {
+                            "dbo_id": 0,
+                            "row_id": 0
+                        }
+                    },
+                    "payload": "message"
+                }
+            },
+            "conditions": [
+                {
+                    "name": "Channel name",
+                    "key": "channel",
+                    "placeholder": "Default: All channels",
+                    "bindingValidation": {
+                        "type": "string",
+                        "tooltip": "A channel name as a string"
+                    },
+                    "type": "Text"
+                }
+            ]
+        },
+        {
+            "label": "On realtime - event",
+            "value": "realtime:event",
+            "event": {
+                "channel": "channel-name",
+                "data": {
+                    "action": "event",
+                    "options": {
+                        "channel": "channel-name"
+                    },
+                    "client": null,
+                    "payload": {
+                        "data": "event-data",
+                        "dbo_id": 0,
+                        "row_id": 0
+                    }
+                }
+            },
+            "conditions": [
+                {
+                    "name": "Channel name",
+                    "key": "channel",
+                    "placeholder": "Default: All channels",
+                    "bindingValidation": {
+                        "type": "string",
+                        "tooltip": "A channel name as a string"
+                    },
+                    "type": "Text"
+                }
+            ]
+        },
+        {
+            "label": "On realtime - history",
+            "value": "realtime:history",
+            "event": {
+                "channel": "channel-name",
+                "data": {
+                    "action": "history",
+                    "options": {
+                        "channel": ""
+                    },
+                    "client": null,
+                    "payload": {
+                        "history": [
+                            {
+                                "action": "message 1",
+                                "options": {
+                                    "authenticated": false,
+                                    "socketId": null,
+                                    "channel": ""
+                                },
+                                "client": {
+                                    "socketId": "socket-id",
+                                    "extras": {},
+                                    "permissions": {
+                                        "dbo_id": 0,
+                                        "row_id": 0
+                                    }
+                                },
+                                "payload": "message"
+                            },
+                            {
+                                "action": "message 2",
+                                "options": {
+                                    "authenticated": false,
+                                    "socketId": null,
+                                    "channel": ""
+                                },
+                                "client": {
+                                    "socketId": "socket-id",
+                                    "extras": {},
+                                    "permissions": {
+                                        "dbo_id": 0,
+                                        "row_id": 0
+                                    }
+                                },
+                                "payload": "message"
+                            }
+                        ]
+                    }
+                }
+            },
+            "conditions": [
+                {
+                    "name": "Channel name",
+                    "key": "channel",
+                    "placeholder": "Default: All channels",
+                    "bindingValidation": {
+                        "type": "string",
+                        "tooltip": "A channel name as a string"
+                    },
+                    "type": "Text"
+                }
+            ]
+        },
+        {
+            "label": "On realtime - error",
+            "value": "realtime:error",
+            "event": {
+                "channel": "channel-name",
+                "data": {
+                    "action": "event",
+                    "options": {
+                        "channel": "channel-name"
+                    },
+                    "client": null,
+                    "payload": {
+                        "message": "error-message"
+                    }
+                }
+            },
+            "conditions": [
+                {
+                    "name": "Channel name",
+                    "key": "channel",
+                    "placeholder": "Default: All channels",
+                    "bindingValidation": {
+                        "type": "string",
+                        "tooltip": "A channel name as a string"
+                    },
+                    "type": "Text"
+                }
+            ]
+        }
+    ],
+    "collection": {
+        "fields": [
+            {
+                "key": "endpoint",
+                "type": "resource",
+                "label": "Endpoint",
+                "operation": "xano.endpoint",
+                "endpointSource": "request",
+                "required": true
+            },
+            {
+                "key": "headers",
+                "type": "list",
+                "label": "Headers",
+                "bindableIn": "dynamicCollection",
+                "item": {
+                    "type": "record",
+                    "fields": [
+                        {
+                            "key": "key",
+                            "type": "text",
+                            "label": "Key",
+                            "bindableIn": "dynamicCollection"
+                        },
+                        {
+                            "key": "value",
+                            "type": "text",
+                            "label": "Value",
+                            "bindableIn": "dynamicCollection"
+                        }
+                    ]
+                }
+            },
+            {
+                "key": "withCredentials",
+                "type": "boolean",
+                "label": "Send cookies with requests",
+                "forcedBySetting": "withCredentials"
+            }
+        ]
+    }
+}
