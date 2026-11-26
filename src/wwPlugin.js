@@ -30,11 +30,12 @@ export default {
         Plugin API
     \================================================================================================*/
     async _onLoad(settings) {
-        this.init(settings);
+        return this.init(settings);
     },
     async init(settings) {
         /* wwEditor:start */
-        await this.initManager(settings);
+        // Only the previous management editor receives private authoring settings.
+        if (settings.privateData) await this.initManager(settings);
         /* wwEditor:end */
         this.xanoClient = new XanoClient({
             instanceBaseUrl: 'https://' + (settings.publicData.customDomain || settings.publicData.domain),
